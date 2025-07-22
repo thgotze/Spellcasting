@@ -1,0 +1,6 @@
+name: MagicParticles
+version: '1.0'
+main: com.gotze.magicParticles.Main
+api-version: '1.21'
+commands:
+  crescent: {}

@@ -1,0 +1,5 @@
+tasks.register('hotswap', Copy) {
+    from jar
+    into '../run/plugins'
+    dependsOn jar
+}

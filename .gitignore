@@ -1,0 +1,24 @@
+# Gradle
+.gradle/
+**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Minecraft Development Server
+run/
+
+# Java
+*.class
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,221 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/gradientTest.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE100"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/particle.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE000"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/small_crescent00.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE020"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/small_crescent01.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE021"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/small_crescent02.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE022"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/small_crescent03.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE023"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/small_crescent04.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE024"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside00.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE030"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside01.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE031"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside02.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE032"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside03.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE033"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside04.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE034"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside05.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE035"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside06.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE036"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside07.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE037"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside08.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE038"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside09.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE039"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside10.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE03A"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_frontside11.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE03B"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside00.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE040"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside01.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE041"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside02.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE042"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside03.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE043"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside04.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE044"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside05.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE045"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside06.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE046"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside07.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE047"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside08.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE048"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside09.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE049"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside10.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE04A"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/crescent_backside11.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE04B"]
+    }
+  ]
+}
