@@ -1,2 +1,2 @@
 rootProject.name = 'MinecraftPlugins'
-include 'MagicParticles'
+include 'Spellcasting'
