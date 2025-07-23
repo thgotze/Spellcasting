@@ -17,8 +17,19 @@ import java.util.List;
 
 public final class CrescentSpell extends AbstractSpell {
 
-    //    private static final String[] CLOCKWISE_SPRITES = {
-    private final String[] CLOCKWISE_SPRITES = {"\uE100", "", "\uE042", "\uE043", "\uE044", "\uE045", "", "", "", "", "", ""};
+
+    private final String[] CLOCKWISE_SPRITES = {
+            "\uE001", "\uE001", "\uE001", "\uE001", "\uE001", "\uE001",
+            "\uE001", "\uE001", "\uE001", "\uE001", "\uE001", "\uE001"
+    };
+
+//    private static final String[] CLOCKWISE_SPRITES = {
+
+//    private final String[] CLOCKWISE_SPRITES = {
+//            "\uE001", "\uE000", "\uE042", "\uE043", "\uE044",
+//    "\uE045", "", "", "", "", "", ""
+//};
+
 //     private final String[] CLOCKWISE_SPRITES = {
 //                "\uE040", "\uE041", "\uE042", "\uE043", "\uE044", "\uE045",
 //                "\uE046", "\uE047", "\uE048", "\uE049", "\uE04A", "\uE04B"
@@ -71,7 +82,7 @@ public final class CrescentSpell extends AbstractSpell {
                 if (ticks % 2 == 0) {
                     for (int i = 0; i < 6; i++) {
                         if (ticks >= START_DELAYS[i]) {
-                            if (ticks % 12 == ANIMATION_DELAYS[i]) { // 75
+                            if (ticks % 12 == ANIMATION_DELAYS[i]) {
                                 player.playSound(net.kyori.adventure.sound.Sound.sound(
                                         Sound.ITEM_TRIDENT_THROW,
                                         net.kyori.adventure.sound.Sound.Source.PLAYER,

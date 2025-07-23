@@ -2,10 +2,10 @@
   "providers": [
     {
       "type": "bitmap",
-      "file": "minecraft:font/gradientTest.png",
+      "file": "minecraft:font/gradient_test.png",
       "ascent": 1,
       "height": 8,
-      "chars": ["\uE100"]
+      "chars": ["\uE001"]
     },
     {
       "type": "bitmap",

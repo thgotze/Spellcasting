@@ -79,7 +79,7 @@ public final class TextDisplayBuilder {
         textDisplay.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
         textDisplay.setBrightness(new Display.Brightness(15, 15));
         textDisplay.setSeeThrough(false);
-        textDisplay.setTextOpacity((byte) 125);
+        textDisplay.setTextOpacity((byte) 255);
 
         return textDisplay;
     }
