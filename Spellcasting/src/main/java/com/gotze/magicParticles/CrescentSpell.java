@@ -1,65 +1,32 @@
 package com.gotze.magicParticles;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TextDisplay;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class CrescentSpell extends AbstractSpell {
+public class CrescentSpell extends AbstractSpell {
 
-
-    private final String[] CLOCKWISE_SPRITES = {
-            "\uE001", "\uE001", "\uE001", "\uE001", "\uE001", "\uE001",
-            "\uE001", "\uE001", "\uE001", "\uE001", "\uE001", "\uE001"
-    };
-
-//    private static final String[] CLOCKWISE_SPRITES = {
-
-//    private final String[] CLOCKWISE_SPRITES = {
-//            "\uE001", "\uE000", "\uE042", "\uE043", "\uE044",
-//    "\uE045", "", "", "", "", "", ""
-//};
-
-//     private final String[] CLOCKWISE_SPRITES = {
-//                "\uE040", "\uE041", "\uE042", "\uE043", "\uE044", "\uE045",
-//                "\uE046", "\uE047", "\uE048", "\uE049", "\uE04A", "\uE04B"
-//        };
-
-    //    private static final String[] COUNTER_CLOCKWISE_SPRITES = {
-    private final String[] COUNTER_CLOCKWISE_SPRITES = {"", "", "\uE032", "\uE033", "\uE034", "\uE035", "", "", "", "", "", ""};
-//    private final String[] COUNTER_CLOCKWISE_SPRITES = {
-//            "\uE030", "\uE031", "\uE032", "\uE033", "\uE034", "\uE035",
-//            "\uE036", "\uE037", "\uE038", "\uE039", "\uE03A", "\uE03B"
-//    };
-
-    //    private static final float[] DISPLAY_ROTATIONS = {-75f, 75f, -45f, 45f, -15f, 15f};
     private final float[] DISPLAY_ROTATIONS = {-75f, 75f, -45f, 45f, -15f, 15f};
-    //    private static final int[] ANIMATION_DELAYS = {0, 6, 2, 8, 4, 10};
     private final int[] ANIMATION_DELAYS = {0, 6, 2, 8, 4, 10};
-    //    private static final int[] START_DELAYS = {
     private final int[] START_DELAYS = {0, 42, 74, 116, 148, 190};
-    // 0 * 12 + 0, 3 * 12 + 6,
-    // 6 * 12 + 2, 9 * 12 + 8,
-    // 12 * 12 + 4, 15 * 12 + 10
 
-    // 0 -> 42
-    // 74 -> 116
-    // 148 -> 190
-
-    private final TextDisplay[] displays = new TextDisplay[6];
-    //    private final TextDisplay[] displays = new TextDisplay[1];
-    private final TextDisplay[] displayBacksides = new TextDisplay[6];
-//    private final TextDisplay[] displayBacksides = new TextDisplay[1];
+    private final ItemDisplay[] displays = new ItemDisplay[6];
+    private final ItemDisplay[] displayBacksides = new ItemDisplay[6];
 
     public CrescentSpell(JavaPlugin plugin, Location location, Player player) {
         super(plugin, location, player);
@@ -104,51 +71,46 @@ public final class CrescentSpell extends AbstractSpell {
 
                     // Only create the displays on 0th tick
                     if (displays[displays.length - 1] == null) {
-                        TextDisplayBuilder baseDisplay = new TextDisplayBuilder(spawnLocation)
-                                .scale(17, 27, 0f)
-                                .rotateX(90f);
-
-//                    for (int i = 0; i < 1; i++) {
                         for (int i = 0; i < 6; i++) {
                             // Create frontside crescent
+                            displays[i] = world.spawn(spawnLocation, ItemDisplay.class);
+                            displays[i].setBrightness(new Display.Brightness(15, 15));
+                            displays[i].setTransformationMatrix(new Matrix4f()
+                                    .rotateX((float) Math.toRadians(90f - 0.5f))
+                                    .rotateZ((float) Math.toRadians(DISPLAY_ROTATIONS[i]))
+                                    .scale(17, 27, 0.1f)
+                            );
 
-                            displays[i] = baseDisplay.copy()
-                                    .rotateZ(DISPLAY_ROTATIONS[i])
-                                    .rotateX(-0.5f)
-                                    .build();
-                            displayBacksides[i] = baseDisplay.copy()
-                                    .rotateZ(DISPLAY_ROTATIONS[i])
-                                    .rotateZ(180f)
-                                    .rotateX(-0.5f)
-                                    .build();
+                            // Create backside crescent
+                            displayBacksides[i] = world.spawn(spawnLocation, ItemDisplay.class);
+                            displayBacksides[i].setBrightness(new Display.Brightness(15, 15));
+                            displayBacksides[i].setTransformationMatrix(new Matrix4f()
+                                    .rotateX((float) Math.toRadians(90f - 0.5f))
+                                    .rotateZ((float) Math.toRadians(DISPLAY_ROTATIONS[i] + 180f))
+                                    .scale(17, 27, 0.1f)
+                            );
                         }
                     }
                 }
 
-
                 // Teleport only one of the 6 pairs every tick
                 if (ticks % 2 == 0) {
-                    if (ticks % 12 == 0) { // 75
+                    if (ticks % 12 == 0) {
                         displays[0].teleport(spawnLocation);
                         displayBacksides[0].teleport(spawnLocation);
-
-                    } else if (ticks % 12 == 6) { // -75 degrees
+                    } else if (ticks % 12 == 6) {
                         displays[1].teleport(spawnLocation);
                         displayBacksides[1].teleport(spawnLocation);
-
-                    } else if (ticks % 12 == 2) { // 45 degrees
+                    } else if (ticks % 12 == 2) {
                         displays[2].teleport(spawnLocation);
                         displayBacksides[2].teleport(spawnLocation);
-
-                    } else if (ticks % 12 == 8) { // -45 degrees
+                    } else if (ticks % 12 == 8) {
                         displays[3].teleport(spawnLocation);
                         displayBacksides[3].teleport(spawnLocation);
-
-                    } else if (ticks % 12 == 4) { // 15 degrees
+                    } else if (ticks % 12 == 4) {
                         displays[4].teleport(spawnLocation);
                         displayBacksides[4].teleport(spawnLocation);
-
-                    } else if (ticks % 12 == 10) { // -15 degrees
+                    } else if (ticks % 12 == 10) {
                         displays[5].teleport(spawnLocation);
                         displayBacksides[5].teleport(spawnLocation);
                     }
@@ -158,12 +120,27 @@ public final class CrescentSpell extends AbstractSpell {
                 for (int i = 0; i < 6; i++) {
                     if (ticks >= START_DELAYS[i]) {
                         int spriteTick = (ticks - START_DELAYS[i]) % 12;
-                        displays[i].text(Component.text(i % 2 == 0 ? CLOCKWISE_SPRITES[spriteTick] : COUNTER_CLOCKWISE_SPRITES[spriteTick],
-                                TextColor.color(255, 255, 255)
-                        ));
-                        displayBacksides[i].text(Component.text(i % 2 == 0 ? COUNTER_CLOCKWISE_SPRITES[spriteTick] : CLOCKWISE_SPRITES[spriteTick],
-                                TextColor.color(255, 255, 255)
-                        ));
+
+                        // Create items for frontside and backside
+                        ItemStack frontsideItem = new ItemStack(Material.PAPER);
+                        ItemMeta frontsideMeta = frontsideItem.getItemMeta();
+
+                        ItemStack backsideItem = new ItemStack(Material.PAPER);
+                        ItemMeta backsideMeta = backsideItem.getItemMeta();
+
+                        if (i % 2 == 0) { // Clockwise displays
+                            frontsideMeta.setItemModel(NamespacedKey.minecraft(String.format("crescent_frontside%02d", spriteTick)));
+                            backsideMeta.setItemModel(NamespacedKey.minecraft(String.format("crescent_backside%02d", spriteTick)));
+                        } else { // Counter-clockwise displays
+                            frontsideMeta.setItemModel(NamespacedKey.minecraft(String.format("crescent_backside%02d", spriteTick)));
+                            backsideMeta.setItemModel(NamespacedKey.minecraft(String.format("crescent_frontside%02d", spriteTick)));
+                        }
+
+                        frontsideItem.setItemMeta(frontsideMeta);
+                        backsideItem.setItemMeta(backsideMeta);
+
+                        displays[i].setItemStack(frontsideItem);
+                        displayBacksides[i].setItemStack(backsideItem);
                     } else {
                         break;
                     }
@@ -337,10 +314,8 @@ public final class CrescentSpell extends AbstractSpell {
         }.runTaskTimer(plugin, 0L, 1L);
     }
 
-
     @Override
     protected void remove() {
-//        for (int i = 0; i < 1; i++) {
         for (int i = 0; i < 6; i++) {
             displays[i].remove();
             displayBacksides[i].remove();

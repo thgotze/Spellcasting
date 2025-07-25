@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class SwingTool implements Listener {
+public class SwingTool implements Listener {
 
     private final JavaPlugin plugin;
 

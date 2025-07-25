@@ -7,7 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TextDisplay;
 import org.joml.Matrix4f;
 
-public final class TextDisplayBuilder {
+public class TextDisplayBuilder {
 
     // Base transformation that accounts for Minecraft's text positioning quirks
     // Modification happens in reverse order (Downscale -> Move -> Upscale)

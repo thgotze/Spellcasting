@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public final class CastSpellCommand implements CommandExecutor {
+public class CastSpellCommand implements CommandExecutor {
     private final JavaPlugin plugin;
 
     public CastSpellCommand(JavaPlugin plugin) {

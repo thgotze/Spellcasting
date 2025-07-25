@@ -27,154 +27,47 @@ public class LaserSpell extends AbstractSpell {
         ItemStack particleItem = new ItemStack(Material.PAPER);
         ItemMeta meta = particleItem.getItemMeta();
 
-        // Set the item model component directly
-        meta.setItemModel(NamespacedKey.minecraft("particle"));
+        // Set the initial item model component
+        meta.setItemModel(NamespacedKey.minecraft("crescent_frontside00"));
         particleItem.setItemMeta(meta);
 
         // Spawn the ItemDisplay
         ItemDisplay display = location.getWorld().spawn(spawnLocation, ItemDisplay.class);
         display.setItemStack(particleItem);
-
-
         display.setBrightness(new Display.Brightness(15, 15));
 
         display.setTransformationMatrix(new Matrix4f()
                 .rotateZ((float) Math.PI / 2.5f)
                 .rotateY((float) Math.PI / 2)
-                .scale(1, 1, 1)
+                .scale(1, 1, 0.01f)
         );
 
         new BukkitRunnable() {
-            private int stage = 0;
-            private final Material[] swords = {
-                    Material.WOODEN_SWORD,
-                    Material.STONE_SWORD,
-                    Material.IRON_SWORD,
-                    Material.GOLDEN_SWORD,
-                    Material.DIAMOND_SWORD,
-                    Material.NETHERITE_SWORD
-            };
+            private int ticks = 0;
+            private final int frames = 12;
+            private final int loops = 20;
+            private final int totalTicks = frames * loops;
 
             @Override
             public void run() {
-                this.cancel();
-                return;
+                if (ticks >= totalTicks) {
+                    this.cancel();
+                    return;
+                }
+
+                int frame = ticks % frames;
+                String modelName = String.format("crescent_frontside%02d", frame);
+
+                ItemStack newItem = new ItemStack(Material.PAPER);
+                ItemMeta newMeta = newItem.getItemMeta();
+                newMeta.setItemModel(NamespacedKey.minecraft(modelName));
+                newItem.setItemMeta(newMeta);
+
+                display.setItemStack(newItem);
+                ticks++;
             }
-        }.runTaskTimer(plugin, 0, 20);
+        }.runTaskTimer(plugin, 0, 1);
     }
-
-
-//        EntityType.UNKNOWN
-
-//        ItemDisplay itemDisplay = player.getWorld().spawnEntity(spawnLocation, EntityType.ITEM_DISPLAY, true)
-
-//        TextDisplayBuilder baseDisplay = new TextDisplayBuilder(spawnLocation);
-//
-//        TextDisplay red = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .translate(0, 0,-0.125f)
-//                .build();
-//        red.setBackgroundColor(Color.fromARGB(255,255, 0, 0));
-//        red.text(Component.text(" "));
-
-//        TextDisplay redB = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateY(180)
-//                .translate(0, 0,-0.125f)
-//                .build();
-//        redB.setBackgroundColor(Color.fromARGB(255,255, 0, 0));
-//        redB.text(Component.text(" "));
-//
-//
-//
-//
-//        TextDisplay green = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .translate(0,0,0.125f)
-//                .build();
-//        green.setBackgroundColor(Color.fromARGB(255,0, 255, 0));
-//        green.text(Component.text(" "));
-//        TextDisplay greenB = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateY(180)
-//                .translate(0,0,0.125f)
-//                .build();
-//        greenB.setBackgroundColor(Color.fromARGB(255,0, 255, 0));
-//        greenB.text(Component.text(" "));
-//
-//
-//
-//        TextDisplay blue = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateX(90)
-//                .translate(0,0.25f,-0.125f)
-//                .build();
-//        blue.setBackgroundColor(Color.fromARGB(255,0, 0, 255));
-//        blue.text(Component.text(" "));
-//        TextDisplay blueB = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateY(180)
-//                .rotateX(90)
-//                .translate(0,0.25f,-0.125f)
-//                .build();
-//        blueB.setBackgroundColor(Color.fromARGB(255,0, 0, 255));
-//        blueB.text(Component.text(" "));
-//
-//
-//
-//        TextDisplay black = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateX(90)
-//                .translate(0,0,-0.125f)
-//                .build();
-//        black.setBackgroundColor(Color.fromARGB(255,0, 0, 0));
-//        black.text(Component.text(" "));
-//
-//        TextDisplay blackB = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateX(90)
-//                .rotateZ(180)
-//                .translate(0,0,-0.125f)
-//                .build();
-//        blackB.setBackgroundColor(Color.fromARGB(255,0, 0, 0));
-//        blackB.text(Component.text(" "));
-//
-//
-//
-//        TextDisplay white = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateY(90)
-//                .translate(0.125f,0f,0)
-//                .build();
-//        white.setBackgroundColor(Color.fromARGB(255,255, 255, 255));
-//        white.text(Component.text(" "));
-//
-//        TextDisplay whiteB = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateY(270)
-//                .translate( 0.125f,0f,0)
-//                .build();
-//        whiteB.setBackgroundColor(Color.fromARGB(255,255, 255, 255));
-//        whiteB.text(Component.text(" "));
-//
-//
-//        TextDisplay gray = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateY(90)
-//                .translate(-0.125f,0f,0)
-//                .build();
-//        gray.setBackgroundColor(Color.fromARGB(255,125, 125, 125));
-//        gray.text(Component.text(" "));
-//
-//        TextDisplay grayB = baseDisplay.copy()
-//                .scale(2,1,1)
-//                .rotateY(270)
-//                .translate(-0.125f,0f,0)
-//                .build();
-//        grayB.setBackgroundColor(Color.fromARGB(255,125, 125, 125));
-//        grayB.text(Component.text(" "));
-
-
 
     @Override
     protected void remove() {
