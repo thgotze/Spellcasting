@@ -1,6 +1,6 @@
 package com.gotze.magicParticles.entrypoints;
 
-import com.gotze.magicParticles.CrescentSpell;
+import com.gotze.magicParticles.SliceSpell;
 import com.gotze.magicParticles.LaserSpell;
 import io.papermc.paper.event.player.PlayerArmSwingEvent;
 import org.bukkit.Material;
@@ -24,7 +24,7 @@ public class SwingTool implements Listener {
         Material material = player.getInventory().getItemInMainHand().getType();
 
         if (material == Material.DIAMOND_SWORD || material == Material.DIAMOND_PICKAXE) {
-            new CrescentSpell(plugin, player.getLocation(), player);
+            new SliceSpell(plugin, player.getLocation(), player);
         }
 
         if (material == Material.STICK) {
