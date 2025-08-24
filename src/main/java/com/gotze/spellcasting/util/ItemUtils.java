@@ -1,7 +1,6 @@
 package com.gotze.spellcasting.util;
 
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 public class ItemUtils {
 
@@ -13,8 +12,4 @@ public class ItemUtils {
                 material == Material.DIAMOND_PICKAXE ||
                 material == Material.NETHERITE_PICKAXE;
     }
-
-    public static final ItemStack RETURN_BUTTON = new ItemStack(
-            Material.ARROW
-    );
 }
