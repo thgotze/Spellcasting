@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public class SpellsGUI implements InventoryHolder, Listener {
+public class EnchantmentsGUI implements InventoryHolder, Listener {
     private Inventory gui;
 
     @Override
@@ -32,20 +32,20 @@ public class SpellsGUI implements InventoryHolder, Listener {
         gui = Bukkit.createInventory(
                 this,
                 45,
-                "Spells"
+                "Enchantments"
         );
         GUIUtils.setFrames(gui);
         gui.setItem(4, PlayerPickaxe.getPickaxe(player));
-        gui.setItem(21, SliceSpellButton());
-        gui.setItem(22, LaserSpellButton());
-        gui.setItem(23, RocketSpellButton());
+        gui.setItem(21, EfficiencyBookButton());
+        gui.setItem(22, UnbreakingBookButton());
+        gui.setItem(23, FortuneBookButton());
         gui.setItem(36, GUIUtils.RETURN_BUTTON);
         player.openInventory(gui);
     }
 
     @EventHandler
     public void onInventoryClick(@NotNull InventoryClickEvent event) {
-        if (!(event.getInventory().getHolder() instanceof SpellsGUI)) return;
+        if (!(event.getInventory().getHolder() instanceof EnchantmentsGUI)) return;
 
         event.setCancelled(true);
 
@@ -65,11 +65,11 @@ public class SpellsGUI implements InventoryHolder, Listener {
         }
     }
 
-    private ItemStack SliceSpellButton() {
-        ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
+    private ItemStack EfficiencyBookButton() {
+        ItemStack itemStack = new ItemStack(Material.REDSTONE);
         itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Slice")
-                    .color(NamedTextColor.LIGHT_PURPLE)
+            meta.displayName(Component.text("Efficiency")
+                    .color(NamedTextColor.YELLOW)
                     .decoration(TextDecoration.ITALIC, false)
             );
 
@@ -78,7 +78,7 @@ public class SpellsGUI implements InventoryHolder, Listener {
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
                             .decoration(TextDecoration.ITALIC, false),
-                    Component.text("32x Amethyst Shard")
+                    Component.text("32x Redstone Dust")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
             ));
@@ -86,11 +86,11 @@ public class SpellsGUI implements InventoryHolder, Listener {
         return itemStack;
     }
 
-    private ItemStack LaserSpellButton() {
-        ItemStack itemStack = new ItemStack(Material.LIGHTNING_ROD);
+    private ItemStack UnbreakingBookButton() {
+        ItemStack itemStack = new ItemStack(Material.OBSIDIAN);
         itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Laser")
-                    .color(NamedTextColor.LIGHT_PURPLE)
+            meta.displayName(Component.text("Unbreaking")
+                    .color(NamedTextColor.YELLOW)
                     .decoration(TextDecoration.ITALIC, false)
             );
 
@@ -99,7 +99,7 @@ public class SpellsGUI implements InventoryHolder, Listener {
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
                             .decoration(TextDecoration.ITALIC, false),
-                    Component.text("32x Amethyst Shard")
+                    Component.text("32x Obsidian")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
             ));
@@ -107,11 +107,11 @@ public class SpellsGUI implements InventoryHolder, Listener {
         return itemStack;
     }
 
-    private ItemStack RocketSpellButton() {
-        ItemStack itemStack = new ItemStack(Material.FIREWORK_ROCKET);
+    private ItemStack FortuneBookButton() {
+        ItemStack itemStack = new ItemStack(Material.LAPIS_LAZULI);
         itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Rocket")
-                    .color(NamedTextColor.LIGHT_PURPLE)
+            meta.displayName(Component.text("Fortune")
+                    .color(NamedTextColor.YELLOW)
                     .decoration(TextDecoration.ITALIC, false)
             );
 
@@ -120,7 +120,7 @@ public class SpellsGUI implements InventoryHolder, Listener {
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
                             .decoration(TextDecoration.ITALIC, false),
-                    Component.text("32x Amethyst Shard")
+                    Component.text("32x Lapis Lazuli")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
             ));

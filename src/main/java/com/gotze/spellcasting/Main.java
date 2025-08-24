@@ -1,6 +1,6 @@
 package com.gotze.spellcasting;
 
-import com.gotze.spellcasting.gui.EnchantsGUI;
+import com.gotze.spellcasting.gui.EnchantmentsGUI;
 import com.gotze.spellcasting.gui.MaterialsGUI;
 import com.gotze.spellcasting.gui.PickaxeGUI;
 import com.gotze.spellcasting.gui.SpellsGUI;
@@ -18,7 +18,7 @@ public class Main extends JavaPlugin {
         INSTANCE = this;
 
         // GUIs
-        getServer().getPluginManager().registerEvents(new EnchantsGUI(), this);
+        getServer().getPluginManager().registerEvents(new EnchantmentsGUI(), this);
         getServer().getPluginManager().registerEvents(new MaterialsGUI(), this);
         getServer().getPluginManager().registerEvents(new PickaxeGUI(), this);
         getServer().getPluginManager().registerEvents(new SpellsGUI(), this);

@@ -1,6 +1,9 @@
 package com.gotze.spellcasting.gui;
 
 import com.gotze.spellcasting.PlayerPickaxe;
+import com.gotze.spellcasting.util.GUIUtils;
+import com.gotze.spellcasting.util.SoundUtils;
+import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -13,8 +16,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 public class PickaxeGUI implements InventoryHolder, Listener {
     private Inventory gui;
@@ -30,28 +34,13 @@ public class PickaxeGUI implements InventoryHolder, Listener {
                 45,
                 "Pickaxe"
         );
-        setFrames();
-        gui.setItem(13, PlayerPickaxe.getPickaxe(player));
-        gui.setItem(30, AnvilButton());
-        gui.setItem(31, EnchantedBookButton());
-        gui.setItem(32, SpellsButton());
+        GUIUtils.setFrames(gui);
+        gui.setItem(4, PlayerPickaxe.getPickaxe(player));
+        gui.setItem(21, MaterialsButton());
+        gui.setItem(22, EnchantmentsButton());
+        gui.setItem(23, SpellsButton());
         player.openInventory(this.gui);
     }
-
-    private void setFrames() {
-        ItemStack FRAME = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        ItemMeta meta = FRAME.getItemMeta();
-        meta.setHideTooltip(true);
-        FRAME.setItemMeta(meta);
-
-        for (int i = 0; i < 9; i++) {
-            gui.setItem(i, FRAME);
-        }
-        for (int i = 36; i < 45; i++) {
-            gui.setItem(i, FRAME);
-        }
-    }
-
 
     @EventHandler
     public void onInventoryClick(@NotNull InventoryClickEvent event) {
@@ -68,36 +57,72 @@ public class PickaxeGUI implements InventoryHolder, Listener {
         int slot = event.getSlot();
 
         switch (slot) {
-            case 30 -> new MaterialsGUI().openGUI(player);
-            case 31 -> new EnchantsGUI().openGUI(player);
-            case 32 -> new SpellsGUI().openGUI(player);
+            case 21 -> {
+                new MaterialsGUI().openGUI(player);
+                SoundUtils.playUIClickSound(player);
+            }
+            case 22 -> {
+                new EnchantmentsGUI().openGUI(player);
+                SoundUtils.playUIClickSound(player);
+            }
+            case 23 -> {
+                new SpellsGUI().openGUI(player);
+                SoundUtils.playUIClickSound(player);
+            }
         }
     }
 
-    private ItemStack AnvilButton() {
+    private ItemStack MaterialsButton() {
         ItemStack itemStack = new ItemStack(Material.ANVIL);
-        itemStack.editMeta(meta -> meta.displayName(Component.text("Pickaxe Material")
-                .color(NamedTextColor.WHITE)
-                .decoration(TextDecoration.ITALIC, false)
-        ));
+        itemStack.editMeta(meta -> {
+            meta.displayName(Component.text("Materials")
+                    .color(NamedTextColor.AQUA)
+                    .decoration(TextDecoration.ITALIC, false)
+            );
+
+            meta.lore(Arrays.asList(
+                    Component.text(""),
+                    Component.text(StringUtils.convertToSmallFont("5 material tiers available"))
+                            .color(NamedTextColor.GRAY)
+                            .decoration(TextDecoration.ITALIC, false)
+            ));
+        });
         return itemStack;
     }
 
-    private ItemStack EnchantedBookButton() {
+    private ItemStack EnchantmentsButton() {
         ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
-        itemStack.editMeta(meta -> meta.displayName(Component.text("Enchantments")
-                .color(NamedTextColor.WHITE)
-                .decoration(TextDecoration.ITALIC, false)
-        ));
+        itemStack.editMeta(meta -> {
+            meta.displayName(Component.text("Enchantments")
+                    .color(NamedTextColor.YELLOW)
+                    .decoration(TextDecoration.ITALIC, false)
+            );
+
+            meta.lore(Arrays.asList(
+                    Component.text(""),
+                    Component.text(StringUtils.convertToSmallFont("3 enchantments available"))
+                            .color(NamedTextColor.GRAY)
+                            .decoration(TextDecoration.ITALIC, false)
+            ));
+        });
         return itemStack;
     }
 
     private ItemStack SpellsButton() {
-        ItemStack itemStack = new ItemStack(Material.BLAZE_ROD);
-        itemStack.editMeta(meta -> meta.displayName(Component.text("Spells")
-                .color(NamedTextColor.WHITE)
-                .decoration(TextDecoration.ITALIC, false)
-        ));
+        ItemStack itemStack = new ItemStack(Material.END_CRYSTAL);
+        itemStack.editMeta(meta -> {
+            meta.displayName(Component.text("Spells")
+                    .color(NamedTextColor.LIGHT_PURPLE)
+                    .decoration(TextDecoration.ITALIC, false)
+            );
+
+            meta.lore(Arrays.asList(
+                    Component.text(""),
+                    Component.text(StringUtils.convertToSmallFont("3 spells available"))
+                            .color(NamedTextColor.GRAY)
+                            .decoration(TextDecoration.ITALIC, false)
+            ));
+        });
         return itemStack;
     }
 }
