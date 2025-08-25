@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.PlayerPickaxe;
+import com.gotze.spellcasting.PlayerPickaxeManager;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
@@ -35,11 +35,11 @@ public class PickaxeGUI implements InventoryHolder, Listener {
                 "Pickaxe"
         );
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxe.getPickaxe(player));
+        gui.setItem(4, PlayerPickaxeManager.getPickaxe(player));
         gui.setItem(21, MaterialsButton());
         gui.setItem(22, EnchantmentsButton());
         gui.setItem(23, SpellsButton());
-        player.openInventory(this.gui);
+        player.openInventory(gui);
     }
 
     @EventHandler
@@ -74,14 +74,16 @@ public class PickaxeGUI implements InventoryHolder, Listener {
 
     private ItemStack MaterialsButton() {
         ItemStack itemStack = new ItemStack(Material.ANVIL);
+        anvil.getItemMeta().setEnchantmentGlintOverride(true);
+
+
         itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Materials")
+            meta.displayName(Component.text("Materials") // TODO
                     .color(NamedTextColor.AQUA)
                     .decoration(TextDecoration.ITALIC, false)
             );
 
             meta.lore(Arrays.asList(
-                    Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("5 material tiers available"))
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
@@ -99,7 +101,6 @@ public class PickaxeGUI implements InventoryHolder, Listener {
             );
 
             meta.lore(Arrays.asList(
-                    Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("3 enchantments available"))
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
@@ -117,7 +118,6 @@ public class PickaxeGUI implements InventoryHolder, Listener {
             );
 
             meta.lore(Arrays.asList(
-                    Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("3 spells available"))
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)

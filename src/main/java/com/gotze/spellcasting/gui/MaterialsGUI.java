@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.PlayerPickaxe;
+import com.gotze.spellcasting.PlayerPickaxeManager;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
@@ -35,7 +35,7 @@ public class MaterialsGUI implements InventoryHolder, Listener {
                 "Materials"
         );
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxe.getPickaxe(player));
+        gui.setItem(4, PlayerPickaxeManager.getPickaxe(player));
         gui.setItem(20, StonePickaxeButton());
         gui.setItem(21, IronPickaxeButton());
         gui.setItem(22, GoldPickaxeButton());
@@ -175,7 +175,7 @@ public class MaterialsGUI implements InventoryHolder, Listener {
     }
 
     private void upgradePickaxe(Player player) {
-        ItemStack playerPickaxe = PlayerPickaxe.getPickaxe(player);
+        ItemStack playerPickaxe = PlayerPickaxeManager.getPickaxe(player);
 
         Material upgradeMaterial = null;
         Material newPickaxeMaterial = null;
@@ -218,11 +218,11 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         if (!playerInventory.containsAtLeast(requiredMaterials, 32)) return;
         playerInventory.removeItem(requiredMaterials);
 
-        playerInventory.removeItemAnySlot(PlayerPickaxe.getPickaxe(player));
+        playerInventory.removeItemAnySlot(PlayerPickaxeManager.getPickaxe(player));
 
-        PlayerPickaxe.setPickaxe(player, new ItemStack(newPickaxeMaterial));
+        PlayerPickaxeManager.setPickaxe(player, new ItemStack(newPickaxeMaterial));
 
         openGUI(player);
-        player.give(PlayerPickaxe.getPickaxe(player));
+        player.give(PlayerPickaxeManager.getPickaxe(player));
     }
 }

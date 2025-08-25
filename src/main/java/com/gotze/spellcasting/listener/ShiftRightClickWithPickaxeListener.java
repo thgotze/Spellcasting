@@ -14,7 +14,7 @@ public class ShiftRightClickWithPickaxeListener implements Listener {
     public void onShiftRightClickWithPickaxe(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if (!event.getAction().isRightClick() || !player.isSneaking()) return;
+        if (event.getAction().isRightClick() && player.isSneaking()) return;
 
         Material material = event.getMaterial();
 

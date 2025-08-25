@@ -17,24 +17,32 @@ import org.joml.Matrix4f;
 
 public class SliceSpell extends Spell {
 
+    private static final String SPELL_NAME = "Slice";
+
     private static final int[] START_DELAYS = {0, 42, 74, 116, 148, 190};
     private static final float[] DISPLAY_ROTATIONS = {-75f, 75f, -45f, 45f, -15f, 15f};
 
     private static final String[] ANTI_CLOCKWISE_SPRITES = {
-            "crescent_frontside00", "crescent_frontside01", "crescent_frontside02", "crescent_frontside03",
-            "crescent_frontside04", "crescent_frontside05", "crescent_frontside06", "crescent_frontside07",
-            "crescent_frontside08", "crescent_frontside09", "crescent_frontside10", "crescent_frontside11"
+//            "crescent_frontside00", "crescent_frontside01", "crescent_frontside02", "crescent_frontside03",
+//            "crescent_frontside04", "crescent_frontside05", "crescent_frontside06", "crescent_frontside07",
+//            "crescent_frontside08", "crescent_frontside09", "crescent_frontside10", "crescent_frontside11"
+            "pixel", "pixel", "pixel", "pixel",
+            "pixel", "pixel", "pixel", "pixel",
+            "pixel", "pixel", "pixel", "pixel"
     };
 
     private static final String[] CLOCKWISE_SPRITES = {
-            "crescent_backside00", "crescent_backside01", "crescent_backside02", "crescent_backside03",
-            "crescent_backside04", "crescent_backside05", "crescent_backside06", "crescent_backside07",
-            "crescent_backside08", "crescent_backside09", "crescent_backside10", "crescent_backside11"
+//            "crescent_backside00", "crescent_backside01", "crescent_backside02", "crescent_backside03",
+//            "crescent_backside04", "crescent_backside05", "crescent_backside06", "crescent_backside07",
+//            "crescent_backside08", "crescent_backside09", "crescent_backside10", "crescent_backside11"
+            "pixel", "pixel", "pixel", "pixel",
+            "pixel", "pixel", "pixel", "pixel",
+            "pixel", "pixel", "pixel", "pixel"
     };
 
     public SliceSpell(Player player) {
         super.player = player;
-        super.spellName = "Slice";
+        super.spellName = SPELL_NAME;
     }
 
     @Override

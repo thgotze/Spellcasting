@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.PlayerPickaxe;
+import com.gotze.spellcasting.PlayerPickaxeManager;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
@@ -35,7 +35,7 @@ public class SpellsGUI implements InventoryHolder, Listener {
                 "Spells"
         );
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxe.getPickaxe(player));
+        gui.setItem(4, PlayerPickaxeManager.getPickaxe(player));
         gui.setItem(21, SliceSpellButton());
         gui.setItem(22, LaserSpellButton());
         gui.setItem(23, RocketSpellButton());

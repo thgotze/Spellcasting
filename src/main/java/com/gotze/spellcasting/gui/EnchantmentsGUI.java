@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.PlayerPickaxe;
+import com.gotze.spellcasting.Main;
+import com.gotze.spellcasting.PlayerPickaxeManager;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
@@ -21,7 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 public class EnchantmentsGUI implements InventoryHolder, Listener {
+    private final Main main;
     private Inventory gui;
+
+    public EnchantmentsGUI(Main main) {
+        this.main = main;
+    }
 
     @Override
     public @NotNull Inventory getInventory() {
@@ -35,7 +41,9 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
                 "Enchantments"
         );
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxe.getPickaxe(player));
+        PlayerPickaxeManager manager = main.getPickaxeService().getManager(player);
+
+        gui.setItem(4, PlayerPickaxeManager.getPickaxe(player));
         gui.setItem(21, EfficiencyBookButton());
         gui.setItem(22, UnbreakingBookButton());
         gui.setItem(23, FortuneBookButton());

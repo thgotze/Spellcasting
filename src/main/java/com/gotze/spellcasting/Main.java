@@ -9,23 +9,26 @@ import com.gotze.spellcasting.listener.ShiftRightClickWithPickaxeListener;
 import com.gotze.spellcasting.listener.SwapHandItemsListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Main extends JavaPlugin {
-
-    public static Main INSTANCE;
+public class Main extends JavaPlugin { // TODO RENAME
+    private PlayerPickaxeService pickaxeService; // TODO
 
     @Override
     public void onEnable() {
-        INSTANCE = this;
+        pickaxeService = new PlayerPickaxeService();
 
         // GUIs
-        getServer().getPluginManager().registerEvents(new EnchantmentsGUI(), this);
-        getServer().getPluginManager().registerEvents(new MaterialsGUI(), this);
-        getServer().getPluginManager().registerEvents(new PickaxeGUI(), this);
-        getServer().getPluginManager().registerEvents(new SpellsGUI(), this);
+        getServer().getPluginManager().registerEvents(new EnchantmentsGUI(this), this); // TODO
+        getServer().getPluginManager().registerEvents(new MaterialsGUI(this), this); // TODO
+        getServer().getPluginManager().registerEvents(new PickaxeGUI(this), this); // TODO
+        getServer().getPluginManager().registerEvents(new SpellsGUI(this), this); // TODO
 
         // Event Listeners
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this); // TODO
         getServer().getPluginManager().registerEvents(new ShiftRightClickWithPickaxeListener(), this);
         getServer().getPluginManager().registerEvents(new SwapHandItemsListener(), this);
+    }
+
+    public PlayerPickaxeService getPickaxeService() { // TODO
+        return pickaxeService;
     }
 }

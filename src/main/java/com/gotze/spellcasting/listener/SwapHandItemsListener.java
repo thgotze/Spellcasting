@@ -22,6 +22,23 @@ public class SwapHandItemsListener implements Listener {
 
         if (material == Material.DIAMOND) {
             player.sendMessage("\uE333");
+            player.sendMessage("1");
+            player.sendMessage("2");
+            player.sendMessage("3");
+            player.sendMessage("4");
+            player.sendMessage("5");
+            player.sendMessage("6");
+            player.sendMessage("7");
+            player.sendMessage("8");
+            player.sendMessage("9");
+            player.sendMessage("10");
+            player.sendMessage("11");
+            player.sendMessage("12");
+            player.sendMessage("13");
+            player.sendMessage("14");
+            player.sendMessage("15");
+            player.sendMessage("16");
+            player.sendMessage("17");
         }
     }
 }
