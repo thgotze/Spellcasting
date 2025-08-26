@@ -1,9 +1,10 @@
 package com.gotze.spellcasting.util;
 
 public class StringUtils {
-
-    // Converts a string to a new string using the Minecraft small font
-    // "Spellcasting is fun!" -> "ѕᴘᴇʟʟᴄᴀѕᴛɪɴɢ ɪѕ ꜰᴜɴ!"
+    /**
+     * Converts a string to a new string using the Minecraft small font
+     * <p>"Spellcasting is fun!" -> "ѕᴘᴇʟʟᴄᴀѕᴛɪɴɢ ɪѕ ꜰᴜɴ!"
+     */
     public static String convertToSmallFont(String input) {
         StringBuilder newString = new StringBuilder();
         for (char c : input.toCharArray()) {

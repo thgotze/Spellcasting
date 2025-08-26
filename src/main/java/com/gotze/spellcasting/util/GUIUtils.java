@@ -1,7 +1,9 @@
 package com.gotze.spellcasting.util;
 
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -31,6 +33,8 @@ public class GUIUtils {
 
     public static final ItemStack RETURN_BUTTON = createItemStack(
             Material.ARROW,
-            ChatColor.YELLOW + "" + ChatColor.BOLD + convertToSmallFont("← return")
+            Component.text(convertToSmallFont("← return"))
+                    .color(NamedTextColor.YELLOW)
+                    .decoration(TextDecoration.ITALIC, false)
     );
 }

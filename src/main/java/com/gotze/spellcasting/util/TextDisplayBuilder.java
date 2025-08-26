@@ -7,6 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TextDisplay;
 import org.joml.Matrix4f;
 
+@Deprecated
 public class TextDisplayBuilder {
 
     // Base transformation that accounts for Minecraft's text positioning quirks

@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.spell;
 
-import com.gotze.spellcasting.Main;
+import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.BlockUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -52,6 +52,6 @@ public class LaserSpell extends Spell {
                 }
                 distance += 1;
             }
-        }.runTaskTimer(Main.INSTANCE, 0L, 1L);
+        }.runTaskTimer(Spellcasting.INSTANCE, 0L, 1L);
     }
 }
