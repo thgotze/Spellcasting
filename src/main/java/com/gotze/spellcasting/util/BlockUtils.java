@@ -10,7 +10,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockUtils {
+public class BlockUtils { // TODO
 
     public static void breakBlocksInLineOfSight(Player player, int displayIndex) {
         List<Block> blocksInLineOfSight = player.getLineOfSight(null, 5);
@@ -20,7 +20,8 @@ public class BlockUtils {
         ArrayList<Block> blocksToBreak = new ArrayList<>();
 
         for (Block block : blocksInLineOfSight) {
-            if (getDistanceSquaredToNearestPoint(player.getEyeLocation(), block, player.getWorld()) > reachDistance * reachDistance) continue;
+            double distanceToNearestPoint = getDistanceSquaredToNearestPoint(player.getEyeLocation(), block);
+            if (distanceToNearestPoint > reachDistance * reachDistance) continue;
             blocksToBreak.add(block);
 
             int x = block.getX();
@@ -28,10 +29,10 @@ public class BlockUtils {
             int z = block.getZ();
 
             switch (displayIndex) {
-                case 0, 1 -> addVerticalBlocks(player.getWorld(), x, y, z, reachDistance, blocksToBreak);
-                case 2 -> addDiagonalBlocks45(player.getWorld(),x, y, z, playerFacing, reachDistance, blocksToBreak);
-                case 3 -> addDiagonalBlocksNeg45(player.getWorld(),x, y, z, playerFacing, reachDistance, blocksToBreak);
-                case 4, 5 -> addHorizontalBlocks(player.getWorld(),x, y, z, playerFacing, reachDistance, blocksToBreak);
+                case 0, 1 -> addVerticalBlocks(player.getWorld(), x, y, z, blocksToBreak);
+                case 2 -> addDiagonalBlocks45(player.getWorld(), x, y, z, playerFacing, blocksToBreak);
+                case 3 -> addDiagonalBlocksNeg45(player.getWorld(), x, y, z, playerFacing, reachDistance, blocksToBreak);
+                case 4, 5 -> addHorizontalBlocks(player.getWorld(), x, y, z, playerFacing, blocksToBreak);
             }
         }
 
@@ -42,7 +43,7 @@ public class BlockUtils {
         }
     }
 
-    public static double getDistanceSquaredToNearestPoint(Location eyeLocation, Block block, World world) {
+    public static double getDistanceSquaredToNearestPoint(Location eyeLocation, Block block) {
         Location blockLocation = block.getLocation();
 
         double nearestX = Math.max(blockLocation.getX(), Math.min(eyeLocation.getX(), blockLocation.getX() + 1));
@@ -52,14 +53,13 @@ public class BlockUtils {
         return eyeLocation.distanceSquared(new Location(blockLocation.getWorld(), nearestX, nearestY, nearestZ));
     }
 
-    public static void addVerticalBlocks(World world, int x, int y, int z, double reachDistance, ArrayList<Block> blocksToBreak) {
-        blocksToBreak.add(world.getBlockAt(x, y + 1, z));
-        blocksToBreak.add(world.getBlockAt(x, y - 1, z));
-//        addBlockIfInReach(world.getBlockAt(x, y + 1, z), reachDistance, blocksToBreak);
-//        addBlockIfInReach(world.getBlockAt(x, y - 1, z), reachDistance, blocksToBreak);
+    // TODO: Should return an array of the blocks instead of modifying the list for all these methods
+    public static void addVerticalBlocks(World world, int x, int y, int z, ArrayList<Block> blocks) {
+        blocks.add(world.getBlockAt(x, y + 1, z));
+        blocks.add(world.getBlockAt(x, y - 1, z));
     }
 
-    public static void addDiagonalBlocks45(World world, int x, int y, int z, BlockFace playerFacing, double reachDistance, ArrayList<Block> blocksToBreak) {
+    public static void addDiagonalBlocks45(World world, int x, int y, int z, BlockFace playerFacing, ArrayList<Block> blocksToBreak) {
         switch (playerFacing) {
             case NORTH -> {
                 blocksToBreak.add(world.getBlockAt(x - 1, y - 1, z));
@@ -117,8 +117,7 @@ public class BlockUtils {
         }
     }
 
-    public static void addHorizontalBlocks(World world, int x, int y, int z, BlockFace playerFacing,
-                                     double reachDistance, ArrayList<Block> blocksToBreak) {
+    public static void addHorizontalBlocks(World world, int x, int y, int z, BlockFace playerFacing, ArrayList<Block> blocksToBreak) {
         switch (playerFacing) {
             case NORTH, SOUTH -> {
                 blocksToBreak.add(world.getBlockAt(x + 1, y, z));

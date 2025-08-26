@@ -2,6 +2,7 @@ package com.gotze.spellcasting.gui;
 
 import com.gotze.spellcasting.PlayerPickaxeManager;
 import com.gotze.spellcasting.util.GUIUtils;
+import com.gotze.spellcasting.util.ItemStackCreator;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
@@ -29,18 +30,14 @@ public class MaterialsGUI implements InventoryHolder, Listener {
     }
 
     public void openGUI(Player player) {
-        gui = Bukkit.createInventory(
-                this,
-                45,
-                "Materials"
-        );
+        gui = Bukkit.createInventory(this, 45, Component.text("Materials"));
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxeManager.getPickaxe(player));
-        gui.setItem(20, StonePickaxeButton());
-        gui.setItem(21, IronPickaxeButton());
-        gui.setItem(22, GoldPickaxeButton());
-        gui.setItem(23, DiamondPickaxeButton());
-        gui.setItem(24, NetheritePickaxeButton());
+        gui.setItem(4, PlayerPickaxeManager.getPlayerPickaxe(player));
+        gui.setItem(20, STONE_PICKAXE_BUTTON);
+        gui.setItem(21, IRON_PICKAXE_BUTTON);
+        gui.setItem(22, GOLD_PICKAXE_BUTTON);
+        gui.setItem(23, DIAMOND_PICKAXE_BUTTON);
+        gui.setItem(24, NETHERITE_PICKAXE_BUTTON);
         gui.setItem(36, GUIUtils.RETURN_BUTTON);
         player.openInventory(gui);
     }
@@ -60,24 +57,19 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         int slot = event.getSlot();
 
         switch (slot) {
-            case 1 -> upgradePickaxe(player);
             case 36 -> {
                 new PickaxeGUI().openGUI(player);
                 SoundUtils.playUIClickSound(player);
             }
-
         }
     }
 
-    private ItemStack StonePickaxeButton() {
-        ItemStack itemStack = new ItemStack(Material.STONE_PICKAXE);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Stone Pickaxe")
+    private final ItemStack STONE_PICKAXE_BUTTON = ItemStackCreator.createItemStack(
+            Material.STONE_PICKAXE,
+            Component.text("Stone Pickaxe")
                     .color(NamedTextColor.AQUA)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
@@ -85,20 +77,15 @@ public class MaterialsGUI implements InventoryHolder, Listener {
                     Component.text("32x Cobblestone")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack IronPickaxeButton() {
-        ItemStack itemStack = new ItemStack(Material.IRON_PICKAXE);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Iron Pickaxe")
+    private final ItemStack IRON_PICKAXE_BUTTON = ItemStackCreator.createItemStack(
+            Material.IRON_PICKAXE,
+            Component.text("Iron Pickaxe")
                     .color(NamedTextColor.AQUA)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
@@ -106,20 +93,15 @@ public class MaterialsGUI implements InventoryHolder, Listener {
                     Component.text("32x Iron Ingot")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack GoldPickaxeButton() {
-        ItemStack itemStack = new ItemStack(Material.GOLDEN_PICKAXE);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Gold Pickaxe")
+    private final ItemStack GOLD_PICKAXE_BUTTON = ItemStackCreator.createItemStack(
+            Material.GOLDEN_PICKAXE,
+            Component.text("Gold Pickaxe")
                     .color(NamedTextColor.AQUA)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
@@ -127,102 +109,38 @@ public class MaterialsGUI implements InventoryHolder, Listener {
                     Component.text("32x Gold Ingot")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack DiamondPickaxeButton() {
-        ItemStack itemStack = new ItemStack(Material.DIAMOND_PICKAXE);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Diamond Pickaxe")
+    private final ItemStack DIAMOND_PICKAXE_BUTTON = ItemStackCreator.createItemStack(
+            Material.DIAMOND_PICKAXE,
+            Component.text("Diamond Pickaxe")
                     .color(NamedTextColor.AQUA)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements"))
-                            .color(NamedTextColor.YELLOW)
+                            .color(NamedTextColor.WHITE)
                             .decoration(TextDecoration.ITALIC, false),
                     Component.text("32x Diamond")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack NetheritePickaxeButton() {
-        ItemStack itemStack = new ItemStack(Material.NETHERITE_PICKAXE);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Netherite Pickaxe")
+    private final ItemStack NETHERITE_PICKAXE_BUTTON = ItemStackCreator.createItemStack(
+            Material.NETHERITE_PICKAXE,
+            Component.text("Netherite Pickaxe")
                     .color(NamedTextColor.AQUA)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements"))
-                            .color(NamedTextColor.YELLOW)
+                            .color(NamedTextColor.WHITE)
                             .decoration(TextDecoration.ITALIC, false),
                     Component.text("32x Netherite Ingot")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
-
-    private void upgradePickaxe(Player player) {
-        ItemStack playerPickaxe = PlayerPickaxeManager.getPickaxe(player);
-
-        Material upgradeMaterial = null;
-        Material newPickaxeMaterial = null;
-
-        switch (playerPickaxe.getType()) {
-            case WOODEN_PICKAXE -> {
-                upgradeMaterial = Material.COBBLESTONE;
-                newPickaxeMaterial = Material.STONE_PICKAXE;
-            }
-
-            case STONE_PICKAXE -> {
-                upgradeMaterial = Material.IRON_INGOT;
-                newPickaxeMaterial = Material.IRON_PICKAXE;
-            }
-
-            case IRON_PICKAXE -> {
-                upgradeMaterial = Material.GOLD_INGOT;
-                newPickaxeMaterial = Material.GOLDEN_PICKAXE;
-            }
-
-            case GOLDEN_PICKAXE -> {
-                upgradeMaterial = Material.DIAMOND;
-                newPickaxeMaterial = Material.DIAMOND_PICKAXE;
-            }
-
-            case DIAMOND_PICKAXE -> {
-                upgradeMaterial = Material.NETHERITE_INGOT;
-                newPickaxeMaterial = Material.NETHERITE_PICKAXE;
-            }
-
-            case NETHERITE_PICKAXE -> {
-                upgradeMaterial = Material.OAK_PLANKS;
-                newPickaxeMaterial = Material.WOODEN_PICKAXE;
-            }
-        }
-        if (upgradeMaterial == null) return;
-
-        Inventory playerInventory = player.getInventory();
-        ItemStack requiredMaterials = new ItemStack(upgradeMaterial, 32);
-        if (!playerInventory.containsAtLeast(requiredMaterials, 32)) return;
-        playerInventory.removeItem(requiredMaterials);
-
-        playerInventory.removeItemAnySlot(PlayerPickaxeManager.getPickaxe(player));
-
-        PlayerPickaxeManager.setPickaxe(player, new ItemStack(newPickaxeMaterial));
-
-        openGUI(player);
-        player.give(PlayerPickaxeManager.getPickaxe(player));
-    }
+            )
+    );
 }

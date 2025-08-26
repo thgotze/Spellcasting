@@ -2,6 +2,7 @@ package com.gotze.spellcasting.gui;
 
 import com.gotze.spellcasting.PlayerPickaxeManager;
 import com.gotze.spellcasting.util.GUIUtils;
+import com.gotze.spellcasting.util.ItemStackCreator;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
@@ -29,16 +30,12 @@ public class PickaxeGUI implements InventoryHolder, Listener {
     }
 
     public void openGUI(Player player) {
-        gui = Bukkit.createInventory(
-                this,
-                45,
-                "Pickaxe"
-        );
+        gui = Bukkit.createInventory(this, 45, Component.text("Pickaxe"));
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxeManager.getPickaxe(player));
-        gui.setItem(21, MaterialsButton());
-        gui.setItem(22, EnchantmentsButton());
-        gui.setItem(23, SpellsButton());
+        gui.setItem(4, PlayerPickaxeManager.getPlayerPickaxe(player));
+        gui.setItem(21, MATERIALS_BUTTON);
+        gui.setItem(22, ENCHANTMENTS_BUTTON);
+        gui.setItem(23, SPELLS_BUTTON);
         player.openInventory(gui);
     }
 
@@ -72,57 +69,39 @@ public class PickaxeGUI implements InventoryHolder, Listener {
         }
     }
 
-    private ItemStack MaterialsButton() {
-        ItemStack itemStack = new ItemStack(Material.ANVIL);
-        anvil.getItemMeta().setEnchantmentGlintOverride(true);
-
-
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Materials") // TODO
+    private final ItemStack MATERIALS_BUTTON = ItemStackCreator.createItemStack(
+            Material.ANVIL,
+            Component.text("Materials")
                     .color(NamedTextColor.AQUA)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(StringUtils.convertToSmallFont("5 material tiers available"))
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack EnchantmentsButton() {
-        ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Enchantments")
+    private final ItemStack ENCHANTMENTS_BUTTON = ItemStackCreator.createItemStack(
+            Material.ENCHANTED_BOOK,
+            Component.text("Enchantments")
                     .color(NamedTextColor.YELLOW)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(StringUtils.convertToSmallFont("3 enchantments available"))
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack SpellsButton() {
-        ItemStack itemStack = new ItemStack(Material.END_CRYSTAL);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Spells")
+    private final ItemStack SPELLS_BUTTON = ItemStackCreator.createItemStack(
+            Material.END_CRYSTAL,
+            Component.text("Spells")
                     .color(NamedTextColor.LIGHT_PURPLE)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(StringUtils.convertToSmallFont("3 spells available"))
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 }

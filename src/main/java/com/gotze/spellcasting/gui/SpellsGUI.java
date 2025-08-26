@@ -2,6 +2,7 @@ package com.gotze.spellcasting.gui;
 
 import com.gotze.spellcasting.PlayerPickaxeManager;
 import com.gotze.spellcasting.util.GUIUtils;
+import com.gotze.spellcasting.util.ItemStackCreator;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
@@ -29,16 +30,12 @@ public class SpellsGUI implements InventoryHolder, Listener {
     }
 
     public void openGUI(Player player) {
-        gui = Bukkit.createInventory(
-                this,
-                45,
-                "Spells"
-        );
+        gui = Bukkit.createInventory(this, 45, Component.text("Spells"));
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxeManager.getPickaxe(player));
-        gui.setItem(21, SliceSpellButton());
-        gui.setItem(22, LaserSpellButton());
-        gui.setItem(23, RocketSpellButton());
+        gui.setItem(4, PlayerPickaxeManager.getPlayerPickaxe(player));
+        gui.setItem(21, SLICE_SPELL_BUTTON);
+        gui.setItem(22, LASER_SPELL_BUTTON);
+        gui.setItem(23, ROCKET_SPELL_BUTTON);
         gui.setItem(36, GUIUtils.RETURN_BUTTON);
         player.openInventory(gui);
     }
@@ -65,66 +62,51 @@ public class SpellsGUI implements InventoryHolder, Listener {
         }
     }
 
-    private ItemStack SliceSpellButton() {
-        ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Slice")
+    private final ItemStack SLICE_SPELL_BUTTON = ItemStackCreator.createItemStack(
+            Material.IRON_SWORD,
+            Component.text("Slice")
                     .color(NamedTextColor.LIGHT_PURPLE)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
-                    Component.text(""),
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
+                    Component.text("") ,
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
                             .decoration(TextDecoration.ITALIC, false),
                     Component.text("32x Amethyst Shard")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack LaserSpellButton() {
-        ItemStack itemStack = new ItemStack(Material.LIGHTNING_ROD);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Laser")
+    private final ItemStack LASER_SPELL_BUTTON = ItemStackCreator.createItemStack(
+            Material.LIGHTNING_ROD,
+            Component.text("Laser")
                     .color(NamedTextColor.LIGHT_PURPLE)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
-                    Component.text(""),
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
+                    Component.text("") ,
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
                             .decoration(TextDecoration.ITALIC, false),
                     Component.text("32x Amethyst Shard")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack RocketSpellButton() {
-        ItemStack itemStack = new ItemStack(Material.FIREWORK_ROCKET);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Rocket")
+    private final ItemStack ROCKET_SPELL_BUTTON = ItemStackCreator.createItemStack(
+            Material.FIREWORK_ROCKET,
+            Component.text("Rocket")
                     .color(NamedTextColor.LIGHT_PURPLE)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
-                    Component.text(""),
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
+                    Component.text("") ,
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
                             .decoration(TextDecoration.ITALIC, false),
                     Component.text("32x Amethyst Shard")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 }

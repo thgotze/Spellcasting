@@ -1,5 +1,6 @@
 package com.gotze.spellcasting.listener;
 
+import com.gotze.spellcasting.spell.LaserSpell;
 import com.gotze.spellcasting.spell.SliceSpell;
 import com.gotze.spellcasting.util.ItemUtils;
 import org.bukkit.Material;
@@ -18,9 +19,17 @@ public class SwapHandItemsListener implements Listener {
         if (ItemUtils.isPickaxe(material)) {
             event.setCancelled(true);
             new SliceSpell(player).cast();
+            return;
+        }
+
+        if (material == Material.BLAZE_ROD) {
+            event.setCancelled(true);
+            new LaserSpell(player).cast();
+            return;
         }
 
         if (material == Material.DIAMOND) {
+            event.setCancelled(true);
             player.sendMessage("\uE333");
             player.sendMessage("1");
             player.sendMessage("2");
@@ -39,6 +48,7 @@ public class SwapHandItemsListener implements Listener {
             player.sendMessage("15");
             player.sendMessage("16");
             player.sendMessage("17");
+            return;
         }
     }
 }

@@ -2,7 +2,6 @@ package com.gotze.spellcasting.listener;
 
 import com.gotze.spellcasting.gui.PickaxeGUI;
 import com.gotze.spellcasting.util.ItemUtils;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,11 +13,9 @@ public class ShiftRightClickWithPickaxeListener implements Listener {
     public void onShiftRightClickWithPickaxe(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if (event.getAction().isRightClick() && player.isSneaking()) return;
+        if (!(event.getAction().isRightClick() && player.isSneaking())) return;
 
-        Material material = event.getMaterial();
-
-        if (ItemUtils.isPickaxe(material)) {
+        if (ItemUtils.isPickaxe(event.getMaterial())) {
             event.setCancelled(true);
             new PickaxeGUI().openGUI(player);
         }

@@ -1,8 +1,8 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.Main;
 import com.gotze.spellcasting.PlayerPickaxeManager;
 import com.gotze.spellcasting.util.GUIUtils;
+import com.gotze.spellcasting.util.ItemStackCreator;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
@@ -22,12 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 public class EnchantmentsGUI implements InventoryHolder, Listener {
-    private final Main main;
     private Inventory gui;
-
-    public EnchantmentsGUI(Main main) {
-        this.main = main;
-    }
 
     @Override
     public @NotNull Inventory getInventory() {
@@ -35,18 +30,12 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
     }
 
     public void openGUI(Player player) {
-        gui = Bukkit.createInventory(
-                this,
-                45,
-                "Enchantments"
-        );
+        gui = Bukkit.createInventory(this, 45, Component.text("Enchantments"));
         GUIUtils.setFrames(gui);
-        PlayerPickaxeManager manager = main.getPickaxeService().getManager(player);
-
-        gui.setItem(4, PlayerPickaxeManager.getPickaxe(player));
-        gui.setItem(21, EfficiencyBookButton());
-        gui.setItem(22, UnbreakingBookButton());
-        gui.setItem(23, FortuneBookButton());
+        gui.setItem(4, PlayerPickaxeManager.getPlayerPickaxe(player));
+        gui.setItem(21, EFFICIENCY_BOOK_BUTTON);
+        gui.setItem(22, UNBREAKING_BOOK_BUTTON);
+        gui.setItem(23, FORTUNE_BOOK_BUTTON);
         gui.setItem(36, GUIUtils.RETURN_BUTTON);
         player.openInventory(gui);
     }
@@ -73,15 +62,12 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         }
     }
 
-    private ItemStack EfficiencyBookButton() {
-        ItemStack itemStack = new ItemStack(Material.REDSTONE);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Efficiency")
+    private final ItemStack EFFICIENCY_BOOK_BUTTON = ItemStackCreator.createItemStack(
+            Material.REDSTONE,
+            Component.text("Efficiency")
                     .color(NamedTextColor.YELLOW)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
@@ -89,20 +75,15 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
                     Component.text("32x Redstone Dust")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack UnbreakingBookButton() {
-        ItemStack itemStack = new ItemStack(Material.OBSIDIAN);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Unbreaking")
+    private final ItemStack UNBREAKING_BOOK_BUTTON = ItemStackCreator.createItemStack(
+            Material.OBSIDIAN,
+            Component.text("Unbreaking")
                     .color(NamedTextColor.YELLOW)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
@@ -110,20 +91,15 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
                     Component.text("32x Obsidian")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 
-    private ItemStack FortuneBookButton() {
-        ItemStack itemStack = new ItemStack(Material.LAPIS_LAZULI);
-        itemStack.editMeta(meta -> {
-            meta.displayName(Component.text("Fortune")
+    private final ItemStack FORTUNE_BOOK_BUTTON = ItemStackCreator.createItemStack(
+            Material.LAPIS_LAZULI,
+            Component.text("Fortune")
                     .color(NamedTextColor.YELLOW)
-                    .decoration(TextDecoration.ITALIC, false)
-            );
-
-            meta.lore(Arrays.asList(
+                    .decoration(TextDecoration.ITALIC, false),
+            Arrays.asList(
                     Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements"))
                             .color(NamedTextColor.WHITE)
@@ -131,8 +107,6 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
                     Component.text("32x Lapis Lazuli")
                             .color(NamedTextColor.GRAY)
                             .decoration(TextDecoration.ITALIC, false)
-            ));
-        });
-        return itemStack;
-    }
+            )
+    );
 }

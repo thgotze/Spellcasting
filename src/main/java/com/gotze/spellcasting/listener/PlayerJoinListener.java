@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.listener;
 
-import com.gotze.spellcasting.Main;
 import com.gotze.spellcasting.PlayerPickaxeManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,19 +7,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerJoinListener implements Listener {
-    private final Main main;
-
-    public PlayerJoinListener(Main main) {
-        this.main = main;
-    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        // Give player pickaxe their pickaxe
-        PlayerPickaxeManager playerPickaxeManager = main.getPickaxeService().getManager(player);
-        player.give(playerPickaxeManager.getPickaxe());
+        // Give player their pickaxe
+        player.give(PlayerPickaxeManager.getPlayerPickaxe(player));
 
         // Set resource pack
         // Currently not sending resource pack because I'm using the client-side resource pack instead of server side

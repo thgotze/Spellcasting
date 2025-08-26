@@ -4,24 +4,15 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PlayerPickaxeManager {
-    private final Player player;
-    private ItemStack playerPickaxe;
+    private static Map<Player, ItemStack> PLAYER_PICKAXE_MAP = new HashMap<>();
 
-    public PlayerPickaxeManager(Player player) {
-        this.player = player;
-        this.playerPickaxe = loadPickaxeDataFromFile();
-    }
-
-    public ItemStack getPickaxe() {
-        return playerPickaxe;
-    }
-
-    public void setPickaxe(ItemStack playerPickaxe) {
-        this.playerPickaxe = playerPickaxe;
-    }
-
-    private ItemStack loadPickaxeDataFromFile() {
-        return new ItemStack(Material.WOODEN_PICKAXE); // TODO
+    public static ItemStack getPlayerPickaxe(Player player) {
+        return PLAYER_PICKAXE_MAP.getOrDefault(player,
+                new ItemStack(Material.WOODEN_PICKAXE)
+        );
     }
 }
