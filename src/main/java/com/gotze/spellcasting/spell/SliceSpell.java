@@ -59,31 +59,23 @@ public class SliceSpell extends Spell {
 
                     int spriteIndex = (ticks - START_DELAYS[i]) % 12;
 
-                    // Every tick - Update sprite
+                    // TODO: Test this, now changed so on the 4th tick it teleports, plays sound and breaks blocks
                     ItemStack itemStack = new ItemStack(Material.AIR);
-                    if (spriteIndex > 3 && spriteIndex < 7) {
+                    if (spriteIndex >= 4 && spriteIndex <= 6) {
                         itemStack.setType(Material.PAPER);
                         String spriteName = (i % 2 == 0) ? ANTI_CLOCKWISE_SPRITES[spriteIndex] : CLOCKWISE_SPRITES[spriteIndex];
                         itemStack.editMeta(itemMeta ->
                                 itemMeta.setItemModel(NamespacedKey.minecraft(spriteName)));
+
+                        if (spriteIndex == 4) {
+                            itemDisplays[i].teleport(player.getEyeLocation()
+                                    .add(player.getLocation().getDirection().multiply(2.3f))
+                            );
+                            player.playSound(player, Sound.ITEM_TRIDENT_THROW, 0.20f, 1.35f);
+                            BlockUtils.breakBlocksInLineOfSight(player, i, 4.5);
+                        }
                     }
                     itemDisplays[i].setItemStack(itemStack);
-
-                    // Only start of cycle - Play sound and teleport display
-                    if (spriteIndex == 0) {
-
-                        itemDisplays[i].teleport(player.getEyeLocation()
-                                .add(player.getLocation().getDirection().multiply(2.3f))
-                        );
-                        continue;
-                    }
-
-                    // Only middle of cycle - Break blocks
-                    if (spriteIndex == 4) {
-                        player.playSound(player, Sound.ITEM_TRIDENT_THROW, 0.20f, 1.35f);
-
-                        BlockUtils.breakBlocksInLineOfSight(player, i);
-                    }
                 }
 
                 ticks++;

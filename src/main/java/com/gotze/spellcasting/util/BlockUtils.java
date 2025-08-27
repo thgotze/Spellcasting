@@ -10,12 +10,11 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockUtils { // TODO
-
-    public static void breakBlocksInLineOfSight(Player player, int displayIndex) {
+public class BlockUtils {
+    public static void breakBlocksInLineOfSight(Player player, int displayIndex, double reachDistance) {
         List<Block> blocksInLineOfSight = player.getLineOfSight(null, 5);
         BlockFace playerFacing = player.getFacing();
-        double reachDistance = 4.5;
+        reachDistance = Math.max(0, reachDistance);
 
         ArrayList<Block> blocksToBreak = new ArrayList<>();
 
@@ -64,26 +63,18 @@ public class BlockUtils { // TODO
             case NORTH -> {
                 blocksToBreak.add(world.getBlockAt(x - 1, y - 1, z));
                 blocksToBreak.add(world.getBlockAt(x + 1, y + 1, z));
-//                addBlockIfInReach(world.getBlockAt(x - 1, y - 1, z), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x + 1, y + 1, z), reachDistance, blocksToBreak);
             }
             case SOUTH -> {
                 blocksToBreak.add(world.getBlockAt(x + 1, y - 1, z));
                 blocksToBreak.add(world.getBlockAt(x - 1, y + 1, z));
-//                addBlockIfInReach(world.getBlockAt(x + 1, y - 1, z), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x - 1, y + 1, z), reachDistance, blocksToBreak);
             }
             case EAST -> {
                 blocksToBreak.add(world.getBlockAt(x, y - 1, z - 1));
                 blocksToBreak.add(world.getBlockAt(x, y + 1, z + 1));
-//                addBlockIfInReach(world.getBlockAt(x, y - 1, z - 1), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x, y + 1, z + 1), reachDistance, blocksToBreak);
             }
             case WEST -> {
                 blocksToBreak.add(world.getBlockAt(x, y - 1, z + 1));
                 blocksToBreak.add(world.getBlockAt(x, y + 1, z - 1));
-//                addBlockIfInReach(world.getBlockAt(x, y - 1, z + 1), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x, y + 1, z - 1), reachDistance, blocksToBreak);
             }
         }
     }
@@ -93,26 +84,18 @@ public class BlockUtils { // TODO
             case NORTH -> {
                 blocksToBreak.add(world.getBlockAt(x + 1, y - 1, z));
                 blocksToBreak.add(world.getBlockAt(x - 1, y + 1, z));
-//                addBlockIfInReach(world.getBlockAt(x + 1, y - 1, z), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x - 1, y + 1, z), reachDistance, blocksToBreak);
             }
             case SOUTH -> {
                 blocksToBreak.add(world.getBlockAt(x - 1, y - 1, z));
                 blocksToBreak.add(world.getBlockAt(x + 1, y + 1, z));
-//                addBlockIfInReach(world.getBlockAt(x - 1, y - 1, z), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x + 1, y + 1, z), reachDistance, blocksToBreak);
             }
             case EAST -> {
                 blocksToBreak.add(world.getBlockAt(x, y - 1, z + 1));
                 blocksToBreak.add(world.getBlockAt(x, y + 1, z - 1));
-//                addBlockIfInReach(world.getBlockAt(x, y - 1, z + 1), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x, y + 1, z - 1), reachDistance, blocksToBreak);
             }
             case WEST -> {
                 blocksToBreak.add(world.getBlockAt(x, y - 1, z - 1));
                 blocksToBreak.add(world.getBlockAt(x, y + 1, z + 1));
-//                addBlockIfInReach(world.getBlockAt(x, y - 1, z - 1), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x, y + 1, z + 1), reachDistance, blocksToBreak);
             }
         }
     }
@@ -122,14 +105,10 @@ public class BlockUtils { // TODO
             case NORTH, SOUTH -> {
                 blocksToBreak.add(world.getBlockAt(x + 1, y, z));
                 blocksToBreak.add(world.getBlockAt(x - 1, y, z));
-//                addBlockIfInReach(world.getBlockAt(x + 1, y, z), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x - 1, y, z), reachDistance, blocksToBreak);
             }
             case EAST, WEST -> {
                 blocksToBreak.add(world.getBlockAt(x, y, z + 1));
                 blocksToBreak.add(world.getBlockAt(x, y, z - 1));
-//                addBlockIfInReach(world.getBlockAt(x, y, z + 1), reachDistance, blocksToBreak);
-//                addBlockIfInReach(world.getBlockAt(x, y, z - 1), reachDistance, blocksToBreak);
             }
         }
     }
@@ -149,7 +128,7 @@ public class BlockUtils { // TODO
                 blocks.addAll(getSpherePattern(centerBlock, size));
                 break;
             case "line":
-                blocks.addAll(getLinePattern(player, centerBlock, size));
+                blocks.addAll(getBlocksInLine(player, centerBlock, size));
                 break;
             case "cylinder":
                 blocks.addAll(getCylinderPattern(centerBlock, size, size * 2));
@@ -287,7 +266,7 @@ public class BlockUtils { // TODO
         return blocks;
     }
 
-    public static ArrayList<Block> getSpherePattern(Block center, int radius) {
+    public static List<Block> getSpherePattern(Block center, int radius) {
         ArrayList<Block> blocks = new ArrayList<>();
         Location centerLoc = center.getLocation().add(0.5, 0.5, 0.5);
 
@@ -303,7 +282,18 @@ public class BlockUtils { // TODO
         return blocks;
     }
 
-    public static ArrayList<Block> getLinePattern(Player player, Block center, int length) {
+    public static List<Block> getBlocksInLine(Block startingBlock, Vector direction, int length) {
+        List<Block> blocksInLine = new ArrayList<>();
+        for (int i = 1; i <= length; i++) {
+            Location blockLocation = startingBlock.getLocation().add(direction.multiply(i));
+            blocksInLine.add(blockLocation.getBlock());
+        }
+        return blocksInLine;
+    }
+
+    // TODO: Replace usages with method above
+    @Deprecated
+    public static ArrayList<Block> getBlocksInLine(Player player, Block center, int length) {
         ArrayList<Block> blocks = new ArrayList<>();
         Vector direction = player.getEyeLocation().getDirection().normalize();
 

@@ -29,27 +29,27 @@ public class LaserSpell extends Spell {
 
         new BukkitRunnable() {
             int ticks = 0;
+            Location laserLocation = startLocation.clone().add(lookingDirection.clone().multiply(ticks));
 
             @Override
             public void run() {
-                Location laserLocation = startLocation.clone().add(lookingDirection.clone().multiply(ticks));
-
-                world.spawnParticle(Particle.DUST, laserLocation, 1, new Particle.DustOptions(Color.LIME, 5.0f));
-
-                ArrayList<Block> blocksToBreak = new ArrayList<>();
+                world.spawnParticle(Particle.DUST, laserLocation, 1,
+                        new Particle.DustOptions(Color.LIME, 5.0f));
 
                 Block targetBlock = player.getTargetBlockExact(10);
-
                 if (targetBlock != null) {
+                    ArrayList<Block> blocksToBreak = new ArrayList<>();
                     blocksToBreak.add(targetBlock);
 
                     int x = targetBlock.getX();
                     int y = targetBlock.getY();
                     int z = targetBlock.getZ();
 
+                    // Vertical blocks
                     blocksToBreak.add(world.getBlockAt(x, y + 1, z));
                     blocksToBreak.add(world.getBlockAt(x, y - 1, z));
 
+                    // Horizontal blocks
                     switch (playerFacing) {
                         case NORTH, SOUTH -> {
                             blocksToBreak.add(world.getBlockAt(x + 1, y, z));
