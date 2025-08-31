@@ -59,7 +59,6 @@ public class SliceSpell extends Spell {
 
                     int spriteIndex = (ticks - START_DELAYS[i]) % 12;
 
-                    // TODO: Test this, now changed so on the 4th tick it teleports, plays sound and breaks blocks
                     ItemStack itemStack = new ItemStack(Material.AIR);
                     if (spriteIndex >= 4 && spriteIndex <= 6) {
                         itemStack.setType(Material.PAPER);

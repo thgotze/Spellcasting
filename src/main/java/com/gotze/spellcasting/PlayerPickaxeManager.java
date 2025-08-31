@@ -25,13 +25,13 @@ public class PlayerPickaxeManager {
         ItemStack playerPickaxe = getPlayerPickaxe(player);
         Inventory playerInvetory = player.getInventory();
 
-        switch (playerPickaxe.getType()) {
-            case WOODEN_PICKAXE: if (
-            case STONE_PICKAXE: //
-            case IRON_PICKAXE: //
-            case GOLDEN_PICKAXE: //
-            case DIAMOND_PICKAXE: //
-            case NETHERITE_PICKAXE: //
-        }
+//        switch (playerPickaxe.getType()) {
+//            case WOODEN_PICKAXE: if (
+//            case STONE_PICKAXE: //
+//            case IRON_PICKAXE: //
+//            case GOLDEN_PICKAXE: //
+//            case DIAMOND_PICKAXE: //
+//            case NETHERITE_PICKAXE: //
+//        }
     }
 }

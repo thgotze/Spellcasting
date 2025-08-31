@@ -24,11 +24,6 @@ import java.util.Arrays;
 public class SpellsGUI implements InventoryHolder, Listener {
     private Inventory gui;
 
-    @Override
-    public @NotNull Inventory getInventory() {
-        return gui;
-    }
-
     public void openGUI(Player player) {
         gui = Bukkit.createInventory(this, 45, Component.text("Spells"));
         GUIUtils.setFrames(gui);
@@ -55,6 +50,9 @@ public class SpellsGUI implements InventoryHolder, Listener {
         int slot = event.getSlot();
 
         switch (slot) {
+//            case 21 ->
+//            case 22 ->
+//            case 23 ->
             case 36 -> {
                 new PickaxeGUI().openGUI(player);
                 SoundUtils.playUIClickSound(player);
@@ -109,4 +107,9 @@ public class SpellsGUI implements InventoryHolder, Listener {
                             .decoration(TextDecoration.ITALIC, false)
             )
     );
+
+    @Override
+    public @NotNull Inventory getInventory() {
+        return gui;
+    }
 }
