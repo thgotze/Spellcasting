@@ -10,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class EnchantmentsGUI implements InventoryHolder, Listener {
     private Inventory gui;
@@ -50,14 +52,25 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         int slot = event.getSlot();
 
         switch (slot) {
-//            case 21 ->
-//            case 22 ->
-//            case 23 ->
+            case 21 -> {
+                upgradePlayerPickaxeEnchantment(player);
+                SoundUtils.playUIClickSound(player);
+            }
+
+
+//            case 22 -> // unb
+//            case 23 -> // fort
             case 36 -> {
                 new PickaxeGUI().openGUI(player);
                 SoundUtils.playUIClickSound(player);
             }
         }
+    }
+
+    private void upgradePlayerPickaxeEnchantment(Player player) {
+        ItemStack playerPickaxe = PlayerPickaxeManager.getPlayerPickaxe(player);
+        Map<Enchantment, Integer> pickaxeEnchantments = playerPickaxe.getEnchantments();
+        // TODO
     }
 
     private final ItemStack EFFICIENCY_BOOK_BUTTON = ItemStackCreator.createItemStack(

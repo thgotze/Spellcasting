@@ -52,16 +52,61 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         int slot = event.getSlot();
 
         switch (slot) {
-//            case 20 ->
-//            case 21 ->
-//            case 22 ->
-//            case 23 ->
-//            case 24 ->
+            case 20, 21, 22, 23, 24 -> {
+                upgradePlayerPickaxeMaterial(player);
+                SoundUtils.playUIClickSound(player);
+            }
+
             case 36 -> {
                 new PickaxeGUI().openGUI(player);
                 SoundUtils.playUIClickSound(player);
             }
         }
+    }
+
+    private void upgradePlayerPickaxeMaterial(Player player) {
+        ItemStack playerPickaxe = PlayerPickaxeManager.getPlayerPickaxe(player);
+
+        Material nextTier = null;
+        ItemStack upgradeMaterial = null;
+
+        switch (playerPickaxe.getType()) {
+            case WOODEN_PICKAXE -> {
+                nextTier = Material.STONE_PICKAXE;
+                upgradeMaterial = ItemStack.of(Material.COBBLESTONE, 32);
+            }
+            case STONE_PICKAXE -> {
+                nextTier = Material.IRON_PICKAXE;
+                upgradeMaterial = ItemStack.of(Material.IRON_INGOT, 32);
+            }
+            case IRON_PICKAXE -> {
+                nextTier = Material.GOLDEN_PICKAXE;
+                upgradeMaterial = ItemStack.of(Material.GOLD_INGOT, 32);
+            }
+            case GOLDEN_PICKAXE -> {
+                nextTier = Material.DIAMOND_PICKAXE;
+                upgradeMaterial = ItemStack.of(Material.DIAMOND, 32);
+            }
+            case DIAMOND_PICKAXE -> {
+                nextTier = Material.NETHERITE_PICKAXE;
+                upgradeMaterial = ItemStack.of(Material.NETHERITE_INGOT, 32);
+            }
+            case NETHERITE_PICKAXE -> {
+                nextTier = Material.WOODEN_PICKAXE;
+                upgradeMaterial = ItemStack.of(Material.OAK_PLANKS, 32);
+            }
+        }
+
+        Inventory playerInventory = player.getInventory();
+        // TODO: Is this 32 also required?
+        if (!playerInventory.containsAtLeast(upgradeMaterial, 32)) return;
+        if (!playerInventory.contains(playerPickaxe)) return;
+
+        playerInventory.removeItem(upgradeMaterial);
+        playerInventory.removeItem(playerPickaxe);
+
+        PlayerPickaxeManager.setPlayerPickaxe(player,playerPickaxe.withType(nextTier));
+        playerInventory.addItem(playerPickaxe);
     }
 
     private final ItemStack STONE_PICKAXE_BUTTON = ItemStackCreator.createItemStack(
