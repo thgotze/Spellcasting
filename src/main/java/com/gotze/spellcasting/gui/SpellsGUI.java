@@ -1,13 +1,12 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.PlayerPickaxeManager;
+import com.gotze.spellcasting.data.PlayerPickaxeService;
 import com.gotze.spellcasting.util.GUIUtils;
-import com.gotze.spellcasting.util.ItemStackCreator;
+import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,9 +16,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 public class SpellsGUI implements InventoryHolder, Listener {
     private Inventory gui;
@@ -27,7 +25,7 @@ public class SpellsGUI implements InventoryHolder, Listener {
     public void openGUI(Player player) {
         gui = Bukkit.createInventory(this, 45, Component.text("Spells"));
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxeManager.getPlayerPickaxe(player));
+        gui.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
         gui.setItem(21, SLICE_SPELL_BUTTON);
         gui.setItem(22, LASER_SPELL_BUTTON);
         gui.setItem(23, ROCKET_SPELL_BUTTON);
@@ -45,8 +43,9 @@ public class SpellsGUI implements InventoryHolder, Listener {
         if (clickedInventory == null) return;
 
         Player player = (Player) event.getWhoClicked();
-        if (clickedInventory.equals(player.getInventory())) return;
-
+        PlayerInventory playerInventory = player.getInventory();
+        if (clickedInventory.equals(playerInventory)) return;
+        
         int slot = event.getSlot();
 
         switch (slot) {
@@ -60,53 +59,35 @@ public class SpellsGUI implements InventoryHolder, Listener {
         }
     }
 
-    private final ItemStack SLICE_SPELL_BUTTON = ItemStackCreator.createItemStack(
-            Material.IRON_SWORD,
-            Component.text("Slice")
-                    .color(NamedTextColor.LIGHT_PURPLE)
-                    .decoration(TextDecoration.ITALIC, false),
-            Arrays.asList(
-                    Component.text("") ,
-                    Component.text(StringUtils.convertToSmallFont("requirements"))
-                            .color(NamedTextColor.WHITE)
-                            .decoration(TextDecoration.ITALIC, false),
+    private final ItemStack SLICE_SPELL_BUTTON = new ItemStackBuilder(Material.IRON_SWORD)
+            .displayName(Component.text("Slice")
+                    .color(NamedTextColor.LIGHT_PURPLE))
+            .lore(Component.text(""),
+                    Component.text(StringUtils.convertToSmallFont("requirements")),
                     Component.text("32x Amethyst Shard")
-                            .color(NamedTextColor.GRAY)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-    );
+                            .color(NamedTextColor.GRAY))
+            .hideAttributes()
+            .build();
 
-    private final ItemStack LASER_SPELL_BUTTON = ItemStackCreator.createItemStack(
-            Material.LIGHTNING_ROD,
-            Component.text("Laser")
-                    .color(NamedTextColor.LIGHT_PURPLE)
-                    .decoration(TextDecoration.ITALIC, false),
-            Arrays.asList(
-                    Component.text("") ,
-                    Component.text(StringUtils.convertToSmallFont("requirements"))
-                            .color(NamedTextColor.WHITE)
-                            .decoration(TextDecoration.ITALIC, false),
+    private final ItemStack LASER_SPELL_BUTTON = new ItemStackBuilder(Material.LIGHTNING_ROD)
+            .displayName(Component.text("Laser")
+                    .color(NamedTextColor.LIGHT_PURPLE))
+            .lore(Component.text(""),
+                    Component.text(StringUtils.convertToSmallFont("requirements")),
                     Component.text("32x Amethyst Shard")
-                            .color(NamedTextColor.GRAY)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-    );
+                            .color(NamedTextColor.GRAY))
+            .build();
 
-    private final ItemStack ROCKET_SPELL_BUTTON = ItemStackCreator.createItemStack(
-            Material.FIREWORK_ROCKET,
-            Component.text("Rocket")
-                    .color(NamedTextColor.LIGHT_PURPLE)
-                    .decoration(TextDecoration.ITALIC, false),
-            Arrays.asList(
-                    Component.text("") ,
-                    Component.text(StringUtils.convertToSmallFont("requirements"))
-                            .color(NamedTextColor.WHITE)
-                            .decoration(TextDecoration.ITALIC, false),
+    private final ItemStack ROCKET_SPELL_BUTTON = new ItemStackBuilder(Material.FIREWORK_ROCKET)
+            .displayName(Component.text("Rocket")
+                    .color(NamedTextColor.LIGHT_PURPLE))
+            .lore(Component.text(""),
+                    Component.text(StringUtils.convertToSmallFont("requirements")),
                     Component.text("32x Amethyst Shard")
-                            .color(NamedTextColor.GRAY)
-                            .decoration(TextDecoration.ITALIC, false)
-            )
-    );
+                            .color(NamedTextColor.GRAY))
+            .hideAdditionalTooltip()
+            .hideAttributes()
+            .build();
 
     @Override
     public @NotNull Inventory getInventory() {
