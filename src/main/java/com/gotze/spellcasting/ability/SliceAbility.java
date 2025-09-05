@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.spell;
+package com.gotze.spellcasting.ability;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.BlockUtils;
@@ -14,24 +14,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.joml.Matrix4f;
 
-public class SliceSpell extends Spell {
-    private int[] START_DELAYS = {0, 6, 38, 44, 76, 82};
-    private float[] DISPLAY_ROTATIONS = {-75f, 75f, -45f, 45f, -15f, 15f};
-    private String[] ANTI_CLOCKWISE_SPRITES = {
+public class SliceAbility extends Ability {
+    private final int[] START_DELAYS = {0, 6, 38, 44, 76, 82};
+    private final float[] DISPLAY_ROTATIONS = {-75f, 75f, -45f, 45f, -15f, 15f};
+    private final String[] ANTI_CLOCKWISE_SPRITES = {
             "crescent_frontside00", "crescent_frontside01", "crescent_frontside02", "crescent_frontside03",
             "crescent_frontside04", "crescent_frontside05", "crescent_frontside06", "crescent_frontside07",
             "crescent_frontside08", "crescent_frontside09", "crescent_frontside10", "crescent_frontside11"
     };
-    private String[] CLOCKWISE_SPRITES = {
+    private final String[] CLOCKWISE_SPRITES = {
             "crescent_backside00", "crescent_backside01", "crescent_backside02", "crescent_backside03",
             "crescent_backside04", "crescent_backside05", "crescent_backside06", "crescent_backside07",
             "crescent_backside08", "crescent_backside09", "crescent_backside10", "crescent_backside11"
     };
 
-    public SliceSpell(Player player) {
-        super.player = player;
-        super.spellName = "Slice";
-        super.world = player.getWorld();
+    public SliceAbility(Player player) {
+        super(player);
     }
 
     @Override
@@ -40,12 +38,12 @@ public class SliceSpell extends Spell {
 
         ItemDisplay[] itemDisplays = new ItemDisplay[6];
         for (int i = 0; i < 6; i++) {
-            itemDisplays[i] = (ItemDisplay) player.getWorld().spawnEntity(spawnLocation, EntityType.ITEM_DISPLAY);
+            itemDisplays[i] = (ItemDisplay) world.spawnEntity(spawnLocation, EntityType.ITEM_DISPLAY);
             itemDisplays[i].setBrightness(new Display.Brightness(15, 15));
             itemDisplays[i].setTransformationMatrix(new Matrix4f()
                     .rotateZ((float) Math.toRadians(DISPLAY_ROTATIONS[i]))
                     .rotateX((float) Math.toRadians(90f))
-                    .scale(5f, 5f, 0.5f)
+                    .scale(5f, 5f, 0.1f)
             );
         }
 
@@ -59,22 +57,27 @@ public class SliceSpell extends Spell {
 
                     int spriteIndex = (ticks - START_DELAYS[i]) % 12;
 
-                    ItemStack itemStack = new ItemStack(Material.AIR);
                     if (spriteIndex >= 4 && spriteIndex <= 6) {
-                        itemStack.setType(Material.PAPER);
-                        String spriteName = (i % 2 == 0) ? ANTI_CLOCKWISE_SPRITES[spriteIndex] : CLOCKWISE_SPRITES[spriteIndex];
-                        itemStack.editMeta(itemMeta ->
-                                itemMeta.setItemModel(NamespacedKey.minecraft(spriteName)));
-
                         if (spriteIndex == 4) {
+                            itemDisplays[i].setItemStack(ItemStack.of(Material.PAPER));
+
                             itemDisplays[i].teleport(player.getEyeLocation()
-                                    .add(player.getLocation().getDirection().multiply(2.3f))
-                            );
+                                    .add(player.getLocation().getDirection().multiply(2.3f)));
+
                             player.playSound(player, Sound.ITEM_TRIDENT_THROW, 0.20f, 1.35f);
+
                             BlockUtils.breakBlocksInLineOfSight(player, i, 4.5);
                         }
+
+                        String spriteName = (i % 2 == 0) ? ANTI_CLOCKWISE_SPRITES[spriteIndex] : CLOCKWISE_SPRITES[spriteIndex];
+
+                        ItemStack itemStack = itemDisplays[i].getItemStack();
+                        itemStack.editMeta(itemMeta -> itemMeta.setItemModel(NamespacedKey.minecraft(spriteName)));
+                        itemDisplays[i].setItemStack(itemStack);
+
+                    } else if (!itemDisplays[i].getItemStack().isEmpty()) {
+                        itemDisplays[i].setItemStack(ItemStack.empty());
                     }
-                    itemDisplays[i].setItemStack(itemStack);
                 }
 
                 ticks++;

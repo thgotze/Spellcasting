@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.spell;
+package com.gotze.spellcasting.ability;
 
 import com.gotze.spellcasting.Spellcasting;
 import org.bukkit.Color;
@@ -13,15 +13,12 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 
-public class LaserSpell extends Spell {
+public class LaserAbility extends Ability {
 
-    public LaserSpell(Player player) {
-        super.player = player;
-        super.spellName = "Laser";
-        super.world = player.getWorld();
+    public LaserAbility(Player player) {
+        super(player);
     }
 
-    @Override
     public void cast() {
         final Location startLocation = player.getLocation();
         final Vector lookingDirection = player.getLocation().getDirection();
