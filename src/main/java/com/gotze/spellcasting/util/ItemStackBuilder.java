@@ -2,14 +2,18 @@ package com.gotze.spellcasting.util;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import io.papermc.paper.datacomponent.item.ItemEnchantments;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemStackBuilder {
     private final Material material;
@@ -18,6 +22,9 @@ public class ItemStackBuilder {
     private boolean hideAdditionalTooltip = false;
     private boolean hideAttributes = false;
     private boolean hideTooltipBox = false;
+    private boolean hideEnchantTooltip = false;
+    private boolean enchantGlint = false;
+    private Map<Enchantment, Integer> enchantments = new HashMap<>();
 
     public ItemStackBuilder(Material material) {
         this.material = material;
@@ -58,6 +65,21 @@ public class ItemStackBuilder {
         return this;
     }
 
+    public ItemStackBuilder hideEnchantTooltip() {
+        this.hideEnchantTooltip = true;
+        return this;
+    }
+
+    public ItemStackBuilder toggleEnchantmentGlint() {
+        this.enchantGlint = true;
+        return this;
+    }
+
+    public ItemStackBuilder addEnchantment(Enchantment enchantment, int level) {
+        this.enchantments.put(enchantment, level);
+        return this;
+    }
+
     public ItemStack build() {
         ItemStack itemStack = ItemStack.of(material);
 
@@ -82,13 +104,27 @@ public class ItemStackBuilder {
         if (hideAttributes) {
             ItemAttributeModifiers data = itemStack.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
             if (data != null) {
-                data = data.showInTooltip(false);
-                itemStack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, data);
+                itemStack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, data.showInTooltip(false));
             }
         }
 
         if (hideTooltipBox) {
             itemStack.setData(DataComponentTypes.HIDE_TOOLTIP);
+        }
+
+        if (hideEnchantTooltip) {
+            ItemEnchantments enchantments = itemStack.getData(DataComponentTypes.ENCHANTMENTS);
+            if (enchantments != null) {
+                itemStack.setData(DataComponentTypes.ENCHANTMENTS, enchantments.showInTooltip(false));
+            }
+        }
+
+        if (enchantGlint) {
+            itemStack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
+        }
+
+        if (!enchantments.isEmpty()) {
+            itemStack.addEnchantments(enchantments);
         }
 
         return itemStack;
