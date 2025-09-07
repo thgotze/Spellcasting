@@ -29,7 +29,7 @@ public class PickaxeGUI implements InventoryHolder, Listener {
         gui = Bukkit.createInventory(this, 45, Component.text("Pickaxe"));
         GUIUtils.setFrames(gui);
         gui.setItem(2, STATISTICS_BUTTON); // TODO fix implementation of statistics, currently is just a static view
-        gui.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player)); // TODO find better naming?
+        gui.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
         gui.setItem(6, CurrentSoundData.createCurrentSoundButton(player)); // TODO fix implementation of current sound
         gui.setItem(21, ENCHANTMENTS_BUTTON);
         gui.setItem(22, MATERIAL_BUTTON);
@@ -62,7 +62,7 @@ public class PickaxeGUI implements InventoryHolder, Listener {
                 SoundUtils.playUIClickSound(player);
             }
             case 23 -> {
-                new SpellsGUI().openGUI(player);
+                new AbilityGUI().openGUI(player);
                 SoundUtils.playUIClickSound(player);
             }
             case 6 -> { // TODO fix implementation of current sound
@@ -78,13 +78,15 @@ public class PickaxeGUI implements InventoryHolder, Listener {
     private final ItemStack STATISTICS_BUTTON = new ItemStackBuilder(Material.BOOK)
             .displayName(Component.text("Statistics")
                     .color(NamedTextColor.GOLD))
-            .lore(Component.text(convertToSmallFont("Blocks broken: 175"))
-                            .color(NamedTextColor.GRAY),
-                    Component.text(convertToSmallFont("Material Tier: Diamond"))
+            .lore(Component.text(convertToSmallFont("Material Tier: Diamond"))
                             .color(NamedTextColor.GRAY),
                     Component.text(convertToSmallFont("Enchants unlocked: 5/8"))
                             .color(NamedTextColor.GRAY),
                     Component.text(convertToSmallFont("Spells unlocked: 2/6"))
+                            .color(NamedTextColor.GRAY),
+                    Component.text(convertToSmallFont("Blocks broken: 175"))
+                            .color(NamedTextColor.GRAY),
+                    Component.text(convertToSmallFont("Durability: 1250"))
                             .color(NamedTextColor.GRAY))
             .build();
 

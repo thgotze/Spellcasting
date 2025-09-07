@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.data.PlayerPickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.data.PlayerPickaxeService;
 import com.gotze.spellcasting.enchantment.Enchantment;
 import com.gotze.spellcasting.util.GUIUtils;
@@ -29,18 +29,13 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         gui = Bukkit.createInventory(this, 45, Component.text("Enchantments"));
         GUIUtils.setFrames(gui);
         gui.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
-        gui.setItem(21, EFFICIENCY_BOOK_BUTTON);
-        gui.setItem(22, UNBREAKING_BOOK_BUTTON);
-        gui.setItem(23, FORTUNE_BOOK_BUTTON);
-        gui.setItem(43, new ItemStackBuilder(Material.BARRIER) // TODO temp
-                .displayName(Component.text("DEBUG: CLEAR ENCHANTS").decorate(TextDecoration.BOLD)
-                        .color(NamedTextColor.RED))
-                .build());
-        gui.setItem(44, new ItemStackBuilder(Material.CHEST) // TODO: remove later
-                .displayName(Component.text("DEBUG: GIVE RESOURCES")
-                        .color(NamedTextColor.RED)
-                        .decorate(TextDecoration.BOLD))
-                .build());
+        gui.setItem(20, HASTE_AND_SPEED_ENCHANT_BUTTON); // TODO: testing
+        gui.setItem(21, EFFICIENCY_ENCHANT_BUTTON);
+        gui.setItem(22, UNBREAKING_ENCHANT_BUTTON);
+        gui.setItem(23, FORTUNE_ENCHANT_BUTTON);
+        gui.setItem(24, MINE_BLOCK_ABOVE_ENCHANT_BUTTON); // TODO: testing
+        gui.setItem(43, DEBUG_CLEAR_ENCHANTS_BUTTON); // TODO: debug
+        gui.setItem(44, DEBUG_GIVE_RESOURCES_BUTTON); // TODO: debug
         gui.setItem(36, GUIUtils.RETURN_BUTTON);
         player.openInventory(gui);
     }
@@ -61,33 +56,42 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         int slot = event.getSlot();
 
         switch (slot) {
-            case 21, 22, 23 ->
+            case 20, 21, 22, 23, 24 ->
                     upgradeEnchantment(player, playerInventory, clickedInventory.getItem(slot).getType(), clickedInventory);
             case 36 -> {
                 new PickaxeGUI().openGUI(player);
                 SoundUtils.playUIClickSound(player);
             }
-            case 43 -> { // TODO: delete later
+            case 43 -> { // TODO: debug
                 ItemStack playerPickaxe = playerInventory.getItemInMainHand();
-                playerInventory.getItemInMainHand().removeEnchantments();
-                PlayerPickaxeService.setPlayerPickaxeData(player, playerPickaxe);
+
+                PlayerPickaxeService.removeAllPlayerPickaxeEnchantments(player);
+                playerInventory.removeItem(playerPickaxe);
+
+                playerInventory.addItem(PlayerPickaxeService.getPlayerPickaxe(player));
+
                 clickedInventory.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
                 SoundUtils.playSuccessSound(player);
             }
-            case 44 -> playerInventory.addItem(ItemStack.of(Material.REDSTONE, 32), // TODO: remove later
-                    ItemStack.of(Material.OBSIDIAN, 32),
-                    ItemStack.of(Material.LAPIS_LAZULI, 32));
+            case 44 -> { // TODO: debug
+                playerInventory.addItem(ItemStack.of(Material.DIAMOND, 32),
+                        ItemStack.of(Material.REDSTONE, 32),
+                        ItemStack.of(Material.OBSIDIAN, 32),
+                        ItemStack.of(Material.LAPIS_LAZULI, 32),
+                        ItemStack.of(Material.EMERALD, 32));
+                SoundUtils.playSuccessSound(player);
+            }
         }
     }
 
     private void upgradeEnchantment(Player player, PlayerInventory playerInventory, Material clickedUpgrade, Inventory clickedInventory) {
-        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, playerInventory.getItemInMainHand())) {
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) {
             player.sendMessage(Component.text("You are not holding your pickaxe!")
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
         }
-        ItemStack playerPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
+        ItemStack playerPickaxe = playerInventory.getItemInMainHand();
 
         final int REQUIRED_AMOUNT = 32;
         final ItemStack REQUIRED_MATERIALS = ItemStack.of(clickedUpgrade, REQUIRED_AMOUNT);
@@ -103,12 +107,13 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
             case REDSTONE -> Enchantment.EnchantmentType.EFFICIENCY;
             case OBSIDIAN -> Enchantment.EnchantmentType.UNBREAKING;
             case LAPIS_LAZULI -> Enchantment.EnchantmentType.FORTUNE;
-            case EMERALD -> Enchantment.EnchantmentType.CUSTOM_ENCHANT; // TODO: testing
+            case DIAMOND -> Enchantment.EnchantmentType.HASTE_AND_SPEED; // TODO: testing
+            case EMERALD -> Enchantment.EnchantmentType.MINE_BLOCK_ABOVE; // TODO: testing
             default -> null;
         };
 
-        PlayerPickaxeData playerPickaxeData = PlayerPickaxeService.getPlayerPickaxeData(player);
-        if (playerPickaxeData.hasEnchantment(enchantmentType) && playerPickaxeData.getEnchantment(enchantmentType).isMaxLevel()) {
+        PickaxeData pickaxeData = PlayerPickaxeService.getPlayerPickaxeData(player);
+        if (pickaxeData.hasEnchantment(enchantmentType) && pickaxeData.getEnchantment(enchantmentType).isMaxLevel()) {
             player.sendMessage(Component.text("Cannot upgrade " + enchantmentType.getName() + " past level " + enchantmentType.getMaxLevel() + "!")
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
@@ -130,7 +135,7 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         SoundUtils.playSuccessSound(player);
     }
 
-    private final ItemStack EFFICIENCY_BOOK_BUTTON = new ItemStackBuilder(Material.REDSTONE)
+    private final ItemStack EFFICIENCY_ENCHANT_BUTTON = new ItemStackBuilder(Material.REDSTONE)
             .displayName(Component.text("Efficiency")
                     .color(NamedTextColor.YELLOW))
             .lore(Component.text(""),
@@ -139,7 +144,7 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
                             .color(NamedTextColor.GRAY))
             .build();
 
-    private final ItemStack UNBREAKING_BOOK_BUTTON = new ItemStackBuilder(Material.OBSIDIAN)
+    private final ItemStack UNBREAKING_ENCHANT_BUTTON = new ItemStackBuilder(Material.OBSIDIAN)
             .displayName(Component.text("Unbreaking")
                     .color(NamedTextColor.YELLOW))
             .lore(Component.text(""),
@@ -148,13 +153,42 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
                             .color(NamedTextColor.GRAY))
             .build();
 
-    private final ItemStack FORTUNE_BOOK_BUTTON = new ItemStackBuilder(Material.LAPIS_LAZULI)
+    private final ItemStack FORTUNE_ENCHANT_BUTTON = new ItemStackBuilder(Material.LAPIS_LAZULI)
             .displayName(Component.text("Fortune")
                     .color(NamedTextColor.YELLOW))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
                     Component.text("32x Lapis Lazuli")
                             .color(NamedTextColor.GRAY))
+            .build();
+
+    private final ItemStack HASTE_AND_SPEED_ENCHANT_BUTTON = new ItemStackBuilder(Material.DIAMOND) // TODO: testing
+            .displayName(Component.text("Haste And Speed")
+                    .color(NamedTextColor.YELLOW))
+            .lore(Component.text(""),
+                    Component.text(StringUtils.convertToSmallFont("requirements")),
+                    Component.text("32x Diamond")
+                            .color(NamedTextColor.GRAY))
+            .build();
+
+    private final ItemStack MINE_BLOCK_ABOVE_ENCHANT_BUTTON = new ItemStackBuilder(Material.EMERALD) // TODO: testing
+            .displayName(Component.text("Mine Block Above")
+                    .color(NamedTextColor.YELLOW))
+            .lore(Component.text(""),
+                    Component.text(StringUtils.convertToSmallFont("requirements")),
+                    Component.text("32x Emerald")
+                            .color(NamedTextColor.GRAY))
+            .build();
+
+    private final ItemStack DEBUG_CLEAR_ENCHANTS_BUTTON = new ItemStackBuilder(Material.BARRIER) // TODO: debug
+            .displayName(Component.text("DEBUG: CLEAR ENCHANTS").decorate(TextDecoration.BOLD)
+                    .color(NamedTextColor.RED))
+            .build();
+
+    private final ItemStack DEBUG_GIVE_RESOURCES_BUTTON = new ItemStackBuilder(Material.CHEST) // TODO: debug
+            .displayName(Component.text("DEBUG: GIVE RESOURCES")
+                    .color(NamedTextColor.RED)
+                    .decorate(TextDecoration.BOLD))
             .build();
 
     @Override

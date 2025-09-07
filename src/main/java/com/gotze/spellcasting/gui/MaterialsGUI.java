@@ -32,12 +32,10 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         gui.setItem(22, GOLD_PICKAXE_BUTTON);
         gui.setItem(23, DIAMOND_PICKAXE_BUTTON);
         gui.setItem(24, NETHERITE_PICKAXE_BUTTON);
+
         gui.setItem(43, WOODEN_PICKAXE_BUTTON); // TODO: remove later
-        gui.setItem(44, new ItemStackBuilder(Material.CHEST) // TODO: remove later
-                .displayName(Component.text("DEBUG: GIVE RESOURCES")
-                        .color(NamedTextColor.RED)
-                        .decorate(TextDecoration.BOLD))
-                .build());
+        gui.setItem(44, DEBUG_GIVE_RESOURCES); // TODO: remove later
+
         gui.setItem(36, GUIUtils.RETURN_BUTTON);
         player.openInventory(gui);
     }
@@ -58,33 +56,35 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         int slot = event.getSlot();
 
         switch (slot) {
-            case 20, 21, 22, 23, 24 -> upgradePickaxeMaterial(player, playerInventory, clickedInventory.getItem(slot).getType(), clickedInventory);
+            case 20, 21, 22, 23, 24 ->
+                    upgradePickaxeMaterial(player, playerInventory, clickedInventory.getItem(slot).getType(), clickedInventory);
             case 36 -> {
                 new PickaxeGUI().openGUI(player);
                 SoundUtils.playUIClickSound(player);
             }
             // TODO: remove case 43 and 44
-            case 43 -> upgradePickaxeMaterial(player, playerInventory, clickedInventory.getItem(slot).getType(), clickedInventory);
+            case 43 ->
+                    upgradePickaxeMaterial(player, playerInventory, clickedInventory.getItem(slot).getType(), clickedInventory);
             case 44 -> {
-                playerInventory.addItem(ItemStack.of(Material.OAK_PLANKS, 32),
-                        ItemStack.of(Material.COBBLESTONE, 32),
+                playerInventory.addItem(ItemStack.of(Material.COBBLESTONE, 32),
                         ItemStack.of(Material.IRON_INGOT, 32),
                         ItemStack.of(Material.GOLD_INGOT, 32),
                         ItemStack.of(Material.DIAMOND, 32),
-                        ItemStack.of(Material.NETHERITE_INGOT, 32));
+                        ItemStack.of(Material.NETHERITE_INGOT, 32),
+                        ItemStack.of(Material.OAK_PLANKS, 32));
                 SoundUtils.playUIClickSound(player);
             }
         }
     }
 
     private void upgradePickaxeMaterial(Player player, PlayerInventory playerInventory, Material clickedUpgrade, Inventory clickedInventory) {
-        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, playerInventory.getItemInMainHand())) {
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) {
             player.sendMessage(Component.text("You are not holding your pickaxe!")
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
         }
-        ItemStack playerPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
+        ItemStack playerPickaxe = playerInventory.getItemInMainHand();
 
         Material nextTierPickaxe = switch (playerPickaxe.getType()) {
             case WOODEN_PICKAXE -> Material.STONE_PICKAXE;
@@ -97,7 +97,7 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         };
 
         if (clickedUpgrade != nextTierPickaxe) {
-            player.sendMessage(Component.text("Cannot upgrade from " + playerPickaxe.getType() + " to " + nextTierPickaxe + "!")
+            player.sendMessage(Component.text("Cannot upgrade from " + playerPickaxe.getType() + " to " + clickedUpgrade + "!")
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
@@ -117,13 +117,14 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         final ItemStack REQUIRED_MATERIALS = ItemStack.of(requiredMaterial, REQUIRED_AMOUNT);
 
         if (!playerInventory.containsAtLeast(REQUIRED_MATERIALS, REQUIRED_AMOUNT)) {
-            player.sendMessage(Component.text("You don't have the required materials (" + REQUIRED_AMOUNT + "x " + requiredMaterial.toString().toLowerCase() + ") " + "to upgrade your pickaxe!"));
+            player.sendMessage(Component.text("You don't have the required materials (" + REQUIRED_AMOUNT + "x " + requiredMaterial.toString().toLowerCase() + ") " + "to upgrade your pickaxe!")
+                    .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
         }
 
         // At this point the player
-        // 1. has their pickaxe in their hand
+        // 1. has their pickaxe in their main hand
         // 2. they have enough of the required material
 
         playerInventory.removeItem(playerPickaxe);
@@ -136,7 +137,7 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         SoundUtils.playSuccessSound(player);
     }
 
-    private final ItemStack WOODEN_PICKAXE_BUTTON = new ItemStackBuilder(Material.WOODEN_PICKAXE) // TODO remove later
+    private final ItemStack WOODEN_PICKAXE_BUTTON = new ItemStackBuilder(Material.WOODEN_PICKAXE) // TODO: remove later
             .displayName(Component.text("DEBUG: Wooden Pickaxe")
                     .color(NamedTextColor.RED)
                     .decorate(TextDecoration.BOLD))
@@ -145,6 +146,12 @@ public class MaterialsGUI implements InventoryHolder, Listener {
                     Component.text("32x Oak Planks")
                             .color(NamedTextColor.GRAY))
             .hideAttributes()
+            .build();
+
+    private final ItemStack DEBUG_GIVE_RESOURCES = new ItemStackBuilder(Material.CHEST) // TODO: remove later
+            .displayName(Component.text("DEBUG: GIVE RESOURCES")
+                    .color(NamedTextColor.RED)
+                    .decorate(TextDecoration.BOLD))
             .build();
 
     private final ItemStack STONE_PICKAXE_BUTTON = new ItemStackBuilder(Material.STONE_PICKAXE)
