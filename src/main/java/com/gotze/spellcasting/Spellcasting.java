@@ -1,10 +1,10 @@
 package com.gotze.spellcasting;
 
+import com.gotze.spellcasting.gui.AbilityGUI;
 import com.gotze.spellcasting.gui.EnchantmentsGUI;
 import com.gotze.spellcasting.gui.MaterialsGUI;
 import com.gotze.spellcasting.gui.PickaxeGUI;
-import com.gotze.spellcasting.gui.SpellsGUI;
-import com.gotze.spellcasting.listener.PlayerItemBreakListener;
+import com.gotze.spellcasting.listener.BlockBreakListener;
 import com.gotze.spellcasting.listener.PlayerJoinListener;
 import com.gotze.spellcasting.listener.ShiftRightClickWithPickaxeListener;
 import com.gotze.spellcasting.listener.SwapHandItemsListener;
@@ -21,11 +21,11 @@ public class Spellcasting extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EnchantmentsGUI(), this);
         getServer().getPluginManager().registerEvents(new MaterialsGUI(), this);
         getServer().getPluginManager().registerEvents(new PickaxeGUI(), this);
-        getServer().getPluginManager().registerEvents(new SpellsGUI(), this);
+        getServer().getPluginManager().registerEvents(new AbilityGUI(), this);
 
         // Event Listeners
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerItemBreakListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
         getServer().getPluginManager().registerEvents(new ShiftRightClickWithPickaxeListener(), this);
         getServer().getPluginManager().registerEvents(new SwapHandItemsListener(), this);
     }

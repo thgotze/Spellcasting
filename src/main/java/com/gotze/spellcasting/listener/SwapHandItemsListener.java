@@ -9,33 +9,35 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class SwapHandItemsListener implements Listener {
 
     @EventHandler
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
-        Material materialOfHeldItem = player.getInventory().getItemInMainHand().getType();
+        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        Material material = itemInMainHand.getType();
 
-        if (MaterialSetTag.ITEMS_PICKAXES.isTagged(materialOfHeldItem)) {
+        if (MaterialSetTag.ITEMS_PICKAXES.isTagged(material)) {
             event.setCancelled(true);
             new SliceAbility(player).cast();
             return;
         }
 
-        if (materialOfHeldItem == Material.COBBLESTONE) {
+        if (material == Material.COBBLESTONE) {
             player.give(PlayerPickaxeService.getPlayerPickaxe(player));
             event.setCancelled(true);
             return;
         }
 
-        if (materialOfHeldItem == Material.BLAZE_ROD) {
+        if (material == Material.BLAZE_ROD) {
             event.setCancelled(true);
             new LaserAbility(player).cast();
             return;
         }
 
-        if (materialOfHeldItem == Material.DIAMOND) {
+        if (material == Material.DIAMOND) {
             event.setCancelled(true);
             player.sendMessage("");
             player.sendMessage("\uE333");

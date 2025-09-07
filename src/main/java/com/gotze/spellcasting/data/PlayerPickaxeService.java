@@ -1,43 +1,82 @@
 package com.gotze.spellcasting.data;
 
+import com.gotze.spellcasting.ability.Ability;
 import com.gotze.spellcasting.enchantment.Enchantment;
+import com.gotze.spellcasting.util.ItemStackBuilder;
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PlayerPickaxeService {
-    private static final Map<Player, PlayerPickaxeData> PLAYER_PICKAXE_DATA_MAP = new HashMap<>();
+    private static final Map<Player, PickaxeData> PLAYER_PICKAXE_DATA_MAP = new HashMap<>();
 
-    public static PlayerPickaxeData getPlayerPickaxeData(Player player) {
+    public static void createPlayerPickaxeData(Player player) {
+        PLAYER_PICKAXE_DATA_MAP.put(player, new PickaxeData());
+    }
+
+    public static PickaxeData getPlayerPickaxeData(Player player) {
         return PLAYER_PICKAXE_DATA_MAP.get(player);
     }
 
-    public static ItemStack getPlayerPickaxe(Player player) {
-        PlayerPickaxeData playerPickaxeData = getPlayerPickaxeData(player);
-        return playerPickaxeData.getPickaxe();
-    }
-
-    public static void setPlayerPickaxeData(Player player, PlayerPickaxeData playerPickaxeData) {
-        PLAYER_PICKAXE_DATA_MAP.put(player, playerPickaxeData);
-    }
-
-    public static void setPlayerPickaxeData(Player player, ItemStack playerPickaxe) {
-        PLAYER_PICKAXE_DATA_MAP.put(player, new PlayerPickaxeData(player, playerPickaxe));
-    }
-
-    public static boolean hasPlayerPickaxedata(Player player) {
+    public static boolean hasPlayerPickaxeData(Player player) {
         return PLAYER_PICKAXE_DATA_MAP.containsKey(player);
     }
 
-    public static ItemStack getPlayerPickaxeCloneWithoutDurability(Player player) {
-        ItemStack playerPickaxeClone = getPlayerPickaxe(player).clone();
-        playerPickaxeClone.resetData(DataComponentTypes.DAMAGE);
-        return playerPickaxeClone;
+    public static ItemStack getPlayerPickaxe(Player player) {
+        PickaxeData pickaxeData = getPlayerPickaxeData(player);
+
+        ItemStackBuilder builder = new ItemStackBuilder(pickaxeData.getType())
+                .lore(getPickaxeLore(player))
+                .hideAttributes()
+                .hideEnchantTooltip();
+
+        Enchantment efficiency = pickaxeData.getEnchantment(Enchantment.EnchantmentType.EFFICIENCY);
+        if (efficiency != null) {
+            builder.addEnchantment(org.bukkit.enchantments.Enchantment.EFFICIENCY, efficiency.getLevel());
+        }
+
+        Enchantment unbreaking = pickaxeData.getEnchantment(Enchantment.EnchantmentType.UNBREAKING);
+        if (unbreaking != null) {
+            builder.addEnchantment(org.bukkit.enchantments.Enchantment.UNBREAKING, unbreaking.getLevel());
+        }
+
+        Enchantment fortune = pickaxeData.getEnchantment(Enchantment.EnchantmentType.FORTUNE);
+        if (fortune != null) {
+            builder.addEnchantment(org.bukkit.enchantments.Enchantment.FORTUNE, fortune.getLevel());
+        }
+
+        return builder.build();
+    }
+
+    public static List<Component> getPickaxeLore(Player player) {
+        return getPickaxeLore(getPlayerPickaxeData(player));
+    }
+
+    public static List<Component> getPickaxeLore(PickaxeData pickaxeData) {
+//        Material material = pickaxeData.getType();
+//        Set<Enchantment> enchantments = pickaxeData.getEnchantments();
+//        Set<Ability> abilities = pickaxeData.getAbilities();
+//        int blocksBroken = pickaxeData.getBlocksBroken();
+//        int damage = pickaxeData.getDamage();
+
+        List<Component> lore = List.of(Component.text(pickaxeData.toString()));
+
+        List<Component> fixedLore = lore.stream()
+                .map(component -> component
+                        .colorIfAbsent(NamedTextColor.WHITE)
+                        .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+                ).toList();
+
+        return fixedLore;
     }
 
     public static void upgradePlayerPickaxeMaterial(Player player, Material nextTierPickaxe) {
@@ -45,50 +84,41 @@ public class PlayerPickaxeService {
     }
 
     public static void upgradePlayerPickaxeEnchantment(Player player, Enchantment.EnchantmentType enchantmentType) {
-        PlayerPickaxeData playerPickaxeData = getPlayerPickaxeData(player);
+        PickaxeData pickaxeData = getPlayerPickaxeData(player);
 
-        if (playerPickaxeData.hasEnchantment(enchantmentType)) {
-            playerPickaxeData.getEnchantment(enchantmentType).increaseLevel();
+        if (pickaxeData.hasEnchantment(enchantmentType)) {
+            pickaxeData.getEnchantment(enchantmentType).increaseLevel();
         } else {
-            playerPickaxeData.addEnchantment(new Enchantment(enchantmentType));
+            pickaxeData.addEnchantment(new Enchantment(enchantmentType));
         }
     }
 
-    public static ItemStack createStarterPickaxe(Player player) {
-        ItemStack starterPick = ItemStack.of(Material.WOODEN_PICKAXE);
+    public static void upgradePlayerPickaxeAbility(Player player, Ability.AbilityType abilityType) {
+        PickaxeData pickaxeData = getPlayerPickaxeData(player);
 
-        // Hiding attributes
-        ItemAttributeModifiers data = starterPick.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
-        data = data.showInTooltip(false);
-        starterPick.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, data);
-
-//        // PDC owner tag
-//        ItemMeta meta = starterPick.getItemMeta();
-//        meta.getPersistentDataContainer().set(
-//                new NamespacedKey(Spellcasting.INSTANCE, "owner"),
-//                PersistentDataType.STRING,
-//                player.getUniqueId().toString()
-//        );
-//        starterPick.setItemMeta(meta);
-
-        // Save player pickaxe data in memory
-        PlayerPickaxeService.setPlayerPickaxeData(player, starterPick);
-
-        return starterPick;
+        if (pickaxeData.hasAbility(abilityType)) {
+            pickaxeData.getAbility(abilityType).increaseLevel();
+        } else {
+            pickaxeData.addAbility(new Ability(abilityType));
+        }
     }
 
-    public static boolean isPlayerHoldingOwnPickaxe(Player player, ItemStack heldItem) {
-        return heldItem.equals(getPlayerPickaxe(player));
+    public static void incrementBlocksBrokenCounter(Player player, int amount) {
+        getPlayerPickaxeData(player).addBlocksBroken(amount);
     }
 
-//    public static boolean isPlayerHoldingOwnPickaxe(Player player, ItemStack heldItem) {
-//        if (heldItem == null || !heldItem.hasItemMeta()) return false;
-//        ItemMeta meta = heldItem.getItemMeta();
-//        String ownerId = meta.getPersistentDataContainer().get(
-//                new NamespacedKey(Spellcasting.INSTANCE, "owner"),
-//                PersistentDataType.STRING
-//        );
-//        return player.getUniqueId().toString().equals(ownerId);
+    public static void removeAllPlayerPickaxeEnchantments(Player player) {
+        getPlayerPickaxeData(player).removeEnchantments();
+    }
 
-//    }
+    public static boolean isPlayerHoldingOwnPickaxe(Player player) {
+        return player.getInventory().getItemInMainHand()
+                .matchesWithoutData(getPlayerPickaxe(player), Set.of(DataComponentTypes.DAMAGE));
+    }
+
+    public static ItemStack getPlayerPickaxeCloneWithoutDurability(Player player) {
+        ItemStack playerPickaxeClone = getPlayerPickaxe(player).clone();
+        playerPickaxeClone.resetData(DataComponentTypes.DAMAGE);
+        return playerPickaxeClone;
+    }
 }

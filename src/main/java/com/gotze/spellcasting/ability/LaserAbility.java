@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.ability;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.util.BlockUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,28 +14,33 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 
-public class LaserAbility extends Ability {
+public class LaserAbility extends AbstractAbility {
 
     public LaserAbility(Player player) {
         super(player);
     }
 
     public void cast() {
-        final Location startLocation = player.getLocation();
+        final Location startLocation = player.getEyeLocation();
         final Vector lookingDirection = player.getLocation().getDirection();
         final BlockFace playerFacing = player.getFacing();
 
         new BukkitRunnable() {
             int ticks = 0;
-            Location laserLocation = startLocation.clone().add(lookingDirection.clone().multiply(ticks));
 
             @Override
             public void run() {
-                world.spawnParticle(Particle.DUST, laserLocation, 1,
-                        new Particle.DustOptions(Color.LIME, 5.0f));
+                Location laserLocation = startLocation.clone()
+                        .add(lookingDirection.clone().multiply(ticks / 1.5));
 
-                Block targetBlock = player.getTargetBlockExact(10);
-                if (targetBlock != null) {
+//                if (ticks % 16 == 0 && ticks != 0) {
+                world.spawnParticle(Particle.DUST, laserLocation, 1,
+                        new Particle.DustOptions(Color.LIME, 2.0f));
+//                }
+
+                player.sendMessage(String.valueOf(ticks));
+                if (ticks == 20) {
+                    Block targetBlock = laserLocation.getBlock();
                     ArrayList<Block> blocksToBreak = new ArrayList<>();
                     blocksToBreak.add(targetBlock);
 
@@ -42,9 +48,10 @@ public class LaserAbility extends Ability {
                     int y = targetBlock.getY();
                     int z = targetBlock.getZ();
 
+                    blocksToBreak.addAll(BlockUtils.getSpherePattern(targetBlock, 4));
                     // Vertical blocks
-                    blocksToBreak.add(world.getBlockAt(x, y + 1, z));
-                    blocksToBreak.add(world.getBlockAt(x, y - 1, z));
+//                    blocksToBreak.add(world.getBlockAt(x, y + 1, z));
+//                    blocksToBreak.add(world.getBlockAt(x, y - 1, z));
 
                     // Horizontal blocks
                     switch (playerFacing) {
@@ -57,15 +64,20 @@ public class LaserAbility extends Ability {
                             blocksToBreak.add(world.getBlockAt(x, y, z - 1));
                         }
                     }
+                    int blocksBroken = 0;
 
                     for (Block block : blocksToBreak) {
                         if (block.getType().isAir() || block.getType() == Material.BEDROCK) continue;
                         block.breakNaturally(true);
+                        blocksBroken++;
                     }
+                    player.sendMessage(String.valueOf(blocksBroken));
+                    this.cancel();
+
                 }
 
                 ticks++;
-                if (ticks >= 60) this.cancel();
+                if (ticks >= 64) this.cancel();
             }
         }.runTaskTimer(Spellcasting.INSTANCE, 0, 1);
     }

@@ -155,13 +155,12 @@ public class BlockUtils {
 
     public static ArrayList<Block> getCylinderPattern(Block center, int radius, int height) {
         ArrayList<Block> blocks = new ArrayList<>();
-        Location centerLoc = center.getLocation().add(0.5, 0.5, 0.5);
 
         for (int y = 0; y < height; y++) {
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
                     if (x * x + z * z <= radius * radius) {
-                        blocks.add(center.getRelative(x, y, z));
+                        blocks.add(center.getRelative(x, -y, z));
                     }
                 }
             }
@@ -222,7 +221,6 @@ public class BlockUtils {
 
     public static ArrayList<Block> getPyramidPattern(Block center, int size) {
         ArrayList<Block> blocks = new ArrayList<>();
-        Location centerLoc = center.getLocation();
 
         for (int y = 0; y < size; y++) {
             int currentSize = size - y;
@@ -238,7 +236,6 @@ public class BlockUtils {
 
     public static ArrayList<Block> getCrossPattern(Block center, int size) {
         ArrayList<Block> blocks = new ArrayList<>();
-        blocks.add(center);
 
         // Add blocks in cardinal directions
         for (int i = 1; i <= size; i++) {
@@ -268,7 +265,6 @@ public class BlockUtils {
 
     public static List<Block> getSpherePattern(Block center, int radius) {
         ArrayList<Block> blocks = new ArrayList<>();
-        Location centerLoc = center.getLocation().add(0.5, 0.5, 0.5);
 
         for (int x = -radius; x <= radius; x++) {
             for (int y = -radius; y <= radius; y++) {

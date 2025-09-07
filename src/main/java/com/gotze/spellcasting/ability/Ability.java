@@ -1,16 +1,82 @@
 package com.gotze.spellcasting.ability;
 
-import org.bukkit.World;
-import org.bukkit.entity.Player;
+import java.util.Objects;
 
-public abstract class Ability {
-    public Player player;
-    public World world;
+public class Ability {
+    private final AbilityType abilityType;
+    private int level;
 
-    public Ability(Player player) {
-        this.player = player;
-        this.world = player.getWorld();
+    public Ability(AbilityType abilityType) {
+        this.abilityType = abilityType;
+        this.level = 1;
     }
 
-    public abstract void cast();
+    public AbilityType getAbilityType() {
+        return abilityType;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public String getName() {
+        return abilityType.getName();
+    }
+
+    public int getMaxLevel() {
+        return abilityType.getMaxLevel();
+    }
+
+    public boolean isMaxLevel() {
+        return level == abilityType.getMaxLevel();
+    }
+
+    public void increaseLevel() {
+        if (level < getMaxLevel()) {
+            this.level++;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ability that)) return false;
+        return level == that.level &&
+                abilityType == that.abilityType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(abilityType, level);
+    }
+
+    @Override
+    public String toString() {
+        return "Ability{" +
+                "abilityType=" + abilityType +
+                ", level=" + level +
+                '}';
+    }
+
+    public enum AbilityType {
+        SLICE("Slice", 5),
+        LASER("Laser", 3),
+        ROCKET_LAUNCHER("Rocket Launcher", 3);
+
+        private final String name;
+        private final int maxLevel;
+
+        AbilityType(String name, int maxLevel) {
+            this.name = name;
+            this.maxLevel = maxLevel;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getMaxLevel() {
+            return maxLevel;
+        }
+    }
 }

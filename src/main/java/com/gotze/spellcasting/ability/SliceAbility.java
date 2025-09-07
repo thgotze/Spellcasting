@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.joml.Matrix4f;
 
-public class SliceAbility extends Ability {
+public class SliceAbility extends AbstractAbility {
     private final int[] START_DELAYS = {0, 6, 38, 44, 76, 82};
     private final float[] DISPLAY_ROTATIONS = {-75f, 75f, -45f, 45f, -15f, 15f};
     private final String[] ANTI_CLOCKWISE_SPRITES = {
