@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.ability;
+package com.gotze.spellcasting.pickaxe.ability;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -12,5 +12,5 @@ public abstract class AbstractAbility {
         this.world = player.getWorld();
     }
 
-    public abstract void cast();
+    public abstract void activate();
 }

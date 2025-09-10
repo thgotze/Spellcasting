@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.ability;
+package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.BlockUtils;
@@ -14,13 +14,13 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 
-public class LaserAbility extends AbstractAbility {
+public class BazookaAbility extends AbstractAbility {
 
-    public LaserAbility(Player player) {
+    public BazookaAbility(Player player) {
         super(player);
     }
 
-    public void cast() {
+    public void activate() {
         final Location startLocation = player.getEyeLocation();
         final Vector lookingDirection = player.getLocation().getDirection();
         final BlockFace playerFacing = player.getFacing();
@@ -31,16 +31,15 @@ public class LaserAbility extends AbstractAbility {
             @Override
             public void run() {
                 Location laserLocation = startLocation.clone()
-                        .add(lookingDirection.clone().multiply(ticks / 1.5));
+                        .add(lookingDirection.clone().multiply(ticks * 1.5));
 
 //                if (ticks % 16 == 0 && ticks != 0) {
                 world.spawnParticle(Particle.DUST, laserLocation, 1,
                         new Particle.DustOptions(Color.LIME, 2.0f));
 //                }
 
-                player.sendMessage(String.valueOf(ticks));
-                if (ticks == 20) {
-                    Block targetBlock = laserLocation.getBlock();
+                Block targetBlock = laserLocation.getBlock();
+                if (!targetBlock.getType().isAir()) {
                     ArrayList<Block> blocksToBreak = new ArrayList<>();
                     blocksToBreak.add(targetBlock);
 
@@ -73,8 +72,8 @@ public class LaserAbility extends AbstractAbility {
                     }
                     player.sendMessage(String.valueOf(blocksBroken));
                     this.cancel();
-
                 }
+
 
                 ticks++;
                 if (ticks >= 64) this.cancel();

@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.ability;
+package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.BlockUtils;
@@ -33,7 +33,7 @@ public class SliceAbility extends AbstractAbility {
     }
 
     @Override
-    public void cast() {
+    public void activate() {
         final Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
 
         ItemDisplay[] itemDisplays = new ItemDisplay[6];
