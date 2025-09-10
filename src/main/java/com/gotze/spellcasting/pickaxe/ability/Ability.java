@@ -1,4 +1,6 @@
-package com.gotze.spellcasting.ability;
+package com.gotze.spellcasting.pickaxe.ability;
+
+import com.gotze.spellcasting.Rarity;
 
 import java.util.Objects;
 
@@ -59,16 +61,19 @@ public class Ability {
     }
 
     public enum AbilityType {
-        SLICE("Slice", 5),
-        LASER("Laser", 3),
-        ROCKET_LAUNCHER("Rocket Launcher", 3);
+        SLICE("Slice", 1, Rarity.LEGENDARY),
+        BAZOOKA("Bazooka", 1, Rarity.LEGENDARY),
+        LASER("Laser", 1, Rarity.LEGENDARY),
+        TRANSFORM_HAMMER("Transform Hammer", 1, Rarity.LEGENDARY);
 
         private final String name;
         private final int maxLevel;
+        private final Rarity rarity;
 
-        AbilityType(String name, int maxLevel) {
+        AbilityType(String name, int maxLevel, Rarity rarity) {
             this.name = name;
             this.maxLevel = maxLevel;
+            this.rarity = rarity;
         }
 
         public String getName() {
@@ -77,6 +82,10 @@ public class Ability {
 
         public int getMaxLevel() {
             return maxLevel;
+        }
+
+        public Rarity getRarity() {
+            return rarity;
         }
     }
 }
