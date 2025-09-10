@@ -3,6 +3,11 @@ package com.gotze.spellcasting.util;
 import net.kyori.adventure.text.Component;
 
 public class StringUtils {
+
+    public static Component toSmallFont(Component input) {
+        return Component.text(convertToSmallFont(input.toString()));
+    }
+
     /**
      * Converts a string to a small string using the Minecraft small font
      * <p>"Spellcasting is fun!" -> "ѕᴘᴇʟʟᴄᴀѕᴛɪɴɢ ɪѕ ꜰᴜɴ!"
@@ -55,12 +60,14 @@ public class StringUtils {
         return smallString.toString();
     }
 
-    public static Component toSmallFont(Component input) {
-        return Component.text(convertToSmallFont(input.toString()));
-//        String plain = Component.text().content(input.toString()).build().content();
-//        String small = convertToSmallFont(plain);
-//        return Component.text(small)
-//                .color(input.color())
-//                .decoration(TextDecoration.ITALIC, input.hasDecoration(TextDecoration.ITALIC));
+    public static String toRomanNumeral(int level) {
+        return switch (level) {
+            case 1 -> "I";
+            case 2 -> "II";
+            case 3 -> "III";
+            case 4 -> "IV";
+            case 5 -> "V";
+            default -> String.valueOf(level);
+        };
     }
 }
