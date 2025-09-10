@@ -4,10 +4,7 @@ import com.gotze.spellcasting.gui.AbilityGUI;
 import com.gotze.spellcasting.gui.EnchantmentsGUI;
 import com.gotze.spellcasting.gui.MaterialsGUI;
 import com.gotze.spellcasting.gui.PickaxeGUI;
-import com.gotze.spellcasting.listener.BlockBreakListener;
-import com.gotze.spellcasting.listener.PlayerJoinListener;
-import com.gotze.spellcasting.listener.ShiftRightClickWithPickaxeListener;
-import com.gotze.spellcasting.listener.SwapHandItemsListener;
+import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Spellcasting extends JavaPlugin {
@@ -18,15 +15,15 @@ public class Spellcasting extends JavaPlugin {
         INSTANCE = this;
 
         // GUIs
+        getServer().getPluginManager().registerEvents(new PickaxeGUI(), this);
         getServer().getPluginManager().registerEvents(new EnchantmentsGUI(), this);
         getServer().getPluginManager().registerEvents(new MaterialsGUI(), this);
-        getServer().getPluginManager().registerEvents(new PickaxeGUI(), this);
         getServer().getPluginManager().registerEvents(new AbilityGUI(), this);
 
-        // Event Listeners
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
-        getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
-        getServer().getPluginManager().registerEvents(new ShiftRightClickWithPickaxeListener(), this);
-        getServer().getPluginManager().registerEvents(new SwapHandItemsListener(), this);
+        getServer().getPluginManager().registerEvents(new ResourcePackManager(), this);
+
+        PlayerPickaxeManager playerPickaxeManager = new PlayerPickaxeManager();
+        getServer().getPluginManager().registerEvents(playerPickaxeManager, this);
+        registerCommand("pickaxe", "Manage your custom pickaxe", playerPickaxeManager);
     }
 }

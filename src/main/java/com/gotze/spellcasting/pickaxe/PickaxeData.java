@@ -1,7 +1,7 @@
-package com.gotze.spellcasting.data;
+package com.gotze.spellcasting.pickaxe;
 
-import com.gotze.spellcasting.ability.Ability;
-import com.gotze.spellcasting.enchantment.Enchantment;
+import com.gotze.spellcasting.pickaxe.ability.Ability;
+import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import org.bukkit.Material;
 
 import java.util.HashSet;
@@ -135,10 +135,6 @@ public class PickaxeData {
         return blocksBroken;
     }
 
-    public void setBlocksBroken(int blocksBroken) {
-        this.blocksBroken = blocksBroken;
-    }
-
     public void addBlocksBroken(int amount) {
         this.blocksBroken += amount;
     }
@@ -147,8 +143,8 @@ public class PickaxeData {
         return damage;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
+    public void addDamage(int amount) {
+        this.damage += amount;
     }
 
     @Override

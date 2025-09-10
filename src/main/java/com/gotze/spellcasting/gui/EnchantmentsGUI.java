@@ -1,8 +1,8 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.data.PickaxeData;
-import com.gotze.spellcasting.data.PlayerPickaxeService;
-import com.gotze.spellcasting.enchantment.Enchantment;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
+import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
@@ -28,7 +28,7 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
     public void openGUI(Player player) {
         gui = Bukkit.createInventory(this, 45, Component.text("Enchantments"));
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
+        gui.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
         gui.setItem(20, HASTE_AND_SPEED_ENCHANT_BUTTON); // TODO: testing
         gui.setItem(21, EFFICIENCY_ENCHANT_BUTTON);
         gui.setItem(22, UNBREAKING_ENCHANT_BUTTON);
@@ -62,25 +62,8 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
                 new PickaxeGUI().openGUI(player);
                 SoundUtils.playUIClickSound(player);
             }
-            case 43 -> { // TODO: debug
-                ItemStack playerPickaxe = playerInventory.getItemInMainHand();
-
-                PlayerPickaxeService.removeAllPlayerPickaxeEnchantments(player);
-                playerInventory.removeItem(playerPickaxe);
-
-                playerInventory.addItem(PlayerPickaxeService.getPlayerPickaxe(player));
-
-                clickedInventory.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
-                SoundUtils.playSuccessSound(player);
-            }
-            case 44 -> { // TODO: debug
-                playerInventory.addItem(ItemStack.of(Material.DIAMOND, 32),
-                        ItemStack.of(Material.REDSTONE, 32),
-                        ItemStack.of(Material.OBSIDIAN, 32),
-                        ItemStack.of(Material.LAPIS_LAZULI, 32),
-                        ItemStack.of(Material.EMERALD, 32));
-                SoundUtils.playSuccessSound(player);
-            }
+            case 43 -> clearPickaxeEnchants(player, playerInventory, clickedInventory); // TODO: debug
+            case 44 -> giveResources(player, playerInventory); // TODO: debug
         }
     }
 
@@ -91,7 +74,6 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
             SoundUtils.playErrorSound(player);
             return;
         }
-        ItemStack playerPickaxe = playerInventory.getItemInMainHand();
 
         final int REQUIRED_AMOUNT = 32;
         final ItemStack REQUIRED_MATERIALS = ItemStack.of(clickedUpgrade, REQUIRED_AMOUNT);
@@ -112,7 +94,7 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
             default -> null;
         };
 
-        PickaxeData pickaxeData = PlayerPickaxeService.getPlayerPickaxeData(player);
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
         if (pickaxeData.hasEnchantment(enchantmentType) && pickaxeData.getEnchantment(enchantmentType).isMaxLevel()) {
             player.sendMessage(Component.text("Cannot upgrade " + enchantmentType.getName() + " past level " + enchantmentType.getMaxLevel() + "!")
                     .color(NamedTextColor.RED));
@@ -125,14 +107,42 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         // 2. they have enough of the required material
         // 3. their pickaxe is not at the max level of the chosen enchant
 
-        playerInventory.removeItem(playerPickaxe);
+        ItemStack heldItem = playerInventory.getItemInMainHand();
+        playerInventory.removeItem(heldItem);
+        PlayerPickaxeService.upgradePickaxeEnchantment(pickaxeData, enchantmentType);
+
         playerInventory.removeItem(REQUIRED_MATERIALS);
-
-        PlayerPickaxeService.upgradePlayerPickaxeEnchantment(player, enchantmentType);
-        playerInventory.addItem(PlayerPickaxeService.getPlayerPickaxe(player));
-
-        clickedInventory.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
         SoundUtils.playSuccessSound(player);
+
+        ItemStack playerPickaxe = PlayerPickaxeService.getPickaxe(pickaxeData);
+        playerInventory.addItem(playerPickaxe);
+        clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(playerPickaxe));
+    }
+
+    private void clearPickaxeEnchants(Player player, PlayerInventory playerInventory, Inventory clickedInventory) {
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) {
+            player.sendMessage(Component.text("You are not holding your pickaxe!")
+                    .color(NamedTextColor.RED));
+            SoundUtils.playErrorSound(player);
+            return;
+        }
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+        pickaxeData.removeEnchantments();
+
+        playerInventory.remove(playerInventory.getItemInMainHand());
+        playerInventory.addItem(PlayerPickaxeService.getPickaxe(pickaxeData));
+
+        clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(pickaxeData));
+        SoundUtils.playUIClickSound(player);
+    }
+
+    private void giveResources(Player player, PlayerInventory playerInventory) {
+        playerInventory.addItem(ItemStack.of(Material.DIAMOND, 32),
+                ItemStack.of(Material.REDSTONE, 32),
+                ItemStack.of(Material.OBSIDIAN, 32),
+                ItemStack.of(Material.LAPIS_LAZULI, 32),
+                ItemStack.of(Material.EMERALD, 32));
+        SoundUtils.playUIClickSound(player);
     }
 
     private final ItemStack EFFICIENCY_ENCHANT_BUTTON = new ItemStackBuilder(Material.REDSTONE)

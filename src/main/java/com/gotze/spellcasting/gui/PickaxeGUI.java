@@ -2,7 +2,7 @@ package com.gotze.spellcasting.gui;
 
 import com.gotze.blockbreaksounds.gui.blockbreaksounds.BlockBreakSoundsGUI;
 import com.gotze.blockbreaksounds.model.CurrentSoundData;
-import com.gotze.spellcasting.data.PlayerPickaxeService;
+import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -25,11 +26,20 @@ import static com.gotze.spellcasting.util.StringUtils.convertToSmallFont;
 public class PickaxeGUI implements InventoryHolder, Listener {
     private Inventory gui;
 
+    @EventHandler
+    public void onShiftRightClickWithPickaxe(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (!(event.getAction().isRightClick() && player.isSneaking())) return;
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) return;
+        event.setCancelled(true);
+        new PickaxeGUI().openGUI(player);
+    }
+
     public void openGUI(Player player) {
         gui = Bukkit.createInventory(this, 45, Component.text("Pickaxe"));
         GUIUtils.setFrames(gui);
         gui.setItem(2, STATISTICS_BUTTON); // TODO fix implementation of statistics, currently is just a static view
-        gui.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
+        gui.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
         gui.setItem(6, CurrentSoundData.createCurrentSoundButton(player)); // TODO fix implementation of current sound
         gui.setItem(21, ENCHANTMENTS_BUTTON);
         gui.setItem(22, MATERIAL_BUTTON);

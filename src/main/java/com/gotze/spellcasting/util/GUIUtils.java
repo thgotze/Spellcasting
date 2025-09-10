@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.util;
 
 
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -28,4 +29,11 @@ public class GUIUtils {
             .displayName(Component.text(convertToSmallFont("← return"))
                     .color(NamedTextColor.YELLOW))
             .build();
+
+
+    public static ItemStack cloneItemWithoutDamage(ItemStack itemStack) {
+        ItemStack clone = itemStack.clone();
+        clone.resetData(DataComponentTypes.DAMAGE);
+        return clone;
+    }
 }

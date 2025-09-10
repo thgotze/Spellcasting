@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.data.PlayerPickaxeService;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
@@ -26,7 +27,7 @@ public class MaterialsGUI implements InventoryHolder, Listener {
     public void openGUI(Player player) {
         gui = Bukkit.createInventory(this, 45, Component.text("Materials"));
         GUIUtils.setFrames(gui);
-        gui.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
+        gui.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
         gui.setItem(20, STONE_PICKAXE_BUTTON);
         gui.setItem(21, IRON_PICKAXE_BUTTON);
         gui.setItem(22, GOLD_PICKAXE_BUTTON);
@@ -130,10 +131,11 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         playerInventory.removeItem(playerPickaxe);
         playerInventory.removeItem(REQUIRED_MATERIALS);
 
-        PlayerPickaxeService.upgradePlayerPickaxeMaterial(player, nextTierPickaxe);
-        playerInventory.addItem(PlayerPickaxeService.getPlayerPickaxe(player));
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+        pickaxeData.setType(nextTierPickaxe);
+        playerInventory.addItem(PlayerPickaxeService.getPickaxe(pickaxeData));
 
-        clickedInventory.setItem(4, PlayerPickaxeService.getPlayerPickaxeCloneWithoutDurability(player));
+        clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
         SoundUtils.playSuccessSound(player);
     }
 
