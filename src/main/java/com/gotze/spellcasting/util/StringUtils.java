@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 
 public class StringUtils {
 
-    public static Component toSmallFont(Component input) {
+    public static Component convertToSmallFont(Component input) {
         return Component.text(convertToSmallFont(input.toString()));
     }
 

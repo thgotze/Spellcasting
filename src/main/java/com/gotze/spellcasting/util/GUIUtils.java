@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import static com.gotze.spellcasting.util.StringUtils.convertToSmallFont;
 
 public class GUIUtils {
 
@@ -26,7 +25,7 @@ public class GUIUtils {
     }
 
     public static final ItemStack RETURN_BUTTON = new ItemStackBuilder(Material.ARROW)
-            .displayName(Component.text(convertToSmallFont("← return"))
+            .displayName(Component.text(StringUtils.convertToSmallFont("← return"))
                     .color(NamedTextColor.YELLOW))
             .build();
 
