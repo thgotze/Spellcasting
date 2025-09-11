@@ -1,14 +1,16 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import org.bukkit.entity.Player;
 
-public class LaserAbility extends AbstractAbility {
-    public LaserAbility(Player player) {
-        super(player);
+public class LaserAbility extends Ability {
+
+    public LaserAbility() {
+        super(AbilityType.LASER);
     }
 
     @Override
-    public void activate() {
+    public void activate(Player player, PickaxeData pickaxeData) {
 
     }
 }

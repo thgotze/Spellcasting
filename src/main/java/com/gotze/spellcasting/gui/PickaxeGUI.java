@@ -6,6 +6,7 @@ import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
+import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -20,8 +21,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
-
-import static com.gotze.spellcasting.util.StringUtils.convertToSmallFont;
 
 public class PickaxeGUI implements InventoryHolder, Listener {
     private Inventory gui;
@@ -88,36 +87,36 @@ public class PickaxeGUI implements InventoryHolder, Listener {
     private final ItemStack STATISTICS_BUTTON = new ItemStackBuilder(Material.BOOK)
             .displayName(Component.text("Statistics")
                     .color(NamedTextColor.GOLD))
-            .lore(Component.text(convertToSmallFont("Material Tier: Diamond"))
+            .lore(Component.text(StringUtils.convertToSmallFont("Material Tier: Diamond"))
                             .color(NamedTextColor.GRAY),
-                    Component.text(convertToSmallFont("Enchants unlocked: 5/8"))
+                    Component.text(StringUtils.convertToSmallFont("Enchants unlocked: 5/8"))
                             .color(NamedTextColor.GRAY),
-                    Component.text(convertToSmallFont("Spells unlocked: 2/6"))
+                    Component.text(StringUtils.convertToSmallFont("Spells unlocked: 2/6"))
                             .color(NamedTextColor.GRAY),
-                    Component.text(convertToSmallFont("Blocks broken: 175"))
+                    Component.text(StringUtils.convertToSmallFont("Blocks broken: 175"))
                             .color(NamedTextColor.GRAY),
-                    Component.text(convertToSmallFont("Durability: 1250"))
+                    Component.text(StringUtils.convertToSmallFont("Durability: 1250"))
                             .color(NamedTextColor.GRAY))
             .build();
 
     private final ItemStack MATERIAL_BUTTON = new ItemStackBuilder(Material.ANVIL)
             .displayName(Component.text("Materials")
                     .color(NamedTextColor.AQUA))
-            .lore(Component.text(convertToSmallFont("Click to view pickaxe materials"))
+            .lore(Component.text(StringUtils.convertToSmallFont("Click to view pickaxe materials"))
                     .color(NamedTextColor.GRAY))
             .build();
 
     private final ItemStack ENCHANTMENTS_BUTTON = new ItemStackBuilder(Material.ENCHANTED_BOOK)
             .displayName(Component.text("Enchantments")
                     .color(NamedTextColor.YELLOW))
-            .lore(Component.text(convertToSmallFont("Click to view pickaxe enchantments"))
+            .lore(Component.text(StringUtils.convertToSmallFont("Click to view pickaxe enchantments"))
                     .color(NamedTextColor.GRAY))
             .build();
 
     private final ItemStack SPELLS_BUTTON = new ItemStackBuilder(Material.END_CRYSTAL)
             .displayName(Component.text("Abilities")
                     .color(NamedTextColor.LIGHT_PURPLE))
-            .lore(Component.text(convertToSmallFont("Click to view pickaxe abilities"))
+            .lore(Component.text(StringUtils.convertToSmallFont("Click to view pickaxe abilities"))
                     .color(NamedTextColor.GRAY))
             .build();
 

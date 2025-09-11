@@ -1,11 +1,11 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.util.BlockUtils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
@@ -14,7 +14,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.joml.Matrix4f;
 
-public class SliceAbility extends AbstractAbility {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SliceAbility extends Ability {
     private final int[] START_DELAYS = {0, 6, 38, 44, 76, 82};
     private final float[] DISPLAY_ROTATIONS = {-75f, 75f, -45f, 45f, -15f, 15f};
     private final String[] ANTI_CLOCKWISE_SPRITES = {
@@ -28,13 +31,14 @@ public class SliceAbility extends AbstractAbility {
             "crescent_backside08", "crescent_backside09", "crescent_backside10", "crescent_backside11"
     };
 
-    public SliceAbility(Player player) {
-        super(player);
+    public SliceAbility() {
+        super(AbilityType.SLICE);
     }
 
     @Override
-    public void activate() {
+    public void activate(Player player, PickaxeData pickaxeData) {
         final Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
+        final World world = player.getWorld();
 
         ItemDisplay[] itemDisplays = new ItemDisplay[6];
         for (int i = 0; i < 6; i++) {
@@ -45,6 +49,7 @@ public class SliceAbility extends AbstractAbility {
                     .rotateX((float) Math.toRadians(90f))
                     .scale(5f, 5f, 0.1f)
             );
+            player.addPassenger(itemDisplays[i]); // TODO: check if itemdisplays being passangers on players is better
         }
 
         new BukkitRunnable() {
@@ -66,7 +71,12 @@ public class SliceAbility extends AbstractAbility {
 
                             player.playSound(player, Sound.ITEM_TRIDENT_THROW, 0.20f, 1.35f);
 
-                            BlockUtils.breakBlocksInLineOfSight(player, i, 4.5);
+                            List<Block> blocksToBreak = getBlocksInLineOfSight(i, player);
+                            for (Block block : blocksToBreak) {
+                                if (!block.getType().isAir()) {
+                                    block.breakNaturally(true);
+                                }
+                            }
                         }
 
                         String spriteName = (i % 2 == 0) ? ANTI_CLOCKWISE_SPRITES[spriteIndex] : CLOCKWISE_SPRITES[spriteIndex];
@@ -87,5 +97,34 @@ public class SliceAbility extends AbstractAbility {
                 }
             }
         }.runTaskTimer(Spellcasting.INSTANCE, 0, 1);
+    }
+
+    private List<Block> getBlocksInLineOfSight(int displayIndex, Player player) {
+        final double reachDistance = 4.5;
+        BlockFace playerFacing = player.getFacing();
+        Location eyeLocation = player.getEyeLocation();
+
+        List<Block> blocksInLineOfSight = player.getLineOfSight(null, 5);
+
+        List<Block> blocksToBreak = new ArrayList<>(blocksInLineOfSight);
+        for (Block block : blocksInLineOfSight) {
+            Location blockLocation = block.getLocation();
+
+            double nearestX = Math.max(blockLocation.getX(), Math.min(eyeLocation.getX(), blockLocation.getX() + 1));
+            double nearestY = Math.max(blockLocation.getY(), Math.min(eyeLocation.getY(), blockLocation.getY() + 1));
+            double nearestZ = Math.max(blockLocation.getZ(), Math.min(eyeLocation.getZ(), blockLocation.getZ() + 1));
+
+            double distanceToNearestPoint = eyeLocation.distanceSquared(new Location(blockLocation.getWorld(), nearestX, nearestY, nearestZ));
+            if (distanceToNearestPoint > reachDistance * reachDistance) continue;
+
+            blocksToBreak.addAll(switch (displayIndex) {
+                case 0, 1 -> BlockUtils.getVerticalBlocks(block);
+                case 2 -> BlockUtils.getPositiveDiagonalBlocks(block, playerFacing);
+                case 3 -> BlockUtils.getNegativeDiagonalBlocks(block, playerFacing);
+                case 4, 5 -> BlockUtils.getHorizontalBlocks(block, playerFacing);
+                default -> null;
+            });
+        }
+        return blocksToBreak;
     }
 }

@@ -68,6 +68,7 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
     }
 
     private void upgradeEnchantment(Player player, PlayerInventory playerInventory, Material clickedUpgrade, Inventory clickedInventory) {
+        ItemStack heldItem = playerInventory.getItemInMainHand();
         if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) {
             player.sendMessage(Component.text("You are not holding your pickaxe!")
                     .color(NamedTextColor.RED));
@@ -107,14 +108,13 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         // 2. they have enough of the required material
         // 3. their pickaxe is not at the max level of the chosen enchant
 
-        ItemStack heldItem = playerInventory.getItemInMainHand();
         playerInventory.removeItem(heldItem);
         PlayerPickaxeService.upgradePickaxeEnchantment(pickaxeData, enchantmentType);
 
         playerInventory.removeItem(REQUIRED_MATERIALS);
         SoundUtils.playSuccessSound(player);
 
-        ItemStack playerPickaxe = PlayerPickaxeService.getPickaxe(pickaxeData);
+        ItemStack playerPickaxe = PlayerPickaxeService.getPickaxe(player);
         playerInventory.addItem(playerPickaxe);
         clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(playerPickaxe));
     }
@@ -130,9 +130,10 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         pickaxeData.removeEnchantments();
 
         playerInventory.remove(playerInventory.getItemInMainHand());
-        playerInventory.addItem(PlayerPickaxeService.getPickaxe(pickaxeData));
+        ItemStack pickaxe = PlayerPickaxeService.getPickaxe(player);
+        playerInventory.addItem(pickaxe);
 
-        clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(pickaxeData));
+        clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(pickaxe));
         SoundUtils.playUIClickSound(player);
     }
 

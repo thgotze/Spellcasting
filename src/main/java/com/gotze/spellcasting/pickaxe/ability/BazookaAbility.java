@@ -1,11 +1,9 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.util.BlockUtils;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -14,13 +12,15 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 
-public class BazookaAbility extends AbstractAbility {
+public class BazookaAbility extends Ability {
 
-    public BazookaAbility(Player player) {
-        super(player);
+    public BazookaAbility() {
+        super(AbilityType.BAZOOKA);
     }
 
-    public void activate() {
+    @Override
+    public void activate(Player player, PickaxeData pickaxeData) {
+        final World world = player.getWorld();
         final Location startLocation = player.getEyeLocation();
         final Vector lookingDirection = player.getLocation().getDirection();
         final BlockFace playerFacing = player.getFacing();
@@ -47,7 +47,7 @@ public class BazookaAbility extends AbstractAbility {
                     int y = targetBlock.getY();
                     int z = targetBlock.getZ();
 
-                    blocksToBreak.addAll(BlockUtils.getSpherePattern(targetBlock, 4));
+                    blocksToBreak.addAll(BlockUtils.getBlocksInSpherePattern(targetBlock, 4));
                     // Vertical blocks
 //                    blocksToBreak.add(world.getBlockAt(x, y + 1, z));
 //                    blocksToBreak.add(world.getBlockAt(x, y - 1, z));

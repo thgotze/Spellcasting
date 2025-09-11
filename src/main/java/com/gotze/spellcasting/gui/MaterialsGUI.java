@@ -33,10 +33,8 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         gui.setItem(22, GOLD_PICKAXE_BUTTON);
         gui.setItem(23, DIAMOND_PICKAXE_BUTTON);
         gui.setItem(24, NETHERITE_PICKAXE_BUTTON);
-
         gui.setItem(43, WOODEN_PICKAXE_BUTTON); // TODO: remove later
         gui.setItem(44, DEBUG_GIVE_RESOURCES); // TODO: remove later
-
         gui.setItem(36, GUIUtils.RETURN_BUTTON);
         player.openInventory(gui);
     }
@@ -133,7 +131,7 @@ public class MaterialsGUI implements InventoryHolder, Listener {
 
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
         pickaxeData.setType(nextTierPickaxe);
-        playerInventory.addItem(PlayerPickaxeService.getPickaxe(pickaxeData));
+        playerInventory.addItem(PlayerPickaxeService.getPickaxe(player));
 
         clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
         SoundUtils.playSuccessSound(player);

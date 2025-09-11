@@ -66,6 +66,7 @@ public class AbilityGUI implements InventoryHolder, Listener {
     }
 
     private void upgradeAbility(Player player, PlayerInventory playerInventory, Material clickedUpgrade, Inventory clickedInventory) {
+        ItemStack heldItem = playerInventory.getItemInMainHand();
         if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) {
             player.sendMessage(Component.text("You are not holding your pickaxe!")
                     .color(NamedTextColor.RED));
@@ -103,12 +104,11 @@ public class AbilityGUI implements InventoryHolder, Listener {
         // 2. they have enough of the required material
         // 3. their pickaxe is not at the max level of the chosen ability
 
-        ItemStack heldItem = playerInventory.getItemInMainHand();
         playerInventory.removeItem(heldItem);
         playerInventory.removeItem(REQUIRED_MATERIALS);
 
         PlayerPickaxeService.upgradePickaxeAbility(player, abilityType);
-        ItemStack playerPickaxe = PlayerPickaxeService.getPickaxe(pickaxeData);
+        ItemStack playerPickaxe = PlayerPickaxeService.getPickaxe(player);
         playerInventory.addItem(playerPickaxe);
 
         clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(playerPickaxe));
@@ -116,6 +116,7 @@ public class AbilityGUI implements InventoryHolder, Listener {
     }
 
     private void clearPickaxeAbilities(Player player, PlayerInventory playerInventory, Inventory clickedInventory) {
+        ItemStack heldItem = playerInventory.getItemInMainHand();
         if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) {
             player.sendMessage(Component.text("You are not holding your pickaxe!")
                     .color(NamedTextColor.RED));
@@ -127,10 +128,10 @@ public class AbilityGUI implements InventoryHolder, Listener {
 
         playerInventory.remove(playerInventory.getItemInMainHand());
 
-        ItemStack pickaxe = PlayerPickaxeService.getPickaxe(pickaxeData);
-        playerInventory.addItem(pickaxe);
+        ItemStack playerPickaxe = PlayerPickaxeService.getPickaxe(player);
+        playerInventory.addItem(playerPickaxe);
 
-        clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(pickaxe));
+        clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(playerPickaxe));
         SoundUtils.playUIClickSound(player);
     }
 

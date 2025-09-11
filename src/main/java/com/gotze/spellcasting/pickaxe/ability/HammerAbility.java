@@ -1,17 +1,18 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class HammerAbility extends AbstractAbility {
+public class HammerAbility extends Ability {
 
-    public HammerAbility(Player player) {
-        super(player);
+    public HammerAbility() {
+        super(AbilityType.HAMMER);
     }
 
     @Override
-    public void activate() {
+    public void activate(Player player, PickaxeData pickaxeData) {
 
         new BukkitRunnable() {
             int ticks = 0;
