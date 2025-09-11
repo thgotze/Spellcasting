@@ -2,16 +2,12 @@ package com.gotze.spellcasting.pickaxe.enchantment;
 
 import com.gotze.spellcasting.Rarity;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
-public class Enchantment {
+public abstract class Enchantment {
     private final EnchantmentType enchantmentType;
     private int level;
 
@@ -19,6 +15,8 @@ public class Enchantment {
         this.enchantmentType = enchantmentType;
         this.level = 1;
     }
+
+    public abstract void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData);
 
     public EnchantmentType getEnchantmentType() {
         return enchantmentType;
@@ -68,53 +66,11 @@ public class Enchantment {
     }
 
     public enum EnchantmentType {
-        EFFICIENCY("Efficiency", 5, Rarity.BASIC) {
-            @Override
-            public void apply(Player player, BlockBreakEvent event, PickaxeData pickaxeData, int level) {
-                // No custom logic needed
-            }
-        },
-        UNBREAKING("Unbreaking", 3, Rarity.BASIC) {
-            @Override
-            public void apply(Player player, BlockBreakEvent event, PickaxeData pickaxeData, int level) {
-                // No custom logic needed
-            }
-        },
-        FORTUNE("Fortune", 3, Rarity.BASIC) {
-            @Override
-            public void apply(Player player, BlockBreakEvent event, PickaxeData pickaxeData, int level) {
-                // No custom logic needed
-            }
-        },
-        HASTE_AND_SPEED("Haste And Speed", 5, Rarity.UNIQUE) {
-            @Override
-            public void apply(Player player, BlockBreakEvent event, PickaxeData pickaxeData, int level) {
-                double chance = level * 0.05;
-
-                if (Math.random() < chance) {
-                    int amplifier = level - 1;
-                    if (Math.random() < 0.5) {
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * level, amplifier));
-                    } else {
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * level, amplifier));
-                    }
-                }
-            }
-        },
-        MINE_BLOCK_ABOVE("Mine Block Above", 5, Rarity.UNIQUE) {
-            @Override
-            public void apply(Player player, BlockBreakEvent event, PickaxeData pickaxeData, int level) {
-                double chance = level * 0.05;
-
-                if (Math.random() < chance) {
-                    Block blockAbove = event.getBlock().getRelative(BlockFace.UP);
-                    if (!blockAbove.getType().isAir()) {
-                        blockAbove.breakNaturally(true);
-                        pickaxeData.addBlocksBroken(1);
-                    }
-                }
-            }
-        };
+        EFFICIENCY("Efficiency", 5, Rarity.BASIC),
+        UNBREAKING("Unbreaking", 3, Rarity.BASIC),
+        FORTUNE("Fortune", 3, Rarity.BASIC),
+        HASTE_AND_SPEED("Haste And Speed", 5, Rarity.UNIQUE),
+        MINE_BLOCK_ABOVE("Mine Block Above", 5, Rarity.UNIQUE);
 
         private final String name;
         private final int maxLevel;
@@ -137,7 +93,33 @@ public class Enchantment {
         public Rarity getRarity() {
             return rarity;
         }
+    }
 
-        public abstract void apply(Player player, BlockBreakEvent event, PickaxeData pickaxeData, int level); // TODO: logic should later NOT be coupled to enum
+    public static class EfficiencyEnchantment extends Enchantment {
+        public EfficiencyEnchantment() {
+            super(EnchantmentType.EFFICIENCY);
+        }
+
+        @Override
+        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {}
+    }
+
+    public static class FortuneEnchantment extends Enchantment {
+        public FortuneEnchantment() {
+            super(EnchantmentType.FORTUNE);
+        }
+
+        @Override
+        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {}
+    }
+
+    public static class UnbreakingEnchantment extends Enchantment {
+
+        public UnbreakingEnchantment() {
+            super(EnchantmentType.UNBREAKING);
+        }
+
+        @Override
+        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {}
     }
 }
