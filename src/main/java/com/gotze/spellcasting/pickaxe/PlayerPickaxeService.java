@@ -1,18 +1,22 @@
 package com.gotze.spellcasting.pickaxe;
 
 import com.destroystokyo.paper.MaterialSetTag;
-import com.gotze.spellcasting.pickaxe.ability.Ability;
+import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.pickaxe.ability.*;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
+import com.gotze.spellcasting.pickaxe.enchantment.HasteAndSpeedEnchantment;
+import com.gotze.spellcasting.pickaxe.enchantment.MineBlockAboveEnchantment;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.StringUtils;
-import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
@@ -28,14 +32,13 @@ public class PlayerPickaxeService {
     }
 
     public static ItemStack getPickaxe(Player player) {
-        return getPickaxe(getPickaxeData(player));
-    }
+        PickaxeData pickaxeData = getPickaxeData(player);
 
-    public static ItemStack getPickaxe(PickaxeData pickaxeData) {
         ItemStackBuilder builder = new ItemStackBuilder(pickaxeData.getType())
                 .lore(getPickaxeLore(pickaxeData))
                 .hideAttributes()
-                .hideEnchantTooltip();
+                .hideEnchantTooltip()
+                .setPersistentDataComponent("owner", player.getUniqueId().toString());
 
         Enchantment efficiency = pickaxeData.getEnchantment(Enchantment.EnchantmentType.EFFICIENCY);
         if (efficiency != null) {
@@ -126,15 +129,17 @@ public class PlayerPickaxeService {
         return fixedLore;
     }
 
-    public static void upgradePickaxeEnchantment(Player player, Enchantment.EnchantmentType enchantmentType) {
-        upgradePickaxeEnchantment(getPickaxeData(player), enchantmentType);
-    }
-
     public static void upgradePickaxeEnchantment(PickaxeData pickaxeData, Enchantment.EnchantmentType enchantmentType) {
         if (pickaxeData.hasEnchantment(enchantmentType)) {
             pickaxeData.getEnchantment(enchantmentType).increaseLevel();
         } else {
-            pickaxeData.addEnchantment(new Enchantment(enchantmentType));
+            switch (enchantmentType) {
+                case EFFICIENCY -> pickaxeData.addEnchantment(new Enchantment.EfficiencyEnchantment());
+                case FORTUNE -> pickaxeData.addEnchantment(new Enchantment.FortuneEnchantment());
+                case UNBREAKING  -> pickaxeData.addEnchantment(new Enchantment.UnbreakingEnchantment());
+                case MINE_BLOCK_ABOVE -> pickaxeData.addEnchantment(new MineBlockAboveEnchantment());
+                case HASTE_AND_SPEED -> pickaxeData.addEnchantment(new HasteAndSpeedEnchantment());
+            }
         }
     }
 
@@ -146,23 +151,31 @@ public class PlayerPickaxeService {
         if (pickaxeData.hasAbility(abilityType)) {
             pickaxeData.getAbility(abilityType).increaseLevel();
         } else {
-            pickaxeData.addAbility(new Ability(abilityType));
+            switch (abilityType) {
+                case SLICE -> pickaxeData.addAbility(new SliceAbility());
+                case BAZOOKA -> pickaxeData.addAbility(new BazookaAbility());
+                case LASER -> pickaxeData.addAbility(new LaserAbility());
+                case HAMMER -> pickaxeData.addAbility(new HammerAbility());
+            }
         }
     }
 
     public static boolean isPlayerHoldingOwnPickaxe(Player player) {
         ItemStack heldItem = player.getInventory().getItemInMainHand();
+
         if (!MaterialSetTag.ITEMS_PICKAXES.isTagged(heldItem.getType())) return false;
 
-        return heldItem.matchesWithoutData(getPickaxe(getPickaxeData(player)), Set.of(DataComponentTypes.DAMAGE));
+        NamespacedKey ownerKey = new NamespacedKey(Spellcasting.INSTANCE, "owner");
+        String owner = heldItem.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
+        return player.getUniqueId().toString().equals(owner);
     }
 
     public static ItemStack getPickaxeCloneWithoutDurability(Player player) {
-        return getPickaxeCloneWithoutDurability(getPickaxeData(player));
+        return getPickaxeCloneWithoutDurability(player, getPickaxeData(player));
     }
 
-    public static ItemStack getPickaxeCloneWithoutDurability(PickaxeData pickaxeData) {
-        return getPickaxeCloneWithoutDurability(getPickaxe(pickaxeData));
+    public static ItemStack getPickaxeCloneWithoutDurability(Player player, PickaxeData pickaxeData) {
+        return getPickaxeCloneWithoutDurability(getPickaxe(player));
     }
 
     public static ItemStack getPickaxeCloneWithoutDurability(ItemStack pickaxe) {
