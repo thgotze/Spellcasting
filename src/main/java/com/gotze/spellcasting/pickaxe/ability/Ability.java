@@ -1,10 +1,12 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Rarity;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
+import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-public class Ability {
+public abstract class Ability {
     private final AbilityType abilityType;
     private int level;
 
@@ -12,6 +14,8 @@ public class Ability {
         this.abilityType = abilityType;
         this.level = 1;
     }
+
+    public abstract void activate(Player player, PickaxeData pickaxeData);
 
     public AbilityType getAbilityType() {
         return abilityType;
@@ -27,6 +31,10 @@ public class Ability {
 
     public int getMaxLevel() {
         return abilityType.getMaxLevel();
+    }
+
+    public Rarity getRarity() {
+        return abilityType.getRarity();
     }
 
     public boolean isMaxLevel() {
@@ -64,7 +72,7 @@ public class Ability {
         SLICE("Slice", 1, Rarity.LEGENDARY),
         BAZOOKA("Bazooka", 1, Rarity.LEGENDARY),
         LASER("Laser", 1, Rarity.LEGENDARY),
-        TRANSFORM_HAMMER("Transform Hammer", 1, Rarity.LEGENDARY);
+        HAMMER("Hammer", 1, Rarity.LEGENDARY);
 
         private final String name;
         private final int maxLevel;
