@@ -1,5 +1,6 @@
 package com.gotze.spellcasting.util;
 
+import com.gotze.spellcasting.Spellcasting;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
 import io.papermc.paper.datacomponent.item.ItemEnchantments;
@@ -8,8 +9,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +28,7 @@ public class ItemStackBuilder {
     private boolean hideEnchantTooltip = false;
     private boolean enchantGlint = false;
     private Map<Enchantment, Integer> enchantments = new HashMap<>();
+    private Map<String, String> persistentData = new HashMap<>();
 
     public ItemStackBuilder(Material material) {
         this.material = material;
@@ -80,6 +84,11 @@ public class ItemStackBuilder {
         return this;
     }
 
+    public ItemStackBuilder setPersistentDataComponent(String key, String value) {
+        this.persistentData.put(key, value);
+        return this;
+    }
+
     public ItemStack build() {
         ItemStack itemStack = ItemStack.of(material);
 
@@ -127,6 +136,14 @@ public class ItemStackBuilder {
             itemStack.addEnchantments(enchantments);
         }
 
+        if (!persistentData.isEmpty()) {
+            itemStack.editPersistentDataContainer(persistentDataContainer -> {
+                for (Map.Entry<String, String> entry : persistentData.entrySet()) {
+                    NamespacedKey key = new NamespacedKey(Spellcasting.INSTANCE, entry.getKey());
+                    persistentDataContainer.set(key, PersistentDataType.STRING, entry.getValue());
+                }
+            });
+        }
         return itemStack;
     }
 }
