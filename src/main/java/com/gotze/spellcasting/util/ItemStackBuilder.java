@@ -27,8 +27,10 @@ public class ItemStackBuilder {
     private boolean hideTooltipBox = false;
     private boolean hideEnchantTooltip = false;
     private boolean enchantGlint = false;
-    private Map<Enchantment, Integer> enchantments = new HashMap<>();
-    private Map<String, String> persistentData = new HashMap<>();
+    private final Map<Enchantment, Integer> enchantments = new HashMap<>();
+    private Map<String, String> persistentDataContainers = new HashMap<>();
+    private int durabilityDamage;
+    private int maxDurability;
 
     public ItemStackBuilder(Material material) {
         this.material = material;
@@ -84,8 +86,18 @@ public class ItemStackBuilder {
         return this;
     }
 
-    public ItemStackBuilder setPersistentDataComponent(String key, String value) {
-        this.persistentData.put(key, value);
+    public ItemStackBuilder addPersistentDataContainer(String key, String value) {
+        this.persistentDataContainers.put(key, value);
+        return this;
+    }
+
+    public ItemStackBuilder setDurabilityDamage(int durabilityDamage) {
+        this.durabilityDamage = durabilityDamage;
+        return this;
+    }
+
+    public ItemStackBuilder setMaxDurability(int maxDurability) {
+        this.maxDurability = maxDurability;
         return this;
     }
 
@@ -136,13 +148,21 @@ public class ItemStackBuilder {
             itemStack.addEnchantments(enchantments);
         }
 
-        if (!persistentData.isEmpty()) {
-            itemStack.editPersistentDataContainer(persistentDataContainer -> {
-                for (Map.Entry<String, String> entry : persistentData.entrySet()) {
+        if (!persistentDataContainers.isEmpty()) {
+            itemStack.editPersistentDataContainer(pdc -> {
+                for (Map.Entry<String, String> entry : this.persistentDataContainers.entrySet()) {
                     NamespacedKey key = new NamespacedKey(Spellcasting.INSTANCE, entry.getKey());
-                    persistentDataContainer.set(key, PersistentDataType.STRING, entry.getValue());
+                    pdc.set(key, PersistentDataType.STRING, entry.getValue());
                 }
             });
+        }
+
+        if (durabilityDamage > 0) {
+            itemStack.setData(DataComponentTypes.DAMAGE, durabilityDamage);
+        }
+
+        if (maxDurability > 0) {
+            itemStack.setData(DataComponentTypes.MAX_DAMAGE, maxDurability);
         }
         return itemStack;
     }
