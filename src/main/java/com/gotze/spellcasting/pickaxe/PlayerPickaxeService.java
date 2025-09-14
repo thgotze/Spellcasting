@@ -2,16 +2,13 @@ package com.gotze.spellcasting.pickaxe;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.pickaxe.ability.*;
+import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
-import com.gotze.spellcasting.pickaxe.enchantment.HasteAndSpeedEnchantment;
-import com.gotze.spellcasting.pickaxe.enchantment.MineBlockAboveEnchantment;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -34,32 +31,33 @@ public class PlayerPickaxeService {
     public static ItemStack getPickaxe(Player player) {
         PickaxeData pickaxeData = getPickaxeData(player);
 
-        ItemStackBuilder builder = new ItemStackBuilder(pickaxeData.getType())
+        ItemStackBuilder builder = new ItemStackBuilder(pickaxeData.getPickaxeMaterial().getType())
                 .lore(getPickaxeLore(pickaxeData))
                 .hideAttributes()
                 .hideEnchantTooltip()
-                .setPersistentDataComponent("owner", player.getUniqueId().toString());
+                .addPersistentDataContainer("owner", player.getUniqueId().toString())
+                .setDurabilityDamage(pickaxeData.getDamage())
+                .setMaxDurability(pickaxeData.getPickaxeMaterial().getMaxDurability());
 
         Enchantment efficiency = pickaxeData.getEnchantment(Enchantment.EnchantmentType.EFFICIENCY);
+        Enchantment fortune = pickaxeData.getEnchantment(Enchantment.EnchantmentType.FORTUNE);
+        Enchantment unbreaking = pickaxeData.getEnchantment(Enchantment.EnchantmentType.UNBREAKING);
+
         if (efficiency != null) {
             builder.addEnchantment(org.bukkit.enchantments.Enchantment.EFFICIENCY, efficiency.getLevel());
         }
-
-        Enchantment unbreaking = pickaxeData.getEnchantment(Enchantment.EnchantmentType.UNBREAKING);
-        if (unbreaking != null) {
-            builder.addEnchantment(org.bukkit.enchantments.Enchantment.UNBREAKING, unbreaking.getLevel());
-        }
-
-        Enchantment fortune = pickaxeData.getEnchantment(Enchantment.EnchantmentType.FORTUNE);
         if (fortune != null) {
             builder.addEnchantment(org.bukkit.enchantments.Enchantment.FORTUNE, fortune.getLevel());
+        }
+        if (unbreaking != null) {
+            builder.addEnchantment(org.bukkit.enchantments.Enchantment.UNBREAKING, unbreaking.getLevel());
         }
 
         return builder.build();
     }
 
     public static List<Component> getPickaxeLore(PickaxeData pickaxeData) {
-//        Material material = pickaxeData.getType();
+        PickaxeMaterial pickaxeMaterial = pickaxeData.getPickaxeMaterial();
         Set<Enchantment> enchantments = pickaxeData.getEnchantments();
         Set<Ability> abilities = pickaxeData.getAbilities();
         int blocksBroken = pickaxeData.getBlocksBroken();
@@ -67,58 +65,80 @@ public class PlayerPickaxeService {
 
         List<Component> lore = new ArrayList<>();
 
-        // Sort enchantments by rarity (descending order)
-        List<Enchantment> sortedEnchantments = enchantments.stream()
-                .sorted((e1, e2) -> Integer.compare(
-                        e2.getEnchantmentType().getRarity().ordinal(),
-                        e1.getEnchantmentType().getRarity().ordinal()
-                ))
-                .toList();
+        if (!enchantments.isEmpty()) {
+            // Sort enchantments by rarity (descending order)
+            List<Enchantment> sortedEnchantments = enchantments.stream()
+                    .sorted((e1, e2) -> Integer.compare(
+                            e2.getEnchantmentType().getRarity().ordinal(),
+                            e1.getEnchantmentType().getRarity().ordinal()
+                    ))
+                    .toList();
 
-
-//        for (Enchantment enchantment : sortedEnchantments) { TODO: decided if this or one below looks better
-//            lore.add(Component.text("⛏ ")
-//                    .color(NamedTextColor.YELLOW)
-//                    .append(Component.text(enchantment.getEnchantmentType().getName() + " ")
-//                            .color(enchantment.getEnchantmentType().getRarity().getColor()))
-//                    .append(Component.text(StringUtils.toRomanNumeral(enchantment.getLevel()))
-//                            .color(TextColor.color(250, 250, 250))
-//                            .decorate(TextDecoration.BOLD)));
-//        }
-
-        for (Enchantment enchantment : sortedEnchantments) {
-            lore.add(Component.text(enchantment.getEnchantmentType().getName() + " ")
-                            .color(enchantment.getEnchantmentType().getRarity().getColor())
-                    .append(Component.text(StringUtils.toRomanNumeral(enchantment.getLevel()))
-                            .color(TextColor.color(250, 250, 250))
-                            .decorate(TextDecoration.BOLD)));
+            for (Enchantment enchantment : sortedEnchantments) {
+                lore.add(Component.text(enchantment.getEnchantmentType() + " ")
+                        .color(enchantment.getEnchantmentType().getRarity().getColor())
+                        .append(Component.text(StringUtils.toRomanNumeral(enchantment.getLevel())))
+                );
+            }
+            lore.add(Component.text(""));
         }
 
-        lore.add(Component.text(""));
+        if (!abilities.isEmpty()) {
+            // Sort abilities by rarity (descending order)
+            List<Ability> sortedAbilities = abilities.stream()
+                    .sorted((e1, e2) -> Integer.compare(
+                            e2.getAbilityType().getRarity().ordinal(),
+                            e1.getAbilityType().getRarity().ordinal()
+                    ))
+                    .toList();
 
-        for (Ability ability : abilities) {
-            lore.add(Component.text("⚡ ")
-                    .color(NamedTextColor.RED)
-                    .decorate(TextDecoration.BOLD)
-                    .append(Component.text(ability.getAbilityType().getName() + " ")
-                            .color(ability.getAbilityType().getRarity().getColor())
-                            .decoration(TextDecoration.BOLD, false))
-                    .append(Component.text(StringUtils.toRomanNumeral(ability.getLevel()))
-                            .color(TextColor.color(250, 250, 250))
-                            .decorate(TextDecoration.BOLD)));
+            for (Ability ability : sortedAbilities) {
+                lore.add(Component.text("⚡ ")
+                        .color(NamedTextColor.RED)
+                        .decorate(TextDecoration.BOLD)
+                        .append(Component.text(ability.getAbilityType() + " ")
+                                .color(ability.getAbilityType().getRarity().getColor())
+                                .decoration(TextDecoration.BOLD, false))
+                        .append(Component.text(StringUtils.toRomanNumeral(ability.getLevel()))
+                                .color(ability.getAbilityType().getRarity().getColor())
+                                .decoration(TextDecoration.BOLD, false)));
+            }
+            lore.add(Component.text(""));
         }
-        lore.add(Component.text(""));
+
         lore.add(Component.text("Blocks Broken: ")
                 .color(NamedTextColor.GRAY)
                 .append(Component.text(String.valueOf(blocksBroken))
-                        .color(NamedTextColor.GOLD)
-                        .decorate(TextDecoration.BOLD)));
+                        .color(NamedTextColor.GOLD)));
+
+        lore.add(Component.text(""));
+
+        int remaining = pickaxeMaterial.getMaxDurability() - damage;
+        double pct = (double) remaining / pickaxeMaterial.getMaxDurability();
+        NamedTextColor color;
+        if (pct >= 0.60) {
+            color = NamedTextColor.GREEN;
+        } else if (pct >= 0.30) {
+            color = NamedTextColor.YELLOW;
+        } else if (pct >= 0.20) {
+            color = NamedTextColor.GOLD;
+        } else if (pct >= 0.15) {
+            color = NamedTextColor.RED;
+        } else {
+            color = NamedTextColor.DARK_RED;
+        }
+
+        Component durabilityComponent = Component.text(remaining).color(color);
 
         lore.add(Component.text("Durability: ")
                 .color(NamedTextColor.GRAY)
-                .append(Component.text(String.valueOf(damage))
-                        .color(NamedTextColor.GREEN)
-                        .decorate(TextDecoration.BOLD)));
+                .append(durabilityComponent)
+//                .append(Component.text(pickaxeMaterial.getMaxDurability() - damage)
+//                        .color(NamedTextColor.GREEN))
+                .append(Component.text(" | ")
+                        .color(NamedTextColor.DARK_GRAY))
+                .append(Component.text(pickaxeMaterial.getMaxDurability())
+                        .color(NamedTextColor.GRAY)));
 
         List<Component> fixedLore = lore.stream()
                 .map(component -> component
@@ -127,37 +147,6 @@ public class PlayerPickaxeService {
                 ).toList();
 
         return fixedLore;
-    }
-
-    public static void upgradePickaxeEnchantment(PickaxeData pickaxeData, Enchantment.EnchantmentType enchantmentType) {
-        if (pickaxeData.hasEnchantment(enchantmentType)) {
-            pickaxeData.getEnchantment(enchantmentType).increaseLevel();
-        } else {
-            switch (enchantmentType) {
-                case EFFICIENCY -> pickaxeData.addEnchantment(new Enchantment.EfficiencyEnchantment());
-                case FORTUNE -> pickaxeData.addEnchantment(new Enchantment.FortuneEnchantment());
-                case UNBREAKING  -> pickaxeData.addEnchantment(new Enchantment.UnbreakingEnchantment());
-                case MINE_BLOCK_ABOVE -> pickaxeData.addEnchantment(new MineBlockAboveEnchantment());
-                case HASTE_AND_SPEED -> pickaxeData.addEnchantment(new HasteAndSpeedEnchantment());
-            }
-        }
-    }
-
-    public static void upgradePickaxeAbility(Player player, Ability.AbilityType abilityType) {
-        upgradePickaxeAbility(getPickaxeData(player), abilityType);
-    }
-
-    public static void upgradePickaxeAbility(PickaxeData pickaxeData, Ability.AbilityType abilityType) {
-        if (pickaxeData.hasAbility(abilityType)) {
-            pickaxeData.getAbility(abilityType).increaseLevel();
-        } else {
-            switch (abilityType) {
-                case SLICE -> pickaxeData.addAbility(new SliceAbility());
-                case BAZOOKA -> pickaxeData.addAbility(new BazookaAbility());
-                case LASER -> pickaxeData.addAbility(new LaserAbility());
-                case HAMMER -> pickaxeData.addAbility(new HammerAbility());
-            }
-        }
     }
 
     public static boolean isPlayerHoldingOwnPickaxe(Player player) {
@@ -171,14 +160,6 @@ public class PlayerPickaxeService {
     }
 
     public static ItemStack getPickaxeCloneWithoutDurability(Player player) {
-        return getPickaxeCloneWithoutDurability(player, getPickaxeData(player));
-    }
-
-    public static ItemStack getPickaxeCloneWithoutDurability(Player player, PickaxeData pickaxeData) {
-        return getPickaxeCloneWithoutDurability(getPickaxe(player));
-    }
-
-    public static ItemStack getPickaxeCloneWithoutDurability(ItemStack pickaxe) {
-        return GUIUtils.cloneItemWithoutDamage(pickaxe);
+        return GUIUtils.cloneItemWithoutDamage(getPickaxe(player));
     }
 }
