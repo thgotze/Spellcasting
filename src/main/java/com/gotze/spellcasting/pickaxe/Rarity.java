@@ -1,4 +1,4 @@
-package com.gotze.spellcasting;
+package com.gotze.spellcasting.pickaxe;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -17,5 +17,10 @@ public enum Rarity {
 
     public NamedTextColor getColor() {
         return color;
+    }
+
+    @Override
+    public String toString() {
+        return name().charAt(0) + name().substring(1).toLowerCase();
     }
 }
