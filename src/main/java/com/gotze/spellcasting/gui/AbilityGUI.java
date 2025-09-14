@@ -26,7 +26,7 @@ public class AbilityGUI implements InventoryHolder, Listener {
     private Inventory gui;
 
     public void openGUI(Player player) {
-        gui = Bukkit.createInventory(this, 45, Component.text("Spells"));
+        gui = Bukkit.createInventory(this, 45, Component.text("Abilities"));
         GUIUtils.setFrames(gui);
         gui.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
         gui.setItem(21, SLICE_ABILITY_BUTTON);
@@ -88,12 +88,12 @@ public class AbilityGUI implements InventoryHolder, Listener {
             case IRON_SWORD -> Ability.AbilityType.SLICE;
             case LIGHTNING_ROD -> Ability.AbilityType.LASER;
             case FIREWORK_ROCKET -> Ability.AbilityType.BAZOOKA;
-            default -> null;
+            default -> throw new IllegalArgumentException("Unsupported ability material: " + clickedUpgrade);
         };
 
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
         if (pickaxeData.hasAbility(abilityType) && pickaxeData.getAbility(abilityType).isMaxLevel()) {
-            player.sendMessage(Component.text("Cannot upgrade " + abilityType.getName() + " past level " + abilityType.getMaxLevel() + "!")
+            player.sendMessage(Component.text("Cannot upgrade " + abilityType + " past level " + abilityType.getMaxLevel() + "!")
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
@@ -104,34 +104,42 @@ public class AbilityGUI implements InventoryHolder, Listener {
         // 2. they have enough of the required material
         // 3. their pickaxe is not at the max level of the chosen ability
 
+        if (pickaxeData.hasAbility(abilityType)) {
+            pickaxeData.getAbility(abilityType).increaseLevel();
+        } else {
+            try {
+                Ability newAbility = abilityType.getAbilityClass().getDeclaredConstructor().newInstance();
+                pickaxeData.addAbility(newAbility);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to create ability: " + abilityType, e);
+            }
+        }
+
         playerInventory.removeItem(heldItem);
         playerInventory.removeItem(REQUIRED_MATERIALS);
 
-        PlayerPickaxeService.upgradePickaxeAbility(player, abilityType);
-        ItemStack playerPickaxe = PlayerPickaxeService.getPickaxe(player);
-        playerInventory.addItem(playerPickaxe);
+        ItemStack pickaxe = PlayerPickaxeService.getPickaxe(player);
+        playerInventory.addItem(pickaxe);
 
-        clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(playerPickaxe));
+        clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(pickaxe));
         SoundUtils.playSuccessSound(player);
     }
 
     private void clearPickaxeAbilities(Player player, PlayerInventory playerInventory, Inventory clickedInventory) {
-        ItemStack heldItem = playerInventory.getItemInMainHand();
         if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) {
             player.sendMessage(Component.text("You are not holding your pickaxe!")
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
         }
+        ItemStack heldItem = playerInventory.getItemInMainHand();
+
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
         pickaxeData.removeAbilities();
 
-        playerInventory.remove(playerInventory.getItemInMainHand());
+        heldItem.lore(PlayerPickaxeService.getPickaxeLore(pickaxeData));
 
-        ItemStack playerPickaxe = PlayerPickaxeService.getPickaxe(player);
-        playerInventory.addItem(playerPickaxe);
-
-        clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(playerPickaxe));
+        clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(heldItem));
         SoundUtils.playUIClickSound(player);
     }
 
@@ -142,7 +150,7 @@ public class AbilityGUI implements InventoryHolder, Listener {
 
     private final ItemStack SLICE_ABILITY_BUTTON = new ItemStackBuilder(Material.IRON_SWORD)
             .displayName(Component.text("Slice")
-                    .color(NamedTextColor.LIGHT_PURPLE))
+                    .color(NamedTextColor.RED))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
                     Component.text("32x Amethyst Shard")
@@ -152,7 +160,7 @@ public class AbilityGUI implements InventoryHolder, Listener {
 
     private final ItemStack LASER_ABILITY_BUTTON = new ItemStackBuilder(Material.LIGHTNING_ROD)
             .displayName(Component.text("Laser")
-                    .color(NamedTextColor.LIGHT_PURPLE))
+                    .color(NamedTextColor.RED))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
                     Component.text("32x Amethyst Shard")
@@ -161,7 +169,7 @@ public class AbilityGUI implements InventoryHolder, Listener {
 
     private final ItemStack BAZOOKA_ABILITY_BUTTON = new ItemStackBuilder(Material.FIREWORK_ROCKET)
             .displayName(Component.text("Bazooka")
-                    .color(NamedTextColor.LIGHT_PURPLE))
+                    .color(NamedTextColor.RED))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
                     Component.text("32x Amethyst Shard")

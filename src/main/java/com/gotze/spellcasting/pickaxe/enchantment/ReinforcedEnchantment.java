@@ -6,10 +6,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
-public class MineBlockAboveEnchantment extends Enchantment {
+public class ReinforcedEnchantment extends Enchantment {
 
-    public MineBlockAboveEnchantment() {
-        super(EnchantmentType.MINE_BLOCK_ABOVE);
+    public ReinforcedEnchantment() {
+        super(EnchantmentType.REINFORCED);
     }
 
     @Override

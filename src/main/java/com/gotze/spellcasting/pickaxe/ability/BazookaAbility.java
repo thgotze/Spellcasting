@@ -25,6 +25,12 @@ public class BazookaAbility extends Ability {
         final Vector lookingDirection = player.getLocation().getDirection();
         final BlockFace playerFacing = player.getFacing();
 
+        float yaw = player.getLocation().getYaw();
+        double radians = Math.toRadians(yaw);
+        Vector horizontalDirection = new Vector(-Math.sin(radians), 0, Math.cos(radians)).normalize();
+        Vector recoil = horizontalDirection.multiply(-1);
+        player.setVelocity(recoil);
+
         new BukkitRunnable() {
             int ticks = 0;
 
@@ -33,47 +39,26 @@ public class BazookaAbility extends Ability {
                 Location laserLocation = startLocation.clone()
                         .add(lookingDirection.clone().multiply(ticks * 1.5));
 
-//                if (ticks % 16 == 0 && ticks != 0) {
-                world.spawnParticle(Particle.DUST, laserLocation, 1,
-                        new Particle.DustOptions(Color.LIME, 2.0f));
-//                }
-
+                world.spawnParticle(Particle.POOF, laserLocation, 3, 0D, 0D, 0D, 0D);
                 Block targetBlock = laserLocation.getBlock();
                 if (!targetBlock.getType().isAir()) {
                     ArrayList<Block> blocksToBreak = new ArrayList<>();
-                    blocksToBreak.add(targetBlock);
-
-                    int x = targetBlock.getX();
-                    int y = targetBlock.getY();
-                    int z = targetBlock.getZ();
-
-                    blocksToBreak.addAll(BlockUtils.getBlocksInSpherePattern(targetBlock, 4));
-                    // Vertical blocks
-//                    blocksToBreak.add(world.getBlockAt(x, y + 1, z));
-//                    blocksToBreak.add(world.getBlockAt(x, y - 1, z));
-
-                    // Horizontal blocks
-                    switch (playerFacing) {
-                        case NORTH, SOUTH -> {
-                            blocksToBreak.add(world.getBlockAt(x + 1, y, z));
-                            blocksToBreak.add(world.getBlockAt(x - 1, y, z));
-                        }
-                        case EAST, WEST -> {
-                            blocksToBreak.add(world.getBlockAt(x, y, z + 1));
-                            blocksToBreak.add(world.getBlockAt(x, y, z - 1));
-                        }
-                    }
-                    int blocksBroken = 0;
-
+                    blocksToBreak.addAll(
+                            BlockUtils.getBlocksInSpherePattern(targetBlock, 9, 7, 9).stream()
+                                    .filter(block -> !block.getType().isAir())
+                                    .filter(block -> block.getType() != Material.BEDROCK)
+                                    .toList()
+                    );
                     for (Block block : blocksToBreak) {
-                        if (block.getType().isAir() || block.getType() == Material.BEDROCK) continue;
                         block.breakNaturally(true);
-                        blocksBroken++;
                     }
-                    player.sendMessage(String.valueOf(blocksBroken));
+                    player.sendMessage("You broke: " + blocksToBreak.size() + " blocks");
+                    world.playSound(targetBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 10.0f, 1.0f);
+//                    world.spawnParticle(Particle.EXPLOSION_EMITTER, laserLocation, 1);
+                    world.spawnParticle(Particle.POOF, laserLocation, 500, 2D, 2D, 2D, 0.35D);
+
                     this.cancel();
                 }
-
 
                 ticks++;
                 if (ticks >= 64) this.cancel();

@@ -21,6 +21,7 @@ public class Spellcasting extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AbilityGUI(), this);
 
         getServer().getPluginManager().registerEvents(new ResourcePackManager(), this);
+        getServer().getPluginManager().registerEvents(new LootPot(), this);
 
         PlayerPickaxeManager playerPickaxeManager = new PlayerPickaxeManager();
         getServer().getPluginManager().registerEvents(playerPickaxeManager, this);

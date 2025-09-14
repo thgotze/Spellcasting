@@ -6,10 +6,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class HasteAndSpeedEnchantment extends Enchantment {
+public class MomentumEnchantment extends Enchantment {
 
-    public HasteAndSpeedEnchantment() {
-        super(EnchantmentType.HASTE_AND_SPEED);
+    public MomentumEnchantment() {
+        super(EnchantmentType.MOMENTUM);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
-import com.gotze.spellcasting.Rarity;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.Rarity;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -23,10 +23,6 @@ public abstract class Ability {
 
     public int getLevel() {
         return level;
-    }
-
-    public String getName() {
-        return abilityType.getName();
     }
 
     public int getMaxLevel() {
@@ -69,23 +65,19 @@ public abstract class Ability {
     }
 
     public enum AbilityType {
-        SLICE("Slice", 1, Rarity.LEGENDARY),
-        BAZOOKA("Bazooka", 1, Rarity.LEGENDARY),
-        LASER("Laser", 1, Rarity.LEGENDARY),
-        HAMMER("Hammer", 1, Rarity.LEGENDARY);
+        SLICE(1, Rarity.LEGENDARY, SliceAbility.class),
+        BAZOOKA(1, Rarity.LEGENDARY, BazookaAbility.class),
+        LASER(1, Rarity.LEGENDARY, LaserAbility.class),
+        HAMMER(1, Rarity.LEGENDARY, HammerAbility.class);
 
-        private final String name;
         private final int maxLevel;
         private final Rarity rarity;
+        private final Class<? extends Ability> abilityClass;
 
-        AbilityType(String name, int maxLevel, Rarity rarity) {
-            this.name = name;
+        AbilityType(int maxLevel, Rarity rarity, Class<? extends Ability> abilityClass) {
             this.maxLevel = maxLevel;
             this.rarity = rarity;
-        }
-
-        public String getName() {
-            return name;
+            this.abilityClass = abilityClass;
         }
 
         public int getMaxLevel() {
@@ -94,6 +86,15 @@ public abstract class Ability {
 
         public Rarity getRarity() {
             return rarity;
+        }
+
+        public Class<? extends Ability> getAbilityClass() {
+            return abilityClass;
+        }
+
+        @Override
+        public String toString() {
+            return name().charAt(0) + name().substring(1).toLowerCase();
         }
     }
 }

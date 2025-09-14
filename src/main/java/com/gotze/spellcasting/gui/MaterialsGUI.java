@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.gui;
 
 import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
@@ -83,33 +84,32 @@ public class MaterialsGUI implements InventoryHolder, Listener {
             SoundUtils.playErrorSound(player);
             return;
         }
-        ItemStack playerPickaxe = playerInventory.getItemInMainHand();
+        ItemStack heldItem = playerInventory.getItemInMainHand();
 
-        Material nextTierPickaxe = switch (playerPickaxe.getType()) {
-            case WOODEN_PICKAXE -> Material.STONE_PICKAXE;
-            case STONE_PICKAXE -> Material.IRON_PICKAXE;
-            case IRON_PICKAXE -> Material.GOLDEN_PICKAXE;
-            case GOLDEN_PICKAXE -> Material.DIAMOND_PICKAXE;
-            case DIAMOND_PICKAXE -> Material.NETHERITE_PICKAXE;
-            case NETHERITE_PICKAXE -> Material.WOODEN_PICKAXE; // TODO: remove later
-            default -> null;
+        PickaxeMaterial nextTierPickaxe = switch (heldItem.getType()) {
+            case WOODEN_PICKAXE -> PickaxeMaterial.STONE;
+            case STONE_PICKAXE -> PickaxeMaterial.IRON;
+            case IRON_PICKAXE -> PickaxeMaterial.GOLD;
+            case GOLDEN_PICKAXE -> PickaxeMaterial.DIAMOND;
+            case DIAMOND_PICKAXE -> PickaxeMaterial.NETHERITE;
+            case NETHERITE_PICKAXE -> PickaxeMaterial.WOOD; // TODO: remove later
+            default -> throw new IllegalArgumentException("Unsupported pickaxe material: " + heldItem.getType());
         };
 
-        if (clickedUpgrade != nextTierPickaxe) {
-            player.sendMessage(Component.text("Cannot upgrade from " + playerPickaxe.getType() + " to " + clickedUpgrade + "!")
+        if (clickedUpgrade != nextTierPickaxe.getType()) {
+            player.sendMessage(Component.text("Cannot upgrade from " + heldItem.getType() + " to " + clickedUpgrade + "!")
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
         }
 
         Material requiredMaterial = switch (nextTierPickaxe) {
-            case STONE_PICKAXE -> Material.COBBLESTONE;
-            case IRON_PICKAXE -> Material.IRON_INGOT;
-            case GOLDEN_PICKAXE -> Material.GOLD_INGOT;
-            case DIAMOND_PICKAXE -> Material.DIAMOND;
-            case NETHERITE_PICKAXE -> Material.NETHERITE_INGOT;
-            case WOODEN_PICKAXE -> Material.OAK_PLANKS; // TODO: remove later
-            default -> null;
+            case STONE -> Material.COBBLESTONE;
+            case IRON -> Material.IRON_INGOT;
+            case GOLD -> Material.GOLD_INGOT;
+            case DIAMOND -> Material.DIAMOND;
+            case NETHERITE -> Material.NETHERITE_INGOT;
+            case WOOD -> Material.OAK_PLANKS; // TODO: remove later
         };
 
         final int REQUIRED_AMOUNT = 32;
@@ -126,14 +126,16 @@ public class MaterialsGUI implements InventoryHolder, Listener {
         // 1. has their pickaxe in their main hand
         // 2. they have enough of the required material
 
-        playerInventory.removeItem(playerPickaxe);
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+        pickaxeData.setPickaxeMaterial(nextTierPickaxe);
+
+        playerInventory.removeItem(heldItem);
         playerInventory.removeItem(REQUIRED_MATERIALS);
 
-        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
-        pickaxeData.setType(nextTierPickaxe);
-        playerInventory.addItem(PlayerPickaxeService.getPickaxe(player));
+        ItemStack pickaxe = PlayerPickaxeService.getPickaxe(player);
+        playerInventory.addItem(pickaxe);
 
-        clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
+        clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(pickaxe));
         SoundUtils.playSuccessSound(player);
     }
 

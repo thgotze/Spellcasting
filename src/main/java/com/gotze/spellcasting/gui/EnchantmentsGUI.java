@@ -29,11 +29,11 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         gui = Bukkit.createInventory(this, 45, Component.text("Enchantments"));
         GUIUtils.setFrames(gui);
         gui.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
-        gui.setItem(20, HASTE_AND_SPEED_ENCHANT_BUTTON); // TODO: testing
+        gui.setItem(20, MOMENTUM_ENCHANT_BUTTON);
         gui.setItem(21, EFFICIENCY_ENCHANT_BUTTON);
         gui.setItem(22, UNBREAKING_ENCHANT_BUTTON);
         gui.setItem(23, FORTUNE_ENCHANT_BUTTON);
-        gui.setItem(24, MINE_BLOCK_ABOVE_ENCHANT_BUTTON); // TODO: testing
+        gui.setItem(24, REINFORCED_ENCHANT_BUTTON);
         gui.setItem(43, DEBUG_CLEAR_ENCHANTS_BUTTON); // TODO: debug
         gui.setItem(44, DEBUG_GIVE_RESOURCES_BUTTON); // TODO: debug
         gui.setItem(36, GUIUtils.RETURN_BUTTON);
@@ -90,14 +90,14 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
             case REDSTONE -> Enchantment.EnchantmentType.EFFICIENCY;
             case OBSIDIAN -> Enchantment.EnchantmentType.UNBREAKING;
             case LAPIS_LAZULI -> Enchantment.EnchantmentType.FORTUNE;
-            case DIAMOND -> Enchantment.EnchantmentType.HASTE_AND_SPEED; // TODO: testing
-            case EMERALD -> Enchantment.EnchantmentType.MINE_BLOCK_ABOVE; // TODO: testing
-            default -> null;
+            case DIAMOND -> Enchantment.EnchantmentType.MOMENTUM; // TODO: testing
+            case EMERALD -> Enchantment.EnchantmentType.REINFORCED; // TODO: testing
+            default -> throw new IllegalArgumentException("Unsupported enchantment material: " + clickedUpgrade);
         };
 
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
         if (pickaxeData.hasEnchantment(enchantmentType) && pickaxeData.getEnchantment(enchantmentType).isMaxLevel()) {
-            player.sendMessage(Component.text("Cannot upgrade " + enchantmentType.getName() + " past level " + enchantmentType.getMaxLevel() + "!")
+            player.sendMessage(Component.text("Cannot upgrade " + enchantmentType + " past level " + enchantmentType.getMaxLevel() + "!")
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
@@ -108,15 +108,25 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         // 2. they have enough of the required material
         // 3. their pickaxe is not at the max level of the chosen enchant
 
-        playerInventory.removeItem(heldItem);
-        PlayerPickaxeService.upgradePickaxeEnchantment(pickaxeData, enchantmentType);
+        if (pickaxeData.hasEnchantment(enchantmentType)) {
+            pickaxeData.getEnchantment(enchantmentType).increaseLevel();
+        } else {
+            try {
+                Enchantment newEnchantment = enchantmentType.getEnchantmentClass().getDeclaredConstructor().newInstance();
+                pickaxeData.addEnchantment(newEnchantment);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to create enchantment: " + enchantmentType, e);
+            }
+        }
 
+        playerInventory.remove(heldItem);
         playerInventory.removeItem(REQUIRED_MATERIALS);
-        SoundUtils.playSuccessSound(player);
 
-        ItemStack playerPickaxe = PlayerPickaxeService.getPickaxe(player);
-        playerInventory.addItem(playerPickaxe);
-        clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(playerPickaxe));
+        ItemStack pickaxe = PlayerPickaxeService.getPickaxe(player);
+        playerInventory.addItem(pickaxe);
+
+        clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(pickaxe));
+        SoundUtils.playSuccessSound(player);
     }
 
     private void clearPickaxeEnchants(Player player, PlayerInventory playerInventory, Inventory clickedInventory) {
@@ -133,7 +143,7 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         ItemStack pickaxe = PlayerPickaxeService.getPickaxe(player);
         playerInventory.addItem(pickaxe);
 
-        clickedInventory.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(pickaxe));
+        clickedInventory.setItem(4, GUIUtils.cloneItemWithoutDamage(pickaxe));
         SoundUtils.playUIClickSound(player);
     }
 
@@ -173,8 +183,8 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
                             .color(NamedTextColor.GRAY))
             .build();
 
-    private final ItemStack HASTE_AND_SPEED_ENCHANT_BUTTON = new ItemStackBuilder(Material.DIAMOND) // TODO: testing
-            .displayName(Component.text("Haste And Speed")
+    private final ItemStack MOMENTUM_ENCHANT_BUTTON = new ItemStackBuilder(Material.DIAMOND)
+            .displayName(Component.text("Momentum")
                     .color(NamedTextColor.YELLOW))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
@@ -182,8 +192,8 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
                             .color(NamedTextColor.GRAY))
             .build();
 
-    private final ItemStack MINE_BLOCK_ABOVE_ENCHANT_BUTTON = new ItemStackBuilder(Material.EMERALD) // TODO: testing
-            .displayName(Component.text("Mine Block Above")
+    private final ItemStack REINFORCED_ENCHANT_BUTTON = new ItemStackBuilder(Material.EMERALD)
+            .displayName(Component.text("Reinforced")
                     .color(NamedTextColor.YELLOW))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
@@ -192,7 +202,8 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
             .build();
 
     private final ItemStack DEBUG_CLEAR_ENCHANTS_BUTTON = new ItemStackBuilder(Material.BARRIER) // TODO: debug
-            .displayName(Component.text("DEBUG: CLEAR ENCHANTS").decorate(TextDecoration.BOLD)
+            .displayName(Component.text("DEBUG: CLEAR ENCHANTS")
+                    .decorate(TextDecoration.BOLD)
                     .color(NamedTextColor.RED))
             .build();
 

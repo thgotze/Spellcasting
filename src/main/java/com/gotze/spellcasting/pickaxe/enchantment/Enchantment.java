@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
-import com.gotze.spellcasting.Rarity;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.Rarity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -24,10 +24,6 @@ public abstract class Enchantment {
 
     public int getLevel() {
         return level;
-    }
-
-    public String getName() {
-        return enchantmentType.getName();
     }
 
     public int getMaxLevel() {
@@ -66,24 +62,21 @@ public abstract class Enchantment {
     }
 
     public enum EnchantmentType {
-        EFFICIENCY("Efficiency", 5, Rarity.BASIC),
-        UNBREAKING("Unbreaking", 3, Rarity.BASIC),
-        FORTUNE("Fortune", 3, Rarity.BASIC),
-        HASTE_AND_SPEED("Haste And Speed", 5, Rarity.UNIQUE),
-        MINE_BLOCK_ABOVE("Mine Block Above", 5, Rarity.UNIQUE);
+        EFFICIENCY(5, Rarity.BASIC, EfficiencyEnchantment.class),
+        UNBREAKING(3, Rarity.BASIC, UnbreakingEnchantment.class),
+        FORTUNE(3, Rarity.BASIC, FortuneEnchantment.class),
+        // custom
+        REINFORCED(5, Rarity.UNIQUE, ReinforcedEnchantment.class),
+        MOMENTUM(5, Rarity.EPIC, MomentumEnchantment.class);
 
-        private final String name;
         private final int maxLevel;
         private final Rarity rarity;
+        private final Class<? extends Enchantment> enchantmentClass;
 
-        EnchantmentType(String name, int maxLevel, Rarity rarity) {
-            this.name = name;
+        EnchantmentType(int maxLevel, Rarity rarity, Class<? extends Enchantment> enchantmentClass) {
             this.maxLevel = maxLevel;
             this.rarity = rarity;
-        }
-
-        public String getName() {
-            return name;
+            this.enchantmentClass = enchantmentClass;
         }
 
         public int getMaxLevel() {
@@ -92,6 +85,15 @@ public abstract class Enchantment {
 
         public Rarity getRarity() {
             return rarity;
+        }
+
+        public Class<? extends Enchantment> getEnchantmentClass() {
+            return enchantmentClass;
+        }
+
+        @Override
+        public String toString() {
+            return name().charAt(0) + name().substring(1).toLowerCase();
         }
     }
 
@@ -114,7 +116,6 @@ public abstract class Enchantment {
     }
 
     public static class UnbreakingEnchantment extends Enchantment {
-
         public UnbreakingEnchantment() {
             super(EnchantmentType.UNBREAKING);
         }

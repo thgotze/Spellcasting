@@ -49,7 +49,6 @@ public class SliceAbility extends Ability {
                     .rotateX((float) Math.toRadians(90f))
                     .scale(5f, 5f, 0.1f)
             );
-            player.addPassenger(itemDisplays[i]); // TODO: check if itemdisplays being passangers on players is better
         }
 
         new BukkitRunnable() {

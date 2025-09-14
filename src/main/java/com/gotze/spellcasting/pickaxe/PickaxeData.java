@@ -2,21 +2,20 @@ package com.gotze.spellcasting.pickaxe;
 
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
-import org.bukkit.Material;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public class PickaxeData {
-    private Material material;
+    private PickaxeMaterial pickaxeMaterial;
     private Set<Enchantment> enchantments;
     private Set<Ability> abilities;
     private int blocksBroken;
     private int damage;
 
     public PickaxeData() {
-        this.material = Material.WOODEN_PICKAXE;
+        this.pickaxeMaterial = PickaxeMaterial.WOOD;
         this.enchantments = new HashSet<>();
         this.abilities = new HashSet<>();
         this.blocksBroken = 0;
@@ -24,19 +23,19 @@ public class PickaxeData {
     }
 
     public PickaxeData(PickaxeData other) {
-        this.material = other.material;
+        this.pickaxeMaterial = other.pickaxeMaterial;
         this.enchantments = new HashSet<>(other.enchantments);
         this.abilities = new HashSet<>(other.abilities);
         this.blocksBroken = other.blocksBroken;
         this.damage = other.damage;
     }
 
-    public Material getType() {
-        return material;
+    public PickaxeMaterial getPickaxeMaterial() {
+        return pickaxeMaterial;
     }
 
-    public void setType(Material material) {
-        this.material = material;
+    public void setPickaxeMaterial(PickaxeMaterial pickaxeMaterial) {
+        this.pickaxeMaterial = pickaxeMaterial;
     }
 
     public Set<Enchantment> getEnchantments() {
@@ -143,8 +142,8 @@ public class PickaxeData {
         return damage;
     }
 
-    public void addDamage(int amount) {
-        this.damage += amount;
+    public void setDamage(int amount) {
+        this.damage = amount;
     }
 
     @Override
@@ -153,20 +152,20 @@ public class PickaxeData {
         if (!(o instanceof PickaxeData that)) return false;
         return blocksBroken == that.blocksBroken &&
                 damage == that.damage &&
-                material == that.material &&
+                pickaxeMaterial == that.pickaxeMaterial &&
                 Objects.equals(enchantments, that.enchantments) &&
                 Objects.equals(abilities, that.abilities);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(material, enchantments, abilities, blocksBroken, damage);
+        return Objects.hash(pickaxeMaterial, enchantments, abilities, blocksBroken, damage);
     }
 
     @Override
     public String toString() {
         return "PickaxeData{" +
-                "material=" + material +
+                "pickaxeMaterial=" + pickaxeMaterial +
                 ", enchantments=" + enchantments +
                 ", abilities=" + abilities +
                 ", blocksBroken=" + blocksBroken +

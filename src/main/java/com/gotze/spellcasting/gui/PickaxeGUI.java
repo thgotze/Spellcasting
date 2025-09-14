@@ -115,7 +115,7 @@ public class PickaxeGUI implements InventoryHolder, Listener {
 
     private final ItemStack SPELLS_BUTTON = new ItemStackBuilder(Material.END_CRYSTAL)
             .displayName(Component.text("Abilities")
-                    .color(NamedTextColor.LIGHT_PURPLE))
+                    .color(NamedTextColor.RED))
             .lore(Component.text(StringUtils.convertToSmallFont("Click to view pickaxe abilities"))
                     .color(NamedTextColor.GRAY))
             .build();
