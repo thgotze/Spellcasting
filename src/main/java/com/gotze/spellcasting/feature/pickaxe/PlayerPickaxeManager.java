@@ -1,15 +1,17 @@
-package com.gotze.spellcasting.pickaxe;
+package com.gotze.spellcasting.feature.pickaxe;
 
-import com.gotze.spellcasting.pickaxe.ability.Ability;
-import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
+import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
+import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.SoundUtils;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +23,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
+
+import static com.gotze.spellcasting.common.OreBlocks.ORE_BLOCKS;
 
 public class PlayerPickaxeManager implements Listener, BasicCommand {
 
@@ -53,6 +57,20 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         pickaxeData.setDamage(damage + 1);
 
         heldItem.lore(PlayerPickaxeService.getPickaxeLore(pickaxeData));
+    }
+
+    @EventHandler
+    public void onOreBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        Material blockType = block.getType();
+
+        if (!ORE_BLOCKS.containsKey(blockType)) return;
+
+        event.setDropItems(false);
+
+        ORE_BLOCKS.get(blockType).toItemStack().ifPresent(itemStack ->
+                block.getWorld().dropItemNaturally(block.getLocation().add(0.5, 0.5, 0.5), itemStack)
+        );
     }
 
     @EventHandler
