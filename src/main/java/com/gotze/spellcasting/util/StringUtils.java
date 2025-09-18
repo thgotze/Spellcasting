@@ -1,64 +1,85 @@
 package com.gotze.spellcasting.util;
 
-import net.kyori.adventure.text.Component;
-
 public class StringUtils {
 
-    public static Component convertToSmallFont(Component input) {
-        return Component.text(convertToSmallFont(input.toString()));
+    public static String toTitleCase(String input) {
+        if (input == null || input.isEmpty()) return input;
+
+        String[] words = input.toLowerCase()
+                .replace("_", " ")
+                .split("\\s+");
+
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if (!word.isEmpty()) {
+                result.append(word.substring(0, 1).toUpperCase())
+                        .append(word.substring(1));
+            }
+            if (i < words.length - 1) {
+                result.append(" ");
+            }
+        }
+
+        return result.toString();
     }
+
 
     /**
      * Converts a string to a small string using the Minecraft small font
      * <p>"Spellcasting is fun!" -> "ѕᴘᴇʟʟᴄᴀѕᴛɪɴɢ ɪѕ ꜰᴜɴ!"
      */
     public static String convertToSmallFont(String input) {
+        if (input == null || input.isEmpty()) return input;
+
         StringBuilder smallString = new StringBuilder();
         for (char c : input.toLowerCase().toCharArray()) {
-            switch (c) {
+            char smallChar = switch (c) {
                 // Numbers
-                case '0': smallString.append('₀'); break;
-                case '1': smallString.append('₁'); break;
-                case '2': smallString.append('₂'); break;
-                case '3': smallString.append('₃'); break;
-                case '4': smallString.append('₄'); break;
-                case '5': smallString.append('₅'); break;
-                case '6': smallString.append('₆'); break;
-                case '7': smallString.append('₇'); break;
-                case '8': smallString.append('₈'); break;
-                case '9': smallString.append('₉'); break;
+                case '0' -> '₀';
+                case '1' -> '₁';
+                case '2' -> '₂';
+                case '3' -> '₃';
+                case '4' -> '₄';
+                case '5' -> '₅';
+                case '6' -> '₆';
+                case '7' -> '₇';
+                case '8' -> '₈';
+                case '9' -> '₉';
                 // Alphabet
-                case 'a': smallString.append('ᴀ'); break;
-                case 'b': smallString.append('ʙ'); break;
-                case 'c': smallString.append('ᴄ'); break;
-                case 'd': smallString.append('ᴅ'); break;
-                case 'e': smallString.append('ᴇ'); break;
-                case 'f': smallString.append('ꜰ'); break;
-                case 'g': smallString.append('ɢ'); break;
-                case 'h': smallString.append('ʜ'); break;
-                case 'i': smallString.append('ɪ'); break;
-                case 'j': smallString.append('ᴊ'); break;
-                case 'k': smallString.append('ᴋ'); break;
-                case 'l': smallString.append('ʟ'); break;
-                case 'm': smallString.append('ᴍ'); break;
-                case 'n': smallString.append('ɴ'); break;
-                case 'o': smallString.append('ᴏ'); break;
-                case 'p': smallString.append('ᴘ'); break;
-                case 'q': smallString.append('ǫ'); break;
-                case 'r': smallString.append('ʀ'); break;
-                case 's': smallString.append('ѕ'); break;
-                case 't': smallString.append('ᴛ'); break;
-                case 'u': smallString.append('ᴜ'); break;
-                case 'v': smallString.append('ᴠ'); break;
-                case 'w': smallString.append('ᴡ'); break;
-                case 'x': smallString.append('x'); break;
-                case 'y': smallString.append('ʏ'); break;
-                case 'z': smallString.append('ᴢ'); break;
-                default: smallString.append(c); break;
-            }
+                case 'a' -> 'ᴀ';
+                case 'b' -> 'ʙ';
+                case 'c' -> 'ᴄ';
+                case 'd' -> 'ᴅ';
+                case 'e' -> 'ᴇ';
+                case 'f' -> 'ꜰ';
+                case 'g' -> 'ɢ';
+                case 'h' -> 'ʜ';
+                case 'i' -> 'ɪ';
+                case 'j' -> 'ᴊ';
+                case 'k' -> 'ᴋ';
+                case 'l' -> 'ʟ';
+                case 'm' -> 'ᴍ';
+                case 'n' -> 'ɴ';
+                case 'o' -> 'ᴏ';
+                case 'p' -> 'ᴘ';
+                case 'q' -> 'ǫ';
+                case 'r' -> 'ʀ';
+                case 's' -> 'ѕ';
+                case 't' -> 'ᴛ';
+                case 'u' -> 'ᴜ';
+                case 'v' -> 'ᴠ';
+                case 'w' -> 'ᴡ';
+                case 'x' -> 'x';
+                case 'y' -> 'ʏ';
+                case 'z' -> 'ᴢ';
+                default -> c;
+            };
+            smallString.append(smallChar);
         }
         return smallString.toString();
     }
+
 
     public static String toRomanNumeral(int level) {
         return switch (level) {
