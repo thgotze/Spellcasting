@@ -1,7 +1,8 @@
-package com.gotze.spellcasting.pickaxe.enchantment;
+package com.gotze.spellcasting.feature.pickaxe.enchantment;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.pickaxe.Rarity;
+import com.gotze.spellcasting.common.Rarity;
+import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -62,33 +63,41 @@ public abstract class Enchantment {
     }
 
     public enum EnchantmentType {
-        EFFICIENCY(5, Rarity.BASIC, EfficiencyEnchantment.class),
-        UNBREAKING(3, Rarity.BASIC, UnbreakingEnchantment.class),
-        FORTUNE(3, Rarity.BASIC, FortuneEnchantment.class),
+        EFFICIENCY(EfficiencyEnchantment.class, Rarity.COMMON, 5, Material.REDSTONE),
+        UNBREAKING(UnbreakingEnchantment.class, Rarity.COMMON, 3, Material.OBSIDIAN),
+        FORTUNE(FortuneEnchantment.class, Rarity.COMMON, 3, Material.LAPIS_LAZULI),
         // custom
-        REINFORCED(5, Rarity.UNIQUE, ReinforcedEnchantment.class),
-        MOMENTUM(5, Rarity.EPIC, MomentumEnchantment.class);
+        UNCOVER(UncoverEnchantment.class, Rarity.UNCOMMON, 5, Material.DECORATED_POT),
+        MOMENTUM(MomentumEnchantment.class, Rarity.RARE, 5, Material.SUGAR),
+        OVERLOAD(OverloadEnchantment.class, Rarity.EPIC, 5, Material.TNT),
+        ;
 
-        private final int maxLevel;
-        private final Rarity rarity;
         private final Class<? extends Enchantment> enchantmentClass;
+        private final Rarity rarity;
+        private final int maxLevel;
+        private final Material materialRepresentation;
 
-        EnchantmentType(int maxLevel, Rarity rarity, Class<? extends Enchantment> enchantmentClass) {
-            this.maxLevel = maxLevel;
-            this.rarity = rarity;
+        EnchantmentType(Class<? extends Enchantment> enchantmentClass, Rarity rarity, int maxLevel, Material materialRepresentation) {
             this.enchantmentClass = enchantmentClass;
+            this.rarity = rarity;
+            this.maxLevel = maxLevel;
+            this.materialRepresentation = materialRepresentation;
         }
 
-        public int getMaxLevel() {
-            return maxLevel;
+        public Class<? extends Enchantment> getEnchantmentClass() {
+            return enchantmentClass;
         }
 
         public Rarity getRarity() {
             return rarity;
         }
 
-        public Class<? extends Enchantment> getEnchantmentClass() {
-            return enchantmentClass;
+        public int getMaxLevel() {
+            return maxLevel;
+        }
+
+        public Material getMaterialRepresentation() {
+            return materialRepresentation;
         }
 
         @Override
@@ -103,7 +112,8 @@ public abstract class Enchantment {
         }
 
         @Override
-        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {}
+        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+        }
     }
 
     public static class FortuneEnchantment extends Enchantment {
@@ -112,7 +122,8 @@ public abstract class Enchantment {
         }
 
         @Override
-        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {}
+        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+        }
     }
 
     public static class UnbreakingEnchantment extends Enchantment {
@@ -121,6 +132,7 @@ public abstract class Enchantment {
         }
 
         @Override
-        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {}
+        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+        }
     }
 }

@@ -1,9 +1,10 @@
-package com.gotze.spellcasting.pickaxe;
+package com.gotze.spellcasting.feature.pickaxe;
 
 import com.destroystokyo.paper.MaterialSetTag;
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.pickaxe.ability.Ability;
-import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
+import com.gotze.spellcasting.common.PickaxeMaterial;
+import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
+import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.StringUtils;
@@ -66,7 +67,7 @@ public class PlayerPickaxeService {
         List<Component> lore = new ArrayList<>();
 
         if (!enchantments.isEmpty()) {
-            // Sort enchantments by rarity (descending order)
+            // Sort enchantments by rarity in descending order (Common -> Legendary)
             List<Enchantment> sortedEnchantments = enchantments.stream()
                     .sorted((e1, e2) -> Integer.compare(
                             e2.getEnchantmentType().getRarity().ordinal(),
@@ -84,11 +85,11 @@ public class PlayerPickaxeService {
         }
 
         if (!abilities.isEmpty()) {
-            // Sort abilities by rarity (descending order)
+            // Sort abilities by rarity in descending order (Common -> Legendary)
             List<Ability> sortedAbilities = abilities.stream()
                     .sorted((e1, e2) -> Integer.compare(
-                            e2.getAbilityType().getRarity().ordinal(),
-                            e1.getAbilityType().getRarity().ordinal()
+                            e2.getRarity().ordinal(),
+                            e1.getRarity().ordinal()
                     ))
                     .toList();
 
@@ -97,10 +98,10 @@ public class PlayerPickaxeService {
                         .color(NamedTextColor.RED)
                         .decorate(TextDecoration.BOLD)
                         .append(Component.text(ability.getAbilityType() + " ")
-                                .color(ability.getAbilityType().getRarity().getColor())
+                                .color(ability.getRarity().getColor())
                                 .decoration(TextDecoration.BOLD, false))
                         .append(Component.text(StringUtils.toRomanNumeral(ability.getLevel()))
-                                .color(ability.getAbilityType().getRarity().getColor())
+                                .color(ability.getRarity().getColor())
                                 .decoration(TextDecoration.BOLD, false)));
             }
             lore.add(Component.text(""));
@@ -133,8 +134,6 @@ public class PlayerPickaxeService {
         lore.add(Component.text("Durability: ")
                 .color(NamedTextColor.GRAY)
                 .append(durabilityComponent)
-//                .append(Component.text(pickaxeMaterial.getMaxDurability() - damage)
-//                        .color(NamedTextColor.GREEN))
                 .append(Component.text(" | ")
                         .color(NamedTextColor.DARK_GRAY))
                 .append(Component.text(pickaxeMaterial.getMaxDurability())

@@ -1,8 +1,8 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
-import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
+import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
+import com.gotze.spellcasting.feature.pickaxe.PlayerPickaxeService;
+import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
@@ -29,12 +29,14 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         gui = Bukkit.createInventory(this, 45, Component.text("Enchantments"));
         GUIUtils.setFrames(gui);
         gui.setItem(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
-        gui.setItem(20, MOMENTUM_ENCHANT_BUTTON);
-        gui.setItem(21, EFFICIENCY_ENCHANT_BUTTON);
-        gui.setItem(22, UNBREAKING_ENCHANT_BUTTON);
-        gui.setItem(23, FORTUNE_ENCHANT_BUTTON);
-        gui.setItem(24, REINFORCED_ENCHANT_BUTTON);
-        gui.setItem(43, DEBUG_CLEAR_ENCHANTS_BUTTON); // TODO: debug
+        gui.setItem(19, EFFICIENCY_ENCHANTMENT_BUTTON);
+        gui.setItem(20, FORTUNE_ENCHANTMENT_BUTTON);
+        gui.setItem(21, UNBREAKING_ENCHANTMENT_BUTTON);
+        gui.setItem(22, UNCOVER_ENCHANTMENT_BUTTON);
+        gui.setItem(23, MOMENTUM_ENCHANTMENT_BUTTON);
+        gui.setItem(24, OVERLOAD_ENCHANTMENT_BUTTON);
+        gui.setItem(25, GUIUtils.FRAME);
+        gui.setItem(43, DEBUG_CLEAR_ENCHANTMENTS_BUTTON); // TODO: debug
         gui.setItem(44, DEBUG_GIVE_RESOURCES_BUTTON); // TODO: debug
         gui.setItem(36, GUIUtils.RETURN_BUTTON);
         player.openInventory(gui);
@@ -56,7 +58,7 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         int slot = event.getSlot();
 
         switch (slot) {
-            case 20, 21, 22, 23, 24 ->
+            case 19, 20, 21, 22, 23, 24 ->
                     upgradeEnchantment(player, playerInventory, clickedInventory.getItem(slot).getType(), clickedInventory);
             case 36 -> {
                 new PickaxeGUI().openGUI(player);
@@ -86,18 +88,19 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
             return;
         }
 
-        Enchantment.EnchantmentType enchantmentType = switch (clickedUpgrade) {
-            case REDSTONE -> Enchantment.EnchantmentType.EFFICIENCY;
-            case OBSIDIAN -> Enchantment.EnchantmentType.UNBREAKING;
-            case LAPIS_LAZULI -> Enchantment.EnchantmentType.FORTUNE;
-            case DIAMOND -> Enchantment.EnchantmentType.MOMENTUM; // TODO: testing
-            case EMERALD -> Enchantment.EnchantmentType.REINFORCED; // TODO: testing
-            default -> throw new IllegalArgumentException("Unsupported enchantment material: " + clickedUpgrade);
-        };
+        Enchantment.EnchantmentType chosenEnchant = null;
+        for (Enchantment.EnchantmentType enchantmentType : Enchantment.EnchantmentType.values()) {
+            if (enchantmentType.getMaterialRepresentation() == clickedUpgrade) {
+                chosenEnchant = enchantmentType;
+                break;
+            }
+        }
+        if (chosenEnchant == null) return;
 
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
-        if (pickaxeData.hasEnchantment(enchantmentType) && pickaxeData.getEnchantment(enchantmentType).isMaxLevel()) {
-            player.sendMessage(Component.text("Cannot upgrade " + enchantmentType + " past level " + enchantmentType.getMaxLevel() + "!")
+
+        if (pickaxeData.hasEnchantment(chosenEnchant) && pickaxeData.getEnchantment(chosenEnchant).isMaxLevel()) {
+            player.sendMessage(Component.text("Cannot upgrade " + chosenEnchant + " past level " + chosenEnchant.getMaxLevel() + "!")
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
@@ -108,14 +111,14 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         // 2. they have enough of the required material
         // 3. their pickaxe is not at the max level of the chosen enchant
 
-        if (pickaxeData.hasEnchantment(enchantmentType)) {
-            pickaxeData.getEnchantment(enchantmentType).increaseLevel();
+        if (pickaxeData.hasEnchantment(chosenEnchant)) {
+            pickaxeData.getEnchantment(chosenEnchant).increaseLevel();
         } else {
             try {
-                Enchantment newEnchantment = enchantmentType.getEnchantmentClass().getDeclaredConstructor().newInstance();
+                Enchantment newEnchantment = chosenEnchant.getEnchantmentClass().getDeclaredConstructor().newInstance();
                 pickaxeData.addEnchantment(newEnchantment);
             } catch (Exception e) {
-                throw new RuntimeException("Failed to create enchantment: " + enchantmentType, e);
+                throw new RuntimeException("Failed to create enchantment: " + chosenEnchant, e);
             }
         }
 
@@ -147,64 +150,72 @@ public class EnchantmentsGUI implements InventoryHolder, Listener {
         SoundUtils.playUIClickSound(player);
     }
 
-    private void giveResources(Player player, PlayerInventory playerInventory) {
-        playerInventory.addItem(ItemStack.of(Material.DIAMOND, 32),
-                ItemStack.of(Material.REDSTONE, 32),
-                ItemStack.of(Material.OBSIDIAN, 32),
-                ItemStack.of(Material.LAPIS_LAZULI, 32),
-                ItemStack.of(Material.EMERALD, 32));
+    private void giveResources(Player player, PlayerInventory playerInventory) { // TODO: debug
+        for (Enchantment.EnchantmentType enchantmentType : Enchantment.EnchantmentType.values()) {
+            playerInventory.addItem(ItemStack.of(enchantmentType.getMaterialRepresentation(), 32));
+        }
         SoundUtils.playUIClickSound(player);
     }
 
-    private final ItemStack EFFICIENCY_ENCHANT_BUTTON = new ItemStackBuilder(Material.REDSTONE)
-            .displayName(Component.text("Efficiency")
-                    .color(NamedTextColor.YELLOW))
+    private final ItemStack EFFICIENCY_ENCHANTMENT_BUTTON = new ItemStackBuilder(Enchantment.EnchantmentType.EFFICIENCY.getMaterialRepresentation())
+            .displayName(Component.text(Enchantment.EnchantmentType.EFFICIENCY.toString())
+                    .color(Enchantment.EnchantmentType.EFFICIENCY.getRarity().getColor()))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
-                    Component.text("32x Redstone Dust")
+                    Component.text("32x " + StringUtils.toTitleCase(Enchantment.EnchantmentType.EFFICIENCY.getMaterialRepresentation().toString()))
                             .color(NamedTextColor.GRAY))
             .build();
 
-    private final ItemStack UNBREAKING_ENCHANT_BUTTON = new ItemStackBuilder(Material.OBSIDIAN)
-            .displayName(Component.text("Unbreaking")
-                    .color(NamedTextColor.YELLOW))
+    private final ItemStack FORTUNE_ENCHANTMENT_BUTTON = new ItemStackBuilder(Enchantment.EnchantmentType.FORTUNE.getMaterialRepresentation())
+            .displayName(Component.text(Enchantment.EnchantmentType.FORTUNE.toString())
+                    .color(Enchantment.EnchantmentType.FORTUNE.getRarity().getColor()))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
-                    Component.text("32x Obsidian")
+                    Component.text("32x " + StringUtils.toTitleCase(Enchantment.EnchantmentType.FORTUNE.getMaterialRepresentation().toString()))
                             .color(NamedTextColor.GRAY))
             .build();
 
-    private final ItemStack FORTUNE_ENCHANT_BUTTON = new ItemStackBuilder(Material.LAPIS_LAZULI)
-            .displayName(Component.text("Fortune")
-                    .color(NamedTextColor.YELLOW))
+    private final ItemStack UNBREAKING_ENCHANTMENT_BUTTON = new ItemStackBuilder(Enchantment.EnchantmentType.UNBREAKING.getMaterialRepresentation())
+            .displayName(Component.text(Enchantment.EnchantmentType.UNBREAKING.toString())
+                    .color(Enchantment.EnchantmentType.UNBREAKING.getRarity().getColor()))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
-                    Component.text("32x Lapis Lazuli")
+                    Component.text("32x " + StringUtils.toTitleCase(Enchantment.EnchantmentType.UNBREAKING.getMaterialRepresentation().toString()))
                             .color(NamedTextColor.GRAY))
             .build();
 
-    private final ItemStack MOMENTUM_ENCHANT_BUTTON = new ItemStackBuilder(Material.DIAMOND)
-            .displayName(Component.text("Momentum")
-                    .color(NamedTextColor.YELLOW))
+    private final ItemStack UNCOVER_ENCHANTMENT_BUTTON = new ItemStackBuilder(Enchantment.EnchantmentType.UNCOVER.getMaterialRepresentation())
+            .displayName(Component.text(Enchantment.EnchantmentType.UNCOVER.toString())
+                    .color(Enchantment.EnchantmentType.UNCOVER.getRarity().getColor()))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
-                    Component.text("32x Diamond")
+                    Component.text("32x " + StringUtils.toTitleCase(Enchantment.EnchantmentType.UNCOVER.getMaterialRepresentation().toString()))
                             .color(NamedTextColor.GRAY))
             .build();
 
-    private final ItemStack REINFORCED_ENCHANT_BUTTON = new ItemStackBuilder(Material.EMERALD)
-            .displayName(Component.text("Reinforced")
-                    .color(NamedTextColor.YELLOW))
+    private final ItemStack MOMENTUM_ENCHANTMENT_BUTTON = new ItemStackBuilder(Enchantment.EnchantmentType.MOMENTUM.getMaterialRepresentation())
+            .displayName(Component.text(Enchantment.EnchantmentType.MOMENTUM.toString())
+                    .color(Enchantment.EnchantmentType.MOMENTUM.getRarity().getColor()))
             .lore(Component.text(""),
                     Component.text(StringUtils.convertToSmallFont("requirements")),
-                    Component.text("32x Emerald")
+                    Component.text("32x " + StringUtils.toTitleCase(Enchantment.EnchantmentType.MOMENTUM.getMaterialRepresentation().toString()))
                             .color(NamedTextColor.GRAY))
             .build();
 
-    private final ItemStack DEBUG_CLEAR_ENCHANTS_BUTTON = new ItemStackBuilder(Material.BARRIER) // TODO: debug
-            .displayName(Component.text("DEBUG: CLEAR ENCHANTS")
-                    .decorate(TextDecoration.BOLD)
-                    .color(NamedTextColor.RED))
+
+    private final ItemStack OVERLOAD_ENCHANTMENT_BUTTON = new ItemStackBuilder(Enchantment.EnchantmentType.OVERLOAD.getMaterialRepresentation())
+            .displayName(Component.text(Enchantment.EnchantmentType.OVERLOAD.toString())
+                    .color(Enchantment.EnchantmentType.OVERLOAD.getRarity().getColor()))
+            .lore(Component.text(""),
+                    Component.text(StringUtils.convertToSmallFont("requirements")),
+                    Component.text("32x " + Enchantment.EnchantmentType.OVERLOAD.getMaterialRepresentation().toString())
+                            .color(NamedTextColor.GRAY))
+            .build();
+
+    private final ItemStack DEBUG_CLEAR_ENCHANTMENTS_BUTTON = new ItemStackBuilder(Material.BARRIER) // TODO: debug
+            .displayName(Component.text("DEBUG: CLEAR ENCHANTMENTS")
+                    .color(NamedTextColor.RED)
+                    .decorate(TextDecoration.BOLD))
             .build();
 
     private final ItemStack DEBUG_GIVE_RESOURCES_BUTTON = new ItemStackBuilder(Material.CHEST) // TODO: debug

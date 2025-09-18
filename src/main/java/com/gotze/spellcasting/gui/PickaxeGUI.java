@@ -2,7 +2,7 @@ package com.gotze.spellcasting.gui;
 
 import com.gotze.blockbreaksounds.gui.blockbreaksounds.BlockBreakSoundsGUI;
 import com.gotze.blockbreaksounds.model.CurrentSoundData;
-import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
+import com.gotze.spellcasting.feature.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;

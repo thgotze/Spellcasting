@@ -1,11 +1,10 @@
-package com.gotze.spellcasting.pickaxe.ability;
+package com.gotze.spellcasting.feature.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
 import com.gotze.spellcasting.util.BlockUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -23,7 +22,6 @@ public class BazookaAbility extends Ability {
         final World world = player.getWorld();
         final Location startLocation = player.getEyeLocation();
         final Vector lookingDirection = player.getLocation().getDirection();
-        final BlockFace playerFacing = player.getFacing();
 
         float yaw = player.getLocation().getYaw();
         double radians = Math.toRadians(yaw);
@@ -39,7 +37,7 @@ public class BazookaAbility extends Ability {
                 Location laserLocation = startLocation.clone()
                         .add(lookingDirection.clone().multiply(ticks * 1.5));
 
-                world.spawnParticle(Particle.POOF, laserLocation, 3, 0D, 0D, 0D, 0D);
+                world.spawnParticle(Particle.POOF, laserLocation, 3, 0, 0, 0, 0);
                 Block targetBlock = laserLocation.getBlock();
                 if (!targetBlock.getType().isAir()) {
                     ArrayList<Block> blocksToBreak = new ArrayList<>();
@@ -50,12 +48,11 @@ public class BazookaAbility extends Ability {
                                     .toList()
                     );
                     for (Block block : blocksToBreak) {
-                        block.breakNaturally(true);
+                        block.breakNaturally(player.getInventory().getItemInMainHand(), true);
                     }
                     player.sendMessage("You broke: " + blocksToBreak.size() + " blocks");
                     world.playSound(targetBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 10.0f, 1.0f);
-//                    world.spawnParticle(Particle.EXPLOSION_EMITTER, laserLocation, 1);
-                    world.spawnParticle(Particle.POOF, laserLocation, 500, 2D, 2D, 2D, 0.35D);
+                    world.spawnParticle(Particle.POOF, laserLocation, 350, 2, 2, 2, 0.35);
 
                     this.cancel();
                 }

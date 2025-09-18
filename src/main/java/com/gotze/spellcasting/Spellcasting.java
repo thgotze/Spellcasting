@@ -1,10 +1,13 @@
 package com.gotze.spellcasting;
 
+import com.gotze.spellcasting.feature.ResourcePackManager;
+import com.gotze.spellcasting.feature.lootpot.LootPotManager;
+import com.gotze.spellcasting.feature.pickaxe.PlayerPickaxeManager;
 import com.gotze.spellcasting.gui.AbilityGUI;
 import com.gotze.spellcasting.gui.EnchantmentsGUI;
 import com.gotze.spellcasting.gui.MaterialsGUI;
 import com.gotze.spellcasting.gui.PickaxeGUI;
-import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Spellcasting extends JavaPlugin {
@@ -13,18 +16,20 @@ public class Spellcasting extends JavaPlugin {
     @Override
     public void onEnable() {
         INSTANCE = this;
+        PluginManager pluginManager = getServer().getPluginManager();
 
-        // GUIs
-        getServer().getPluginManager().registerEvents(new PickaxeGUI(), this);
-        getServer().getPluginManager().registerEvents(new EnchantmentsGUI(), this);
-        getServer().getPluginManager().registerEvents(new MaterialsGUI(), this);
-        getServer().getPluginManager().registerEvents(new AbilityGUI(), this);
-
-        getServer().getPluginManager().registerEvents(new ResourcePackManager(), this);
-        getServer().getPluginManager().registerEvents(new LootPot(), this);
+        // Features
+        pluginManager.registerEvents(new ResourcePackManager(), this);
+        pluginManager.registerEvents(new LootPotManager(), this);
 
         PlayerPickaxeManager playerPickaxeManager = new PlayerPickaxeManager();
-        getServer().getPluginManager().registerEvents(playerPickaxeManager, this);
+        pluginManager.registerEvents(playerPickaxeManager, this);
         registerCommand("pickaxe", "Manage your custom pickaxe", playerPickaxeManager);
+
+        // GUIs
+        pluginManager.registerEvents(new PickaxeGUI(), this);
+        pluginManager.registerEvents(new EnchantmentsGUI(), this);
+        pluginManager.registerEvents(new MaterialsGUI(), this);
+        pluginManager.registerEvents(new AbilityGUI(), this);
     }
 }

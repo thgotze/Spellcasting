@@ -1,7 +1,8 @@
-package com.gotze.spellcasting.pickaxe;
+package com.gotze.spellcasting.feature.pickaxe;
 
-import com.gotze.spellcasting.pickaxe.ability.Ability;
-import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
+import com.gotze.spellcasting.common.PickaxeMaterial;
+import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
+import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
 
 import java.util.HashSet;
 import java.util.Objects;

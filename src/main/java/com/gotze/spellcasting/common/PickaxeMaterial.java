@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.pickaxe;
+package com.gotze.spellcasting.common;
 
 import org.bukkit.Material;
 
@@ -8,7 +8,8 @@ public enum PickaxeMaterial {
     IRON(Material.IRON_PICKAXE, 1024),
     GOLD(Material.GOLDEN_PICKAXE, 2048),
     DIAMOND(Material.DIAMOND_PICKAXE, 4096),
-    NETHERITE(Material.NETHERITE_PICKAXE, 8192);
+    NETHERITE(Material.NETHERITE_PICKAXE, 8192),
+    ;
 
     private final Material material;
     private final int maxDurability;

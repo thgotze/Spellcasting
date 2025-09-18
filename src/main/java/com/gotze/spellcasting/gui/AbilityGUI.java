@@ -1,8 +1,8 @@
 package com.gotze.spellcasting.gui;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
-import com.gotze.spellcasting.pickaxe.ability.Ability;
+import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
+import com.gotze.spellcasting.feature.pickaxe.PlayerPickaxeService;
+import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
 import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
