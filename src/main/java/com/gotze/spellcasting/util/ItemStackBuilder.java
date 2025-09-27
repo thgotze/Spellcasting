@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ItemStackBuilder {
-    private final Material material;
+    private ItemStack itemStack;
+    private Material material;
     private int amount = 1;
     private Component name;
     private List<Component> lore;
@@ -33,6 +34,11 @@ public class ItemStackBuilder {
     private Map<String, String> persistentDataContainer = new HashMap<>();
     private int durabilityDamage;
     private int maxDurability;
+    private int maxStackSize;
+
+    public ItemStackBuilder(ItemStack itemStack) {
+        this.itemStack = itemStack.clone();
+    }
 
     public ItemStackBuilder(Material material) {
         this.material = material;
@@ -109,7 +115,9 @@ public class ItemStackBuilder {
     }
 
     public ItemStack build() {
-        ItemStack itemStack = ItemStack.of(material);
+        if (material != null) {
+            this.itemStack = ItemStack.of(material);
+        }
 
         if (name != null) {
             itemStack.setData(DataComponentTypes.ITEM_NAME, name);
