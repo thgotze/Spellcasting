@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.feature.pickaxe;
 
-import com.gotze.spellcasting.common.PickaxeMaterial;
 import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
 import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
 

@@ -122,7 +122,7 @@ public class SliceAbility extends Ability {
                 case 2 -> BlockUtils.getPositiveDiagonalBlocks(block, playerFacing);
                 case 3 -> BlockUtils.getNegativeDiagonalBlocks(block, playerFacing);
                 case 4, 5 -> BlockUtils.getHorizontalBlocks(block, playerFacing);
-                default -> null;
+                default -> throw new IllegalStateException("Unexpected value: " + displayIndex);
             });
         }
         return blocksToBreak;

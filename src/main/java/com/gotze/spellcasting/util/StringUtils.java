@@ -20,10 +20,8 @@ public class StringUtils {
                 result.append(" ");
             }
         }
-
         return result.toString();
     }
-
 
     /**
      * Converts a string to a small string using the Minecraft small font
@@ -79,7 +77,6 @@ public class StringUtils {
         }
         return smallString.toString();
     }
-
 
     public static String toRomanNumeral(int level) {
         return switch (level) {

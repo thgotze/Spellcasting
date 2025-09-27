@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.common;
+package com.gotze.spellcasting.util;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 
