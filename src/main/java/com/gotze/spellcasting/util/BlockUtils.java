@@ -12,67 +12,72 @@ public class BlockUtils {
 
     public static List<Block> getVerticalBlocks(Block block) {
         List<Block> blocks = new ArrayList<>();
+
         blocks.add(block.getRelative(0, 1, 0));
         blocks.add(block.getRelative(0, -1, 0));
+
         return blocks;
     }
 
-    public static List<Block> getPositiveDiagonalBlocks(Block block, BlockFace playerFacing) {
+    public static List<Block> getPositiveDiagonalBlocks(Block origin, BlockFace playerFacing) {
         List<Block> blocks = new ArrayList<>();
+
         switch (playerFacing) {
             case NORTH -> {
-                blocks.add(block.getRelative(-1, -1, 0));
-                blocks.add(block.getRelative(1, 1, 0));
+                blocks.add(origin.getRelative(-1, -1, 0));
+                blocks.add(origin.getRelative(1, 1, 0));
             }
             case SOUTH -> {
-                blocks.add(block.getRelative(1, -1, 0));
-                blocks.add(block.getRelative(-1, 1, 0));
+                blocks.add(origin.getRelative(1, -1, 0));
+                blocks.add(origin.getRelative(-1, 1, 0));
             }
             case EAST -> {
-                blocks.add(block.getRelative(0, -1, -1));
-                blocks.add(block.getRelative(0, 1, 1));
+                blocks.add(origin.getRelative(0, -1, -1));
+                blocks.add(origin.getRelative(0, 1, 1));
             }
             case WEST -> {
-                blocks.add(block.getRelative(0, -1, 1));
-                blocks.add(block.getRelative(0, 1, -1));
+                blocks.add(origin.getRelative(0, -1, 1));
+                blocks.add(origin.getRelative(0, 1, -1));
             }
         }
         return blocks;
     }
 
-    public static List<Block> getNegativeDiagonalBlocks(Block block, BlockFace playerFacing) {
+    public static List<Block> getNegativeDiagonalBlocks(Block origin, BlockFace playerFacing) {
         List<Block> blocks = new ArrayList<>();
+
         switch (playerFacing) {
             case NORTH -> {
-                blocks.add(block.getRelative(1, -1, 0));
-                blocks.add(block.getRelative(-1, 1, 0));
+                blocks.add(origin.getRelative(1, -1, 0));
+                blocks.add(origin.getRelative(-1, 1, 0));
             }
             case SOUTH -> {
-                blocks.add(block.getRelative(-1, -1, 0));
-                blocks.add(block.getRelative(1, 1, 0));
+                blocks.add(origin.getRelative(-1, -1, 0));
+                blocks.add(origin.getRelative(1, 1, 0));
             }
             case EAST -> {
-                blocks.add(block.getRelative(0, -1, 1));
-                blocks.add(block.getRelative(0, 1, -1));
+                blocks.add(origin.getRelative(0, -1, 1));
+                blocks.add(origin.getRelative(0, 1, -1));
             }
             case WEST -> {
-                blocks.add(block.getRelative(0, -1, -1));
-                blocks.add(block.getRelative(0, 1, 1));
+                blocks.add(origin.getRelative(0, -1, -1));
+                blocks.add(origin.getRelative(0, 1, 1));
             }
         }
         return blocks;
     }
 
-    public static List<Block> getHorizontalBlocks(Block block, BlockFace playerFacing) {
+    public static List<Block> getHorizontalBlocks(Block origin, BlockFace playerFacing) {
         List<Block> blocks = new ArrayList<>();
+
         switch (playerFacing) {
             case NORTH, SOUTH -> {
-                blocks.add(block.getRelative(1, 0, 0));
-                blocks.add(block.getRelative(-1, 0, 0));
+                blocks.add(origin.getRelative(1, 0, 0));
+                blocks.add(origin.getRelative(-1, 0, 0));
             }
             case EAST, WEST -> {
-                blocks.add(block.getRelative(0, 0, 1));
-                blocks.add(block.getRelative(0, 0, -1));
+                blocks.add(origin.getRelative(0, 0, 1));
+                blocks.add(origin.getRelative(0, 0, -1));
             }
         }
         return blocks;
@@ -88,7 +93,7 @@ public class BlockUtils {
                 for (int z = -halfDepth; z < depth - halfDepth; z++) {
                     double ellipseCheck = (x * x) / (double) (halfWidth * halfWidth) + (z * z) / (double) (halfDepth * halfDepth);
                     if (ellipseCheck <= 1) {
-                        blocks.add(block.getRelative(x, y, z));
+                        blocks.add(origin.getRelative(x, y, z));
                     }
                 }
             }
@@ -96,28 +101,10 @@ public class BlockUtils {
         return blocks;
     }
 
-    public static List<Block> getBlocksInDiamondPattern(Block block, int width, int height, int depth) {
-        List<Block> blocks = new ArrayList<>();
-        int halfWidth = width / 2;
-        int halfHeight = height / 2;
-        int halfDepth = depth / 2;
 
-        for (int x = -halfWidth; x < width - halfWidth; x++) {
-            for (int y = -halfHeight; y < height - halfHeight; y++) {
-                for (int z = -halfDepth; z < depth - halfDepth; z++) {
-                    if (halfWidth > 0 && halfHeight > 0 && halfDepth > 0) {
-                        if (Math.abs(x) / (double) halfWidth + Math.abs(y) / (double) halfHeight + Math.abs(z) / (double) halfDepth <= 1) {
-                            blocks.add(block.getRelative(x, y, z));
-                        }
-                    }
-                }
-            }
-        }
-        return blocks;
-    }
-
-    public static List<Block> getBlocksInConePattern(Block block, Vector direction, int width, int height, int depth) {
+    public static List<Block> getBlocksInConePattern(Block origin, Vector direction, int width, int height, int depth) {
         List<Block> blocks = new ArrayList<>();
+
         int halfWidth = width / 2;
         int halfDepth = depth / 2;
 
@@ -128,7 +115,7 @@ public class BlockUtils {
                 for (int z = -halfDepth; z < depth - halfDepth; z++) {
                     if (currentWidth > 0 && currentDepth > 0) {
                         if (x * x / (currentWidth * currentWidth) + z * z / (currentDepth * currentDepth) <= 1) {
-                            blocks.add(block.getLocation().clone().add(direction.clone().multiply(y)).getBlock().getRelative(x, y, z));
+                            blocks.add(origin.getLocation().clone().add(direction.clone().multiply(y)).getBlock().getRelative(x, y, z));
                         }
                     }
                 }
@@ -137,8 +124,9 @@ public class BlockUtils {
         return blocks;
     }
 
-    public static List<Block> getBlocksInRingPattern(Block center, int width, int height, int depth) {
+    public static List<Block> getBlocksInRingPattern(Block origin, int width, int height, int depth) {
         List<Block> blocks = new ArrayList<>();
+
         int halfWidth = width / 2;
         int halfHeight = height / 2;
         int halfDepth = depth / 2;
@@ -149,7 +137,7 @@ public class BlockUtils {
                     if (halfWidth > 0 && halfHeight > 0 && halfDepth > 0) {
                         double distance = (x * x) / (double) (halfWidth * halfWidth) + (y * y) / (double) (halfHeight * halfHeight) + (z * z) / (double) (halfDepth * halfDepth);
                         if (distance >= 0.8 && distance <= 1.2) { // Ring thickness tolerance TODO: find out what AI is cooking here
-                            blocks.add(center.getRelative(x, y, z));
+                            blocks.add(origin.getRelative(x, y, z));
                         }
                     }
                 }
@@ -158,8 +146,9 @@ public class BlockUtils {
         return blocks;
     }
 
-    public static List<Block> getBlocksInPyramidPattern(Block center, int width, int height, int depth) {
+    public static List<Block> getBlocksInPyramidPattern(Block origin, int width, int height, int depth) {
         List<Block> blocks = new ArrayList<>();
+
         int halfWidth = width / 2;
         int halfDepth = depth / 2;
 
@@ -168,14 +157,14 @@ public class BlockUtils {
             int currentDepth = halfDepth * (height - y) / height;
             for (int x = -currentWidth; x <= currentWidth; x++) {
                 for (int z = -currentDepth; z <= currentDepth; z++) {
-                    blocks.add(center.getRelative(x, y, z));
+                    blocks.add(origin.getRelative(x, y, z));
                 }
             }
         }
         return blocks;
     }
 
-    public static List<Block> getBlocksInCrossPattern(Block center, int width, int height, int depth) {
+    public static List<Block> getBlocksInCrossPattern(Block origin, int width, int height, int depth) {
         List<Block> blocks = new ArrayList<>();
         for (int i = 1; i <= width; i++) {
             blocks.add(center.getRelative(BlockFace.NORTH, i));
@@ -192,7 +181,7 @@ public class BlockUtils {
         return blocks;
     }
 
-    public static List<Block> getBlocksInSquarePattern(Block center, int width, int height, int depth) {
+    public static List<Block> getBlocksInSquarePattern(Block origin, int width, int height, int depth) {
         List<Block> blocks = new ArrayList<>();
 
         int halfWidth = width / 2;
@@ -202,14 +191,14 @@ public class BlockUtils {
         for (int x = -halfWidth; x < width - halfWidth; x++) {
             for (int y = -halfHeight; y < height - halfHeight; y++) {
                 for (int z = -halfDepth; z < depth - halfDepth; z++) {
-                    blocks.add(center.getRelative(x, y, z));
+                    blocks.add(origin.getRelative(x, y, z));
                 }
             }
         }
         return blocks;
     }
 
-    public static List<Block> getBlocksInSpherePattern(Block center, int width, int height, int depth) {
+    public static List<Block> getBlocksInSpherePattern(Block origin, int width, int height, int depth) {
         List<Block> blocks = new ArrayList<>();
         int halfWidth = width / 2;
         int halfHeight = height / 2;
@@ -232,8 +221,9 @@ public class BlockUtils {
 
     public static List<Block> getBlocksInLine(Block startingBlock, Vector direction, int length) {
         List<Block> blocksInLine = new ArrayList<>();
+
         for (int i = 1; i <= length; i++) {
-            Location blockLocation = startingBlock.getLocation().add(direction.multiply(i));
+            Location blockLocation = origin.getLocation().add(direction.multiply(i));
             blocksInLine.add(blockLocation.getBlock());
         }
         return blocksInLine;
