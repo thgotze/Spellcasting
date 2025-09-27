@@ -3,7 +3,7 @@ package com.gotze.spellcasting.util;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public enum Rarity {
-    COMMON(NamedTextColor.WHITE, 0.5161),
+    COMMON(NamedTextColor.WHITE, 0.5061),
     UNCOMMON(NamedTextColor.GREEN, 0.2581),
     RARE(NamedTextColor.AQUA, 0.1290),
     EPIC(NamedTextColor.LIGHT_PURPLE, 0.0645),
