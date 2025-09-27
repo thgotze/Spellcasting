@@ -2,6 +2,8 @@ package com.gotze.spellcasting.feature.pickaxe;
 
 import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
 import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
+import com.gotze.spellcasting.gui.PickaxeMenu;
+import com.gotze.spellcasting.util.BlockCategories;
 import com.gotze.spellcasting.util.SoundUtils;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -16,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -24,14 +27,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-import static com.gotze.spellcasting.common.OreBlocks.ORE_BLOCKS;
-
 public class PlayerPickaxeManager implements Listener, BasicCommand {
+
+    @EventHandler
+    public void onShiftRightClickWithPickaxe(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (!(event.getAction().isRightClick() && player.isSneaking())) return;
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
+        event.setCancelled(true);
+        new PickaxeMenu(player);
+    }
 
     @EventHandler
     public void onBlockBreakActivateEnchants(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) return;
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
         ItemStack heldItem = player.getInventory().getItemInMainHand();
 
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
@@ -64,11 +74,11 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         Block block = event.getBlock();
         Material blockType = block.getType();
 
-        if (!ORE_BLOCKS.containsKey(blockType)) return;
+        if (!BlockCategories.ORE_BLOCKS.containsKey(blockType)) return;
 
         event.setDropItems(false);
 
-        ORE_BLOCKS.get(blockType).toItemStack().ifPresent(itemStack ->
+        BlockCategories.ORE_BLOCKS.get(blockType).rollChance().ifPresent(itemStack ->
                 block.getWorld().dropItemNaturally(block.getLocation().add(0.5, 0.5, 0.5), itemStack)
         );
     }
@@ -76,7 +86,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
     @EventHandler
     public void onHandSwapActivateAbilities(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
-        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player)) return;
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
         event.setCancelled(true);
 
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
@@ -91,7 +101,8 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         if (!(commandSourceStack.getSender() instanceof Player player)) return;
 
         if (args.length == 0) {
-            player.sendMessage(Component.text("Usage: /pickaxe <get|reset>").color(NamedTextColor.RED));
+            player.sendMessage(Component.text("Usage: /pickaxe <get|reset>")
+                    .color(NamedTextColor.RED));
             return;
         }
 
@@ -100,16 +111,19 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
                 PlayerPickaxeService.createPickaxeData(player);
             }
             player.getInventory().addItem(PlayerPickaxeService.getPickaxe(player));
-            player.sendMessage(Component.text("You received your pickaxe!").color(NamedTextColor.GREEN));
+            player.sendMessage(Component.text("You received your pickaxe!")
+                    .color(NamedTextColor.GREEN));
             return;
         }
 
         if (args[0].equalsIgnoreCase("reset")) {
             PlayerPickaxeService.createPickaxeData(player);
-            player.sendMessage(Component.text("Pickaxe data reset!").color(NamedTextColor.GREEN));
+            player.sendMessage(Component.text("Pickaxe data reset!")
+                    .color(NamedTextColor.GREEN));
             return;
         }
 
-        player.sendMessage(Component.text("Unknown subcommand. Usage: /pickaxe <get|reset>").color(NamedTextColor.RED));
+        player.sendMessage(Component.text("Unknown subcommand. Usage: /pickaxe <get|reset>")
+                .color(NamedTextColor.RED));
     }
 }

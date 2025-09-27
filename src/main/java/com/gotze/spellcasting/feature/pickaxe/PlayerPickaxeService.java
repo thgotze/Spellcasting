@@ -1,13 +1,12 @@
 package com.gotze.spellcasting.feature.pickaxe;
 
-import com.destroystokyo.paper.MaterialSetTag;
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.common.PickaxeMaterial;
 import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
 import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
-import com.gotze.spellcasting.util.GUIUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
+import com.gotze.spellcasting.util.menu.MenuUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -15,6 +14,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -36,7 +36,7 @@ public class PlayerPickaxeService {
                 .lore(getPickaxeLore(pickaxeData))
                 .hideAttributes()
                 .hideEnchantTooltip()
-                .addPersistentDataContainer("owner", player.getUniqueId().toString())
+                .persistentDataContainer("owner", player.getUniqueId().toString())
                 .setDurabilityDamage(pickaxeData.getDamage())
                 .setMaxDurability(pickaxeData.getPickaxeMaterial().getMaxDurability());
 
@@ -148,17 +148,22 @@ public class PlayerPickaxeService {
         return fixedLore;
     }
 
-    public static boolean isPlayerHoldingOwnPickaxe(Player player) {
+    public static boolean isPlayerHoldingOwnPickaxe(Player player, boolean notifyOnError) {
         ItemStack heldItem = player.getInventory().getItemInMainHand();
 
-        if (!MaterialSetTag.ITEMS_PICKAXES.isTagged(heldItem.getType())) return false;
-
-        NamespacedKey ownerKey = new NamespacedKey(Spellcasting.INSTANCE, "owner");
+        NamespacedKey ownerKey = new NamespacedKey(JavaPlugin.getPlugin(Spellcasting.class), "owner");
         String owner = heldItem.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
-        return player.getUniqueId().toString().equals(owner);
+
+        boolean result = player.getUniqueId().toString().equals(owner);
+        if (!result && notifyOnError) {
+            player.sendMessage(Component.text("You are not holding your pickaxe!")
+                    .color(NamedTextColor.RED));
+            SoundUtils.playErrorSound(player);
+        }
+        return result;
     }
 
     public static ItemStack getPickaxeCloneWithoutDurability(Player player) {
-        return GUIUtils.cloneItemWithoutDamage(getPickaxe(player));
+        return MenuUtils.cloneItemWithoutDamage(getPickaxe(player));
     }
 }
