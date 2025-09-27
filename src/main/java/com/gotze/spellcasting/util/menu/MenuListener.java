@@ -27,9 +27,11 @@ public class MenuListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getClickedInventory() == null) return;
+
         asMenu(event.getView().getTopInventory()).ifPresent(menu -> {
             event.setCancelled(true);
             if (event.getClickedInventory() != menu.getInventory()) return;
+
             Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), () -> {
                 menu.onClick(event);
                 Optional.ofNullable(menu.buttons().get(event.getSlot())).ifPresent(button -> button.onClick(event));
