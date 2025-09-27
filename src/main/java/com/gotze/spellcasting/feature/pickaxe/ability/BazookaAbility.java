@@ -6,6 +6,7 @@ import com.gotze.spellcasting.util.BlockUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -60,6 +61,6 @@ public class BazookaAbility extends Ability {
                 ticks++;
                 if (ticks >= 64) this.cancel();
             }
-        }.runTaskTimer(Spellcasting.INSTANCE, 0, 1);
+        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0, 1);
     }
 }

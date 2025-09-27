@@ -10,12 +10,10 @@ import com.gotze.spellcasting.gui.PickaxeGUI;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Spellcasting extends JavaPlugin {
-    public static Spellcasting INSTANCE;
+public final class Spellcasting extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        INSTANCE = this;
         PluginManager pluginManager = getServer().getPluginManager();
 
         // Features

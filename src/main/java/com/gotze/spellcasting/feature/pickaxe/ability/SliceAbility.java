@@ -11,6 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.joml.Matrix4f;
 
@@ -95,7 +96,7 @@ public class SliceAbility extends Ability {
                     for (ItemDisplay display : itemDisplays) display.remove();
                 }
             }
-        }.runTaskTimer(Spellcasting.INSTANCE, 0, 1);
+        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0, 1);
     }
 
     private List<Block> getBlocksInLineOfSight(int displayIndex, Player player) {
