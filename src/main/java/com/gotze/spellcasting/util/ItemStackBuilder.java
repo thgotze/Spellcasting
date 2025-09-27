@@ -121,6 +121,11 @@ public class ItemStackBuilder {
         return this;
     }
 
+    public ItemStackBuilder maxStackSize(int maxStackSize) {
+        this.maxStackSize = maxStackSize;
+        return this;
+    }
+
     public ItemStack build() {
         if (material != null) {
             this.itemStack = ItemStack.of(material);
@@ -193,6 +198,10 @@ public class ItemStackBuilder {
 
         if (maxDurability > 0) {
             itemStack.setData(DataComponentTypes.MAX_DAMAGE, maxDurability);
+        }
+
+        if (maxStackSize > 0) {
+            itemStack.setData(DataComponentTypes.MAX_STACK_SIZE, maxStackSize);
         }
 
         return itemStack;
