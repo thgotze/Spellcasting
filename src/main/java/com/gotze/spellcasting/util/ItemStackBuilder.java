@@ -13,6 +13,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,8 @@ import java.util.Map;
 
 public class ItemStackBuilder {
     private final Material material;
-    private Component displayName;
+    private int amount = 1;
+    private Component name;
     private List<Component> lore;
     private boolean hideAdditionalTooltip = false;
     private boolean hideAttributes = false;
@@ -28,7 +30,7 @@ public class ItemStackBuilder {
     private boolean hideEnchantTooltip = false;
     private boolean enchantGlint = false;
     private final Map<Enchantment, Integer> enchantments = new HashMap<>();
-    private Map<String, String> persistentDataContainers = new HashMap<>();
+    private Map<String, String> persistentDataContainer = new HashMap<>();
     private int durabilityDamage;
     private int maxDurability;
 
@@ -36,8 +38,13 @@ public class ItemStackBuilder {
         this.material = material;
     }
 
-    public ItemStackBuilder displayName(Component displayName) {
-        this.displayName = displayName;
+    public ItemStackBuilder amount(int amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public ItemStackBuilder name(Component name) {
+        this.name = name;
         return this;
     }
 
@@ -86,8 +93,8 @@ public class ItemStackBuilder {
         return this;
     }
 
-    public ItemStackBuilder addPersistentDataContainer(String key, String value) {
-        this.persistentDataContainers.put(key, value);
+    public ItemStackBuilder persistentDataContainer(String key, String value) {
+        this.persistentDataContainer.put(key, value);
         return this;
     }
 
@@ -104,8 +111,12 @@ public class ItemStackBuilder {
     public ItemStack build() {
         ItemStack itemStack = ItemStack.of(material);
 
-        if (displayName != null) {
-            itemStack.setData(DataComponentTypes.ITEM_NAME, displayName);
+        if (name != null) {
+            itemStack.setData(DataComponentTypes.ITEM_NAME, name);
+        }
+
+        if (amount > 1) {
+            itemStack.setAmount(amount);
         }
 
         if (lore != null) {
@@ -148,10 +159,10 @@ public class ItemStackBuilder {
             itemStack.addEnchantments(enchantments);
         }
 
-        if (!persistentDataContainers.isEmpty()) {
+        if (!persistentDataContainer.isEmpty()) {
             itemStack.editPersistentDataContainer(pdc -> {
-                for (Map.Entry<String, String> entry : this.persistentDataContainers.entrySet()) {
-                    NamespacedKey key = new NamespacedKey(Spellcasting.INSTANCE, entry.getKey());
+                for (Map.Entry<String, String> entry : persistentDataContainer.entrySet()) {
+                    NamespacedKey key = new NamespacedKey(JavaPlugin.getPlugin(Spellcasting.class), entry.getKey());
                     pdc.set(key, PersistentDataType.STRING, entry.getValue());
                 }
             });
@@ -164,6 +175,7 @@ public class ItemStackBuilder {
         if (maxDurability > 0) {
             itemStack.setData(DataComponentTypes.MAX_DAMAGE, maxDurability);
         }
+
         return itemStack;
     }
 }
