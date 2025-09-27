@@ -5,6 +5,7 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
 import io.papermc.paper.datacomponent.item.ItemEnchantments;
 import io.papermc.paper.datacomponent.item.ItemLore;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -25,6 +26,7 @@ public class ItemStackBuilder {
     private int amount = 1;
     private Component name;
     private List<Component> lore;
+    private Key itemModel;
     private boolean hideAdditionalTooltip = false;
     private boolean hideAttributes = false;
     private boolean hideTooltipBox = false;
@@ -66,6 +68,11 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder lore(List<Component> lore) {
         this.lore = lore;
+        return this;
+    }
+
+    public ItemStackBuilder itemModel(Key itemModel) {
+        this.itemModel = itemModel;
         return this;
     }
 
@@ -135,6 +142,10 @@ public class ItemStackBuilder {
                     ).toList();
 
             itemStack.setData(DataComponentTypes.LORE, ItemLore.lore(fixedLore));
+        }
+
+        if (itemModel != null) {
+            itemStack.setData(DataComponentTypes.ITEM_MODEL, itemModel);
         }
 
         if (hideAdditionalTooltip) {
