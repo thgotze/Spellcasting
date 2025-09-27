@@ -1,15 +1,21 @@
 package com.gotze.spellcasting.feature.lootpot;
 
-import com.gotze.spellcasting.common.Drop;
+import com.gotze.spellcasting.feature.pickaxe.PlayerPickaxeService;
+import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
 import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.BlockUtils;
-import com.gotze.spellcasting.util.StringUtils;
+import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.util.Loot;
+import com.gotze.spellcasting.util.Rarity;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.DecoratedPot;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,111 +26,237 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.gotze.spellcasting.common.FillerBlocks.FILLER_BLOCKS;
-import static com.gotze.spellcasting.common.LootContainerBlocks.LOOT_CONTAINERS;
-import static com.gotze.spellcasting.common.OreBlocks.ORE_BLOCKS;
-
 public class LootPotManager implements Listener {
-    private static final Random random = new Random();
-    private static final float POT_SPAWN_CHANCE = 1.0f / 300; // 1 in 300 chance
-
-    public static final Map<Material, List<Drop>> LOOT_POTS = Map.of(
-            Material.PLENTY_POTTERY_SHERD, List.of(
-                    new Drop(Material.RAW_COPPER, 24, 72, 0.75),
-                    new Drop(Material.RAW_IRON, 16, 48, 0.50),
-                    new Drop(Material.RAW_GOLD, 8, 24, 0.25)
-            ),
-            Material.PRIZE_POTTERY_SHERD, List.of(
-                    new Drop(Material.DIAMOND, 1, 0.25),
-                    new Drop(Material.EMERALD, 1, 0.25),
-                    new Drop(Material.QUARTZ, 1, 2),
-                    new Drop(Material.AMETHYST_SHARD, 1, 2)
-            ),
-            Material.MINER_POTTERY_SHERD, Stream.of(Enchantment.EnchantmentType.values())
-                    .map(enchantmentType ->
-                            new Drop(enchantmentType.getMaterialRepresentation(),
-                                    1,
-                                    enchantmentType.getRarity().getWeight()))
-                    .toList()
+    private static final float POT_SPAWN_CHANCE = 1.0f / 5; // 1 in 300 chance
+    private static final List<Loot> RAW_ORE_LOOT = List.of(
+            new Loot(ItemStack.of(Material.RAW_COPPER), 21, 34),
+            new Loot(ItemStack.of(Material.RAW_IRON), 6, 10),
+            new Loot(ItemStack.of(Material.RAW_GOLD), 6,10)
     );
+    private static final List<Loot> ABILITY_TOKENS = Stream.of(Ability.AbilityType.values()) // TODO: will need to filter all the types and their rarity and their weight
+            .map(abilityType -> new Loot(abilityType.getUpgradeToken(), abilityType.getRarity().getWeight()))
+            .toList();
+    private static final List<Loot> ENCHANT_TOKENS = Stream.of(Enchantment.EnchantmentType.values())
+            .map(enchantmentType -> new Loot(enchantmentType.getUpgradeToken(), enchantmentType.getRarity().getWeight()))
+            .toList();
+    private static final List<Loot> MACHINE_PARTS = List.of( // TODO: placeholder
+            new Loot(new ItemStackBuilder(Material.REPEATER)
+                    .name(Component.text("Machine Part 1")
+                            .color(NamedTextColor.RED))
+                    .build(), 0.33),
+            new Loot(new ItemStackBuilder(Material.COMPARATOR)
+                    .name(Component.text("Machine Part 2")
+                            .color(NamedTextColor.RED))
+                    .build(), 0.33),
+            new Loot(new ItemStackBuilder(Material.POWERED_RAIL)
+                    .name(Component.text("Machine Part 3")
+                            .color(NamedTextColor.RED))
+                    .build(), 0.33)
+    );
+    private static final List<Loot> MONEY_LOOT = List.of( // TODO: placeholder
+//            new Loot(new ItemStackBuilder(Material.DIAMOND)
+//                    .name(Component.text("Valuable item $$$")
+//                            .color(NamedTextColor.YELLOW))
+//                    .build(), 0.10),
+//
+//            new Loot(new ItemStackBuilder(Material.EMERALD)
+//                    .name(Component.text("Valuable item $$$")
+//                            .color(NamedTextColor.YELLOW))
+//                    .build(), 0.10),
+//
+//            new Loot(new ItemStackBuilder(Material.QUARTZ)
+//                    .name(Component.text("Valuable item $$$")
+//                            .color(NamedTextColor.YELLOW))
+//                    .build(), 0.10),
+
+            new Loot(new ItemStackBuilder(Material.AMETHYST_SHARD)
+                    .name(Component.text("Valuable item $$$")
+                            .color(NamedTextColor.YELLOW))
+                    .build(), 0.10),
+
+//            new Loot(new ItemStackBuilder(Material.DISC_FRAGMENT_5)
+//                    .name(Component.text("Valuable item $$$")
+//                            .color(NamedTextColor.YELLOW))
+//                    .build(), 0.10),
+
+            new Loot(new ItemStackBuilder(Material.ECHO_SHARD)
+                    .name(Component.text("Valuable item $$$")
+                            .color(NamedTextColor.YELLOW))
+                    .build(), 0.10),
+
+            new Loot(new ItemStackBuilder(Material.PRISMARINE_CRYSTALS)
+                    .name(Component.text("Valuable item $$$")
+                            .color(NamedTextColor.YELLOW))
+                    .build(), 0.10),
+
+            new Loot(new ItemStackBuilder(Material.PRISMARINE_SHARD)
+                    .name(Component.text("Valuable item $$$")
+                            .color(NamedTextColor.YELLOW))
+                    .build(), 0.10),
+
+            new Loot(new ItemStackBuilder(Material.RESIN_CLUMP)
+                    .name(Component.text("Valuable item $$$")
+                            .color(NamedTextColor.YELLOW))
+                    .build(), 0.10)
+    );
+    private static final List<Loot> LOOT_BOXES = List.of(
+            new Loot(new ItemStackBuilder(Material.WHITE_SHULKER_BOX)
+                    .name(Component.text("Common Loot Box")
+                            .color(NamedTextColor.WHITE))
+                    .build(), Rarity.COMMON.getWeight()),
+//                    .build(), Rarity.COMMON.getWeight() / Rarity.values().length), // TODO: reduce chance
+
+            new Loot(new ItemStackBuilder(Material.LIME_SHULKER_BOX)
+                    .name(Component.text("Uncommon Loot Box")
+                            .color(NamedTextColor.GREEN))
+                    .build(), Rarity.UNCOMMON.getWeight()),
+
+            new Loot(new ItemStackBuilder(Material.LIGHT_BLUE_SHULKER_BOX)
+                    .name(Component.text("Rare Loot Box")
+                            .color(NamedTextColor.AQUA))
+                    .build(), Rarity.RARE.getWeight()),
+
+            new Loot(new ItemStackBuilder(Material.MAGENTA_SHULKER_BOX)
+                    .name(Component.text("Epic Loot Box")
+                            .color(NamedTextColor.LIGHT_PURPLE))
+                    .build(), Rarity.EPIC.getWeight()),
+
+            new Loot(new ItemStackBuilder(Material.ORANGE_SHULKER_BOX)
+                    .name(Component.text("Legendary Loot Box")
+                            .color(NamedTextColor.GOLD))
+                    .build(), Rarity.LEGENDARY.getWeight())
+    );
+    private static final List<Loot> POT_SHERDS_LOOT = List.of(
+            new Loot(new ItemStackBuilder(Material.MINER_POTTERY_SHERD)
+                    .lore(Component.text("Collect 4 to craft a lootpot!")
+                            .color(NamedTextColor.YELLOW))
+                    .build(), 0.50)
+    );
+    private static final List<Loot> ENCHANTMENT_TOKEN_LOOT = Stream.of(Enchantment.EnchantmentType.values())
+            .collect(Collectors.collectingAndThen(
+                    Collectors.groupingBy(Enchantment.EnchantmentType::getRarity, Collectors.counting()),
+                    counts -> Stream.of(Enchantment.EnchantmentType.values())
+                            .map(type -> {
+                                Rarity rarity = type.getRarity();
+                                double chance = rarity.getWeight() / counts.get(rarity);
+                                return new Loot(type.getUpgradeToken(), chance);
+                            })
+                            .toList()
+            ));
 
     @EventHandler
     public void onLootPotBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (block.getType() != Material.DECORATED_POT) return;
 
-        org.bukkit.block.data.type.DecoratedPot potData = (org.bukkit.block.data.type.DecoratedPot) block.getBlockData();
-//        if (!potData.isCracked()) return;
-
         DecoratedPot pot = (DecoratedPot) block.getState();
         Material sherdType = pot.getSherd(DecoratedPot.Side.FRONT);
-        if (!LOOT_POTS.containsKey(sherdType)) return;
+        if (sherdType != Material.MINER_POTTERY_SHERD) return;
 
         event.setDropItems(false);
 
-        List<Drop> drops = LOOT_POTS.get(sherdType);
-        List<ItemStack> loot = new ArrayList<>();
+        List<ItemStack> itemsInPot = new ArrayList<>();
 
-        do {
-            for (Drop drop : drops) {
-                drop.toItemStack().ifPresent(loot::add);
-            }
-            // test
-            event.getPlayer().sendMessage("\nPotential loot:");
-            for (ItemStack itemStack : loot) {
-                event.getPlayer().sendMessage(StringUtils.toTitleCase(itemStack.getType().toString()));
-            }
-            //
-        } while (loot.isEmpty());
+        for (Loot loot : RAW_ORE_LOOT) {
+            loot.rollChance().ifPresent(itemsInPot::add);
+        }
 
-        if (sherdType == Material.MINER_POTTERY_SHERD) {
-            ItemStack itemStack = loot.get(random.nextInt(loot.size()));
-            block.getWorld().dropItemNaturally(block.getLocation().add(0.5, 0.5, 0.5), itemStack);
-            // test
-            event.getPlayer().sendMessage("\nYou rollled: " + StringUtils.toTitleCase(itemStack.getType().toString()));
-            //
-        } else {
-            for (ItemStack itemStack : loot) {
-                block.getWorld().dropItemNaturally(block.getLocation().add(0.5, 0.5, 0.5), itemStack);
-                event.getPlayer().sendMessage(itemStack.toString());
+        for (Loot loot : ABILITY_TOKENS) {
+            var token = loot.rollChance();
+            if (token.isPresent()) {
+                itemsInPot.add(token.get());
+                break;
             }
         }
+
+        for (Loot loot : ENCHANT_TOKENS) {
+            var token = loot.rollChance();
+            if (token.isPresent()) {
+                itemsInPot.add(token.get());
+                break;
+            }
+        }
+
+        for (Loot loot : MACHINE_PARTS) {
+            loot.rollChance().ifPresent(itemsInPot::add);
+        }
+
+        for (Loot loot : MONEY_LOOT) {
+            loot.rollChance().ifPresent(itemsInPot::add);
+        }
+
+        for (Loot loot : LOOT_BOXES) {
+            loot.rollChance().ifPresent(itemsInPot::add);
+        }
+
+        for (Loot loot : POT_SHERDS_LOOT) {
+            loot.rollChance().ifPresent(itemsInPot::add);
+        }
+
+        for (Loot loot : ENCHANTMENT_TOKEN_LOOT) {
+            var token = loot.rollChance();
+            if (token.isPresent()) {
+                itemsInPot.add(token.get());
+                break;
+            }
+        }
+
+        event.getPlayer().sendMessage(Component.text("You uncovered a lootpot!")
+                .color(NamedTextColor.GREEN));
+
+        for (ItemStack itemStack : itemsInPot) {
+            block.getWorld().dropItemNaturally(block.getLocation().add(0.5, 0.5, 0.5), itemStack);
+            Component displayName = itemStack.displayName();
+            event.getPlayer().sendMessage(displayName);
+        }
+
+        if (ThreadLocalRandom.current().nextDouble() < 0.2) {
+            Enchantment.EnchantmentType[] enchantmentTypes = Enchantment.EnchantmentType.values();
+            int enchantmentIndex = ThreadLocalRandom.current().nextInt(enchantmentTypes.length);
+            Enchantment.EnchantmentType enchantmentType = enchantmentTypes[enchantmentIndex];
+            event.getPlayer().sendMessage(Component.text("Your pickaxe has been enchanted with " + enchantmentType + " for 30 seconds!")
+                    .color(NamedTextColor.GREEN));
+        }
+
+        if (ThreadLocalRandom.current().nextDouble() < 0.2) {
+            Ability.AbilityType[] abilityTypes = Ability.AbilityType.values();
+            int abilityIndex = ThreadLocalRandom.current().nextInt(abilityTypes.length);
+            Ability.AbilityType abilityType = abilityTypes[abilityIndex];
+            event.getPlayer().sendMessage(Component.text("Your have received 1 usage of the " + abilityType + " ability!")
+                    .color(NamedTextColor.GREEN));
+        }
+
+        event.getBlock().getWorld().spawn(event.getBlock().getLocation(), ExperienceOrb.class, orb -> orb.setExperience(10));
     }
 
     @EventHandler
     public void onBlockBreakTrySpawnLootPot(BlockBreakEvent event) {
-        Block block = event.getBlock();
-        Material blockType = block.getType();
-
-        if (!FILLER_BLOCKS.contains(blockType) &&
-                !ORE_BLOCKS.containsKey(blockType) &&
-                !LOOT_CONTAINERS.containsKey(blockType)) return;
-
-        if (random.nextFloat() >= POT_SPAWN_CHANCE) return;
-
         Player player = event.getPlayer();
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
+        if (ThreadLocalRandom.current().nextDouble() >= POT_SPAWN_CHANCE) return;
+
+        Block block = event.getBlock();
 
         List<Block> candidates = BlockUtils.getBlocksInSquarePattern(
-                block.getRelative(player.getFacing(), 7),
-                5, 1, 5);
+                block.getRelative(player.getFacing(), 7), 5, 1, 5);
 
-        Block chosenBlock = candidates.get(random.nextInt(candidates.size()));
+        Block chosenBlock = candidates.get(ThreadLocalRandom.current().nextInt(candidates.size()));
         chosenBlock.setType(Material.DECORATED_POT);
 
+        // cracked will disallow picking up the pot
         org.bukkit.block.data.type.DecoratedPot potData = (org.bukkit.block.data.type.DecoratedPot) chosenBlock.getBlockData();
         potData.setCracked(true);
         chosenBlock.setBlockData(potData);
 
         DecoratedPot pot = (DecoratedPot) chosenBlock.getState();
-        Material randomSherd = new ArrayList<>(LOOT_POTS.keySet()).get(random.nextInt(LOOT_POTS.size()));
-        pot.setSherd(DecoratedPot.Side.FRONT, randomSherd);
-        pot.setSherd(DecoratedPot.Side.BACK, randomSherd);
-        pot.setSherd(DecoratedPot.Side.RIGHT, randomSherd);
-        pot.setSherd(DecoratedPot.Side.LEFT, randomSherd);
+        pot.setSherd(DecoratedPot.Side.FRONT, Material.MINER_POTTERY_SHERD);
+        pot.setSherd(DecoratedPot.Side.BACK, Material.MINER_POTTERY_SHERD);
+        pot.setSherd(DecoratedPot.Side.RIGHT, Material.MINER_POTTERY_SHERD);
+        pot.setSherd(DecoratedPot.Side.LEFT, Material.MINER_POTTERY_SHERD);
         pot.update(true, false);
 
         Location potLocation = pot.getLocation();
@@ -141,9 +273,8 @@ public class LootPotManager implements Listener {
         if (block == null || block.getType() != Material.DECORATED_POT) return;
 
         DecoratedPot pot = (DecoratedPot) block.getState();
-        Material sherdType = pot.getSherd(DecoratedPot.Side.FRONT);
-        if (!LOOT_POTS.containsKey(sherdType)) return;
-        if (event.getItem() == null) return;
+        Material sherd = pot.getSherd(DecoratedPot.Side.FRONT);
+        if (sherd != Material.MINER_POTTERY_SHERD) return;
 
         event.setCancelled(true);
     }
