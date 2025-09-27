@@ -1,8 +1,12 @@
 package com.gotze.spellcasting.feature.pickaxe.ability;
 
-import com.gotze.spellcasting.common.Rarity;
 import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
+import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.util.Rarity;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
@@ -91,6 +95,27 @@ public abstract class Ability {
 
         public int getMaxLevel() {
             return maxLevel;
+        }
+
+        public ItemStack getUpgradeToken() {
+            return switch (this) {
+                case SLICE -> new ItemStackBuilder(Material.IRON_SWORD)
+                        .name(Component.text("Slice Ability Token")
+                                .color(Rarity.LEGENDARY.getColor()))
+                        .build();
+                case BAZOOKA -> new ItemStackBuilder(Material.FIREWORK_ROCKET)
+                        .name(Component.text("Bazooka Ability Token")
+                                .color(Rarity.LEGENDARY.getColor()))
+                        .build();
+                case LASER -> new ItemStackBuilder(Material.LIGHTNING_ROD)
+                        .name(Component.text("Laser Ability Token")
+                                .color(Rarity.LEGENDARY.getColor()))
+                        .build();
+                case HAMMER -> new ItemStackBuilder(Material.MACE)
+                        .name(Component.text("Hammer Ability Token")
+                                .color(Rarity.LEGENDARY.getColor()))
+                        .build();
+            };
         }
 
         @Override
