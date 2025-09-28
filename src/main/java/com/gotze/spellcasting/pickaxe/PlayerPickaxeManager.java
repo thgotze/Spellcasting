@@ -35,6 +35,20 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         if (!(event.getAction().isRightClick() && player.isSneaking())) return;
         if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
         event.setCancelled(true);
+
+        new PickaxeMenu(player);
+    }
+
+    @EventHandler
+    public void onShiftRightClickPickaxeInInventory(InventoryClickEvent event) {
+        if (event.getClick() != ClickType.SHIFT_RIGHT) return;
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+        if (event.getClickedInventory() != player.getInventory()) return;
+
+        // TODO: find better way of knowing if it's the players pickaxe
+        if (event.getCurrentItem().getType() != PlayerPickaxeService.getPickaxeData(player).getPickaxeMaterial().getType())
+            return;
+
         new PickaxeMenu(player);
     }
 
