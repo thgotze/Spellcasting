@@ -126,6 +126,19 @@ public abstract class Ability {
                                 .color(Rarity.LEGENDARY.getColor()))
                         .build();
             };
+            Material material = switch (this) {
+                case PEEK -> Material.GLASS;
+                case SLICE -> Material.IRON_SWORD;
+                case BAZOOKA -> Material.FIREWORK_ROCKET;
+                case LASER -> Material.LIGHTNING_ROD;
+                case HAMMER -> Material.MACE;
+            };
+
+            return new ItemStackBuilder(Material.PAPER)
+                    .name(getUpgradeTokenName())
+                    .itemModel(NamespacedKey.minecraft(material.name().toLowerCase()))
+                    .build();
+        }
         }
 
         @Override
