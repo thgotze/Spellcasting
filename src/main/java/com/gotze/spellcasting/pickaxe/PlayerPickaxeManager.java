@@ -25,8 +25,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
 public class PlayerPickaxeManager implements Listener, BasicCommand {
 
     @EventHandler
@@ -56,14 +54,10 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
     public void onBlockBreakHandlePickaxeDurability(BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
-        ItemStack heldItem = player.getInventory().getItemInMainHand();
 
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
 
-        int maxDamage = heldItem.getData(DataComponentTypes.MAX_DAMAGE);
-        int damage = heldItem.getData(DataComponentTypes.DAMAGE);
-
-        if (damage + 1 == maxDamage) {
+        if (pickaxeData.getDurabilityDamage() + 1 == pickaxeData.getPickaxeMaterial().getMaxDurability()) {
             event.setCancelled(true);
             player.sendMessage("Warning! Pickaxe has low durability!");
             player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 100, 2));
@@ -73,9 +67,17 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         }
 
         pickaxeData.addBlocksBroken(1);
-        pickaxeData.setDamage(damage + 1);
 
-        heldItem.lore(PlayerPickaxeService.getPickaxeLore(pickaxeData));
+        ItemStack heldItem = player.getInventory().getItemInMainHand();
+
+        Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), () -> {
+            int durabilityDamage = heldItem.getData(DataComponentTypes.DAMAGE);
+
+            if (durabilityDamage > pickaxeData.getDurabilityDamage()) {
+                pickaxeData.setDurabilityDamage(durabilityDamage);
+            }
+            heldItem.lore(PlayerPickaxeService.getPickaxeLore(pickaxeData));
+        }, 1L);
     }
 
     @EventHandler
