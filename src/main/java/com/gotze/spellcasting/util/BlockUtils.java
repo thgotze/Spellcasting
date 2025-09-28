@@ -166,17 +166,27 @@ public class BlockUtils {
 
     public static List<Block> getBlocksInCrossPattern(Block origin, int width, int height, int depth) {
         List<Block> blocks = new ArrayList<>();
-        for (int i = 1; i <= width; i++) {
-            blocks.add(center.getRelative(BlockFace.NORTH, i));
-            blocks.add(center.getRelative(BlockFace.SOUTH, i));
+
+        if (width > 1) {
+            int halfWidth = width / 2;
+            for (int x = -halfWidth; x <= halfWidth; x++) {
+                blocks.add(origin.getRelative(x, 0, 0));
+            }
         }
-        for (int i = 1; i <= depth; i++) {
-            blocks.add(center.getRelative(BlockFace.EAST, i));
-            blocks.add(center.getRelative(BlockFace.WEST, i));
+
+
+        if (height > 1) {
+            int halfHeight = height / 2;
+            for (int y = -halfHeight; y <= halfHeight; y++) {
+                blocks.add(origin.getRelative(0, y, 0));
+            }
         }
-        for (int i = 1; i <= height; i++) {
-            blocks.add(center.getRelative(BlockFace.UP, i));
-            blocks.add(center.getRelative(BlockFace.DOWN, i));
+
+        if (depth > 1) {
+            int halfDepth = depth / 2;
+            for (int z = -halfDepth; z <= halfDepth; z++) {
+                blocks.add(origin.getRelative(0, 0, z));
+            }
         }
         return blocks;
     }
