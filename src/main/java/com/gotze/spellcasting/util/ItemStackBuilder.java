@@ -34,6 +34,8 @@ public class ItemStackBuilder {
     private boolean enchantGlint = false;
     private final Map<Enchantment, Integer> enchantments = new HashMap<>();
     private Map<String, String> persistentDataContainer = new HashMap<>();
+    private Map<Enchantment, Integer> enchantments;
+    private Map<String, String> persistentDataContainer;
     private int durabilityDamage;
     private int maxDurability;
     private int maxStackSize;
@@ -101,12 +103,18 @@ public class ItemStackBuilder {
         return this;
     }
 
-    public ItemStackBuilder addEnchantment(Enchantment enchantment, int level) {
+    public ItemStackBuilder enchant(Enchantment enchantment, int level) {
+        if (this.enchantments == null) {
+            this.enchantments = new HashMap<>();
+        }
         this.enchantments.put(enchantment, level);
         return this;
     }
 
     public ItemStackBuilder persistentDataContainer(String key, String value) {
+        if (this.persistentDataContainer == null) {
+            this.persistentDataContainer = new HashMap<>();
+        }
         this.persistentDataContainer.put(key, value);
         return this;
     }
@@ -132,7 +140,8 @@ public class ItemStackBuilder {
         }
 
         if (name != null) {
-            itemStack.setData(DataComponentTypes.ITEM_NAME, name);
+            Component fixedName = name.colorIfAbsent(NamedTextColor.WHITE);
+            itemStack.setData(DataComponentTypes.ITEM_NAME, fixedName);
         }
 
         if (amount > 1) {
@@ -179,11 +188,11 @@ public class ItemStackBuilder {
             itemStack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
         }
 
-        if (!enchantments.isEmpty()) {
+        if (enchantments != null) {
             itemStack.addEnchantments(enchantments);
         }
 
-        if (!persistentDataContainer.isEmpty()) {
+        if (persistentDataContainer != null) {
             itemStack.editPersistentDataContainer(pdc -> {
                 for (Map.Entry<String, String> entry : persistentDataContainer.entrySet()) {
                     NamespacedKey key = new NamespacedKey(JavaPlugin.getPlugin(Spellcasting.class), entry.getKey());
