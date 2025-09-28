@@ -210,18 +210,55 @@ public class BlockUtils {
 
     public static List<Block> getBlocksInSpherePattern(Block origin, int width, int height, int depth) {
         List<Block> blocks = new ArrayList<>();
+
+        double radiusX = width / 2.0;
+        double radiusY = height / 2.0;
+        double radiusZ = depth / 2.0;
+
         int halfWidth = width / 2;
         int halfHeight = height / 2;
         int halfDepth = depth / 2;
 
-        for (int x = -halfWidth; x < width - halfWidth; x++) {
-            for (int y = -halfHeight; y < height - halfHeight; y++) {
-                for (int z = -halfDepth; z < depth - halfDepth; z++) {
-                    if (halfWidth > 0 && halfHeight > 0 && halfDepth > 0) {
-                        double distance = (x * x) / (double) (halfWidth * halfWidth) + (y * y) / (double) (halfHeight * halfHeight) + (z * z) / (double) (halfDepth * halfDepth);
-                        if (distance <= 1) {
-                            blocks.add(center.getRelative(x, y, z));
-                        }
+        for (int x = -halfWidth; x <= halfWidth; x++) {
+            for (int y = -halfHeight; y <= halfHeight; y++) {
+                for (int z = -halfDepth; z <= halfDepth; z++) {
+
+                    double normalizedDistance = 0.0;
+                    if (halfWidth > 0) normalizedDistance += (x * x) / (radiusX * radiusX);
+                    if (halfHeight > 0) normalizedDistance += (y * y) / (radiusY * radiusY);
+                    if (halfDepth > 0) normalizedDistance += (z * z) / (radiusZ * radiusZ);
+
+                    if (normalizedDistance <= 1) {
+                        blocks.add(origin.getRelative(x, y, z));
+                    }
+
+                }
+            }
+        }
+        return blocks;
+    }
+
+    public static List<Block> getBlocksInDiamondPattern(Block origin, int width, int height, int depth) {
+        List<Block> blocks = new ArrayList<>();
+
+        int halfWidth = width / 2;
+        int halfHeight = height / 2;
+        int halfDepth = depth / 2;
+
+        for (int x = -halfWidth; x <= halfWidth; x++) {
+            for (int y = -halfHeight; y <= halfHeight; y++) {
+                for (int z = -halfDepth; z <= halfDepth; z++) {
+                    int distanceX = Math.abs(x);
+                    int distanceY = Math.abs(y);
+                    int distanceZ = Math.abs(z);
+
+                    double normalizedDistance = 0.0;
+                    if (halfWidth > 0) normalizedDistance += (double) distanceX / halfWidth;
+                    if (halfHeight > 0) normalizedDistance += (double) distanceY / halfHeight;
+                    if (halfDepth > 0) normalizedDistance += (double) distanceZ / halfDepth;
+
+                    if (normalizedDistance <= 1.0) {
+                        blocks.add(origin.getRelative(x, y, z));
                     }
                 }
             }
@@ -229,7 +266,7 @@ public class BlockUtils {
         return blocks;
     }
 
-    public static List<Block> getBlocksInLine(Block startingBlock, Vector direction, int length) {
+    public static List<Block> getBlocksInLine(Block origin, Vector direction, int length) {
         List<Block> blocksInLine = new ArrayList<>();
 
         for (int i = 1; i <= length; i++) {
