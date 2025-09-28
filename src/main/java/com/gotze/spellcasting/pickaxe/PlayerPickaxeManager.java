@@ -53,7 +53,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
     }
 
     @EventHandler
-    public void onBlockBreakActivateEnchants(BlockBreakEvent event) {
+    public void onBlockBreakHandlePickaxeDurability(BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
         ItemStack heldItem = player.getInventory().getItemInMainHand();
@@ -70,11 +70,6 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
             player.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.MASTER, 1.0f, 1.0f, 404);
             SoundUtils.playErrorSound(player);
             return;
-        }
-
-        Set<Enchantment> enchantments = pickaxeData.getEnchantments();
-        for (Enchantment enchantment : enchantments) {
-            enchantment.activate(player, event, pickaxeData);
         }
 
         pickaxeData.addBlocksBroken(1);
