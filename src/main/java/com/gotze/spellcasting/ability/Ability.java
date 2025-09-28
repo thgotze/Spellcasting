@@ -97,6 +97,16 @@ public abstract class Ability {
             return maxLevel;
         }
 
+        public Component getColoredName() {
+            return Component.text()
+                    .append(Component.text("⚡ ")
+                            .color(NamedTextColor.RED)
+                            .decorate(TextDecoration.BOLD))
+                    .append(Component.text(this.toString())
+                            .color(this.getRarity().getColor()))
+                    .build();
+        }
+
         public ItemStack getUpgradeToken() {
             return switch (this) {
                 case SLICE -> new ItemStackBuilder(Material.IRON_SWORD)
