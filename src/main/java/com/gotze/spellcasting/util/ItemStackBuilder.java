@@ -32,8 +32,6 @@ public class ItemStackBuilder {
     private boolean hideTooltipBox = false;
     private boolean hideEnchantTooltip = false;
     private boolean enchantGlint = false;
-    private final Map<Enchantment, Integer> enchantments = new HashMap<>();
-    private Map<String, String> persistentDataContainer = new HashMap<>();
     private Map<Enchantment, Integer> enchantments;
     private Map<String, String> persistentDataContainer;
     private int durabilityDamage;
@@ -119,12 +117,12 @@ public class ItemStackBuilder {
         return this;
     }
 
-    public ItemStackBuilder setDurabilityDamage(int durabilityDamage) {
+    public ItemStackBuilder durabilityDamage(int durabilityDamage) {
         this.durabilityDamage = durabilityDamage;
         return this;
     }
 
-    public ItemStackBuilder setMaxDurability(int maxDurability) {
+    public ItemStackBuilder maxDurability(int maxDurability) {
         this.maxDurability = maxDurability;
         return this;
     }

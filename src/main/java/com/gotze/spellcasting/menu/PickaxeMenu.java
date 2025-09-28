@@ -1,14 +1,14 @@
-package com.gotze.spellcasting.gui;
+package com.gotze.spellcasting.menu;
 
 import com.gotze.blockbreaksounds.gui.blockbreaksounds.BlockBreakSoundsGUI;
 import com.gotze.blockbreaksounds.model.CurrentSoundData;
-import com.gotze.spellcasting.feature.pickaxe.PlayerPickaxeService;
-import com.gotze.spellcasting.util.ItemStackBuilder;
-import com.gotze.spellcasting.util.SoundUtils;
-import com.gotze.spellcasting.util.StringUtils;
 import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
 import com.gotze.spellcasting.util.menu.MenuUtils;
+import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
+import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.util.SoundUtils;
+import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;

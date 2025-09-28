@@ -1,9 +1,8 @@
 package com.gotze.spellcasting;
 
-import com.gotze.spellcasting.feature.ResourcePackManager;
-import com.gotze.spellcasting.feature.lootpot.LootPotManager;
-import com.gotze.spellcasting.feature.pickaxe.PlayerPickaxeManager;
+import com.gotze.spellcasting.lootpot.LootPotManager;
 import com.gotze.spellcasting.util.menu.MenuListener;
+import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 

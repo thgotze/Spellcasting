@@ -1,8 +1,8 @@
-package com.gotze.spellcasting.feature.lootpot;
+package com.gotze.spellcasting.lootpot;
 
-import com.gotze.spellcasting.feature.pickaxe.PlayerPickaxeService;
-import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
-import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
+import com.gotze.spellcasting.ability.Ability;
+import com.gotze.spellcasting.enchantment.Enchantment;
+import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.BlockUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Loot;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class LootPotManager implements Listener {
-    private static final float POT_SPAWN_CHANCE = 1.0f / 5; // 1 in 300 chance
+    private static final float POT_SPAWN_CHANCE = 1.0f / 300; // 1 in 300 chance
     private static final List<Loot> RAW_ORE_LOOT = List.of(
             new Loot(ItemStack.of(Material.RAW_COPPER), 21, 34),
             new Loot(ItemStack.of(Material.RAW_IRON), 6, 10),
@@ -209,7 +209,7 @@ public class LootPotManager implements Listener {
                 .color(NamedTextColor.GREEN));
 
         for (ItemStack itemStack : itemsInPot) {
-            block.getWorld().dropItemNaturally(block.getLocation().add(0.5, 0.5, 0.5), itemStack);
+            block.getWorld().dropItemNaturally(block.getLocation().toCenterLocation(), itemStack);
             Component displayName = itemStack.displayName();
             event.getPlayer().sendMessage(displayName);
         }
@@ -241,13 +241,13 @@ public class LootPotManager implements Listener {
 
         Block block = event.getBlock();
 
-        List<Block> candidates = BlockUtils.getBlocksInSquarePattern(
-                block.getRelative(player.getFacing(), 7), 5, 1, 5);
+        List<Block> candidates = BlockUtils.getBlocksInSquarePattern(block.getRelative(player.getFacing(), 7),
+                5, 1, 5);
 
         Block chosenBlock = candidates.get(ThreadLocalRandom.current().nextInt(candidates.size()));
         chosenBlock.setType(Material.DECORATED_POT);
 
-        // cracked will disallow picking up the pot
+        // Cracked will disallow picking up the pot
         org.bukkit.block.data.type.DecoratedPot potData = (org.bukkit.block.data.type.DecoratedPot) chosenBlock.getBlockData();
         potData.setCracked(true);
         chosenBlock.setBlockData(potData);

@@ -1,7 +1,7 @@
-package com.gotze.spellcasting.feature.pickaxe.ability;
+package com.gotze.spellcasting.ability;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.util.BlockUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BazookaAbility extends Ability {
 
@@ -41,13 +42,12 @@ public class BazookaAbility extends Ability {
                 world.spawnParticle(Particle.POOF, laserLocation, 3, 0, 0, 0, 0);
                 Block targetBlock = laserLocation.getBlock();
                 if (!targetBlock.getType().isAir()) {
-                    ArrayList<Block> blocksToBreak = new ArrayList<>();
-                    blocksToBreak.addAll(
-                            BlockUtils.getBlocksInSpherePattern(targetBlock, 9, 7, 9).stream()
-                                    .filter(block -> !block.getType().isAir())
-                                    .filter(block -> block.getType() != Material.BEDROCK)
-                                    .toList()
-                    );
+
+                    List<Block> blocksToBreak = new ArrayList<>(BlockUtils.getBlocksInSpherePattern(targetBlock, 9, 7, 9).stream()
+                            .filter(block -> !block.getType().isAir())
+                            .filter(block -> block.getType() != Material.BEDROCK)
+                            .toList());
+
                     for (Block block : blocksToBreak) {
                         block.breakNaturally(player.getInventory().getItemInMainHand(), true);
                     }

@@ -1,15 +1,19 @@
-package com.gotze.spellcasting.feature.pickaxe;
+package com.gotze.spellcasting.pickaxe;
 
-import com.gotze.spellcasting.feature.pickaxe.ability.Ability;
-import com.gotze.spellcasting.feature.pickaxe.enchantment.Enchantment;
-import com.gotze.spellcasting.gui.PickaxeMenu;
+import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.ability.Ability;
+import com.gotze.spellcasting.enchantment.Enchantment;
+import com.gotze.spellcasting.menu.PickaxeMenu;
+import com.gotze.spellcasting.util.BlockBreakAware;
 import com.gotze.spellcasting.util.BlockCategories;
+import com.gotze.spellcasting.util.BlockDamageAware;
 import com.gotze.spellcasting.util.SoundUtils;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -18,9 +22,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +36,11 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerPickaxeManager implements Listener, BasicCommand {
 
     @EventHandler
-    public void onShiftRightClickWithPickaxe(PlayerInteractEvent event) {
+    public void onShiftRightClickHoldingPickaxe(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (!(event.getAction().isRightClick() && player.isSneaking())) return;
         if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
+
         event.setCancelled(true);
 
         new PickaxeMenu(player);
@@ -90,7 +99,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         event.setDropItems(false);
 
         BlockCategories.ORE_BLOCKS.get(blockType).rollChance().ifPresent(itemStack ->
-                block.getWorld().dropItemNaturally(block.getLocation().add(0.5, 0.5, 0.5), itemStack)
+                block.getWorld().dropItemNaturally(block.getLocation().toCenterLocation(), itemStack)
         );
     }
 
@@ -146,7 +155,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
     }
 
     @Override
-    public void execute(@NotNull CommandSourceStack commandSourceStack, @NotNull String[] args) {
+    public void execute(@NotNull CommandSourceStack commandSourceStack, @NotNull String @NotNull [] args) {
         if (!(commandSourceStack.getSender() instanceof Player player)) return;
 
         if (args.length == 0) {

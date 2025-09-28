@@ -1,10 +1,14 @@
-package com.gotze.spellcasting.feature.pickaxe.ability;
+package com.gotze.spellcasting.ability;
 
-import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Rarity;
+import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -69,6 +73,7 @@ public abstract class Ability {
     }
 
     public enum AbilityType {
+        PEEK(PeekAbility.class, Rarity.COMMON, 1),
         SLICE(SliceAbility.class, Rarity.LEGENDARY, 1),
         BAZOOKA(BazookaAbility.class, Rarity.LEGENDARY, 1),
         LASER(LaserAbility.class, Rarity.LEGENDARY, 1),
@@ -108,24 +113,6 @@ public abstract class Ability {
         }
 
         public ItemStack getUpgradeToken() {
-            return switch (this) {
-                case SLICE -> new ItemStackBuilder(Material.IRON_SWORD)
-                        .name(Component.text("Slice Ability Token")
-                                .color(Rarity.LEGENDARY.getColor()))
-                        .build();
-                case BAZOOKA -> new ItemStackBuilder(Material.FIREWORK_ROCKET)
-                        .name(Component.text("Bazooka Ability Token")
-                                .color(Rarity.LEGENDARY.getColor()))
-                        .build();
-                case LASER -> new ItemStackBuilder(Material.LIGHTNING_ROD)
-                        .name(Component.text("Laser Ability Token")
-                                .color(Rarity.LEGENDARY.getColor()))
-                        .build();
-                case HAMMER -> new ItemStackBuilder(Material.MACE)
-                        .name(Component.text("Hammer Ability Token")
-                                .color(Rarity.LEGENDARY.getColor()))
-                        .build();
-            };
             Material material = switch (this) {
                 case PEEK -> Material.GLASS;
                 case SLICE -> Material.IRON_SWORD;
@@ -139,11 +126,16 @@ public abstract class Ability {
                     .itemModel(NamespacedKey.minecraft(material.name().toLowerCase()))
                     .build();
         }
+
+        public Component getUpgradeTokenName() {
+            return getColoredName()
+                    .append(Component.text(" Token")
+                            .color(this.getRarity().getColor()));
         }
 
         @Override
         public String toString() {
-            return name().charAt(0) + name().substring(1).toLowerCase();
+            return StringUtils.toTitleCase(name());
         }
     }
 }

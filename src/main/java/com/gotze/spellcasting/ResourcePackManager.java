@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.feature;
+package com.gotze.spellcasting;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

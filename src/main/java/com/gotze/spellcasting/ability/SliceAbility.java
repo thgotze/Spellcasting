@@ -1,7 +1,7 @@
-package com.gotze.spellcasting.feature.pickaxe.ability;
+package com.gotze.spellcasting.ability;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.util.BlockUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -38,8 +38,8 @@ public class SliceAbility extends Ability {
 
     @Override
     public void activate(Player player, PickaxeData pickaxeData) {
-        final Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
-        final World world = player.getWorld();
+        Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
+        World world = player.getWorld();
 
         ItemDisplay[] itemDisplays = new ItemDisplay[6];
         for (int i = 0; i < 6; i++) {
@@ -100,7 +100,7 @@ public class SliceAbility extends Ability {
     }
 
     private List<Block> getBlocksInLineOfSight(int displayIndex, Player player) {
-        final double reachDistance = 4.5;
+        double reachDistance = 4.5;
         BlockFace playerFacing = player.getFacing();
         Location eyeLocation = player.getEyeLocation();
 

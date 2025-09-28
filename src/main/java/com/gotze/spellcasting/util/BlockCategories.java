@@ -19,7 +19,8 @@ public class BlockCategories {
             Material.CALCITE,
             Material.TUFF,
             Material.NETHERRACK,
-            Material.END_STONE
+            Material.END_STONE,
+            Material.GLASS // TODO: for debugging
     );
 
     public static final Map<Material, Loot> ORE_BLOCKS = Map.ofEntries(

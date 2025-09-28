@@ -83,8 +83,9 @@ public class BlockUtils {
         return blocks;
     }
 
-    public static List<Block> getBlocksInCylinderPattern(Block block, int width, int height, int depth) {
+    public static List<Block> getBlocksInCylinderPattern(Block origin, int width, int height, int depth) {
         List<Block> blocks = new ArrayList<>();
+
         int halfWidth = width / 2;
         int halfDepth = depth / 2;
 

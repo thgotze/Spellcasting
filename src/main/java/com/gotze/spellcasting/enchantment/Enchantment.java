@@ -1,10 +1,12 @@
-package com.gotze.spellcasting.feature.pickaxe.enchantment;
+package com.gotze.spellcasting.enchantment;
 
-import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Rarity;
+import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +16,7 @@ import java.util.Objects;
 public abstract class Enchantment {
     private final EnchantmentType enchantmentType;
     private int level;
+    private boolean killSwitch;
 
     public Enchantment(EnchantmentType enchantmentType) {
         this.enchantmentType = enchantmentType;
@@ -67,12 +70,13 @@ public abstract class Enchantment {
 
     public enum EnchantmentType {
         EFFICIENCY(EfficiencyEnchantment.class, Rarity.COMMON, 5),
-        UNBREAKING(UnbreakingEnchantment.class, Rarity.COMMON, 3),
         FORTUNE(FortuneEnchantment.class, Rarity.COMMON, 3),
+        UNBREAKING(UnbreakingEnchantment.class, Rarity.COMMON, 3),
         UNCOVER(UncoverEnchantment.class, Rarity.UNCOMMON, 5),
         MOMENTUM(MomentumEnchantment.class, Rarity.RARE, 5),
-        PHANTOM_QUARRY(PhantomQuarryEnchantment.class, Rarity.EPIC, 5);
-
+        PHANTOM_QUARRY(PhantomQuarryEnchantment.class, Rarity.EPIC, 5),
+        SPREAD(SpreadEnchantment.class, Rarity.UNCOMMON, 5),
+        ;
         private final Class<? extends Enchantment> enchantmentClass;
         private final Rarity rarity;
         private final int maxLevel;
@@ -96,36 +100,37 @@ public abstract class Enchantment {
         }
 
         public ItemStack getUpgradeToken() {
-            return switch (this) {
-                case EFFICIENCY -> new ItemStackBuilder(Material.REDSTONE)
-                        .name(Component.text("Efficiency Enchantment Token")
-                                .color(Rarity.COMMON.getColor()))
-                        .build();
-                case UNBREAKING -> new ItemStackBuilder(Material.OBSIDIAN)
-                        .name(Component.text("Unbreaking Enchantment Token")
-                                .color(Rarity.COMMON.getColor()))
-                        .build();
-                case FORTUNE -> new ItemStackBuilder(Material.LAPIS_LAZULI)
-                        .name(Component.text("Fortune Enchantment Token")
-                                .color(Rarity.COMMON.getColor()))
-                        .build();
-                case UNCOVER -> new ItemStackBuilder(Material.DECORATED_POT)
-                        .name(Component.text("Uncover Enchantment Token")
-                                .color(Rarity.UNCOMMON.getColor()))
-                        .build();
-                case MOMENTUM -> new ItemStackBuilder(Material.SUGAR)
-                        .name(Component.text("Momentum Enchantment Token")
-                                .color(Rarity.RARE.getColor()))
-                        .build();
-                case PHANTOM_QUARRY -> new ItemStackBuilder(Material.TINTED_GLASS)
-                        .name(Component.text("Phantom Quarry Enchantment Token")
-                                .color(Rarity.EPIC.getColor()))
-                        .build();
+            Material material = switch (this) {
+                case EFFICIENCY -> Material.REDSTONE;
+                case FORTUNE -> Material.LAPIS_LAZULI;
+                case UNBREAKING -> Material.OBSIDIAN;
+                case UNCOVER -> Material.DECORATED_POT;
+                case MOMENTUM -> Material.SUGAR;
+                case PHANTOM_QUARRY -> Material.TINTED_GLASS;
+                case SPREAD -> Material.COBBLESTONE;
             };
+
+            return new ItemStackBuilder(Material.PAPER)
+                    .name(getUpgradeTokenName())
+                    .itemModel(NamespacedKey.minecraft(material.name().toLowerCase()))
+                    .build();
+        }
+
+        public Component getUpgradeTokenName() {
+            return getColoredName()
+                    .append(Component.text(" Token")
+                            .color(this.getRarity().getColor()));
+        }
+
+        public Component getColoredName() {
+            return Component.text()
+                    .append(Component.text(this.toString())
+                            .color(this.getRarity().getColor()))
+                    .build();
         }
 
         public String toString() {
-            return name().charAt(0) + name().substring(1).toLowerCase();
+            return StringUtils.toTitleCase(name());
         }
     }
 
@@ -135,7 +140,8 @@ public abstract class Enchantment {
         }
 
         @Override
-        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+        public void onBlockBreak(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+
         }
     }
 
@@ -145,7 +151,8 @@ public abstract class Enchantment {
         }
 
         @Override
-        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+        public void onBlockBreak(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+
         }
     }
 
@@ -155,7 +162,8 @@ public abstract class Enchantment {
         }
 
         @Override
-        public void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+        public void onBlockBreak(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+
         }
     }
 }

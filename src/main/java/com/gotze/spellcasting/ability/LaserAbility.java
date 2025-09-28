@@ -1,6 +1,6 @@
-package com.gotze.spellcasting.feature.pickaxe.ability;
+package com.gotze.spellcasting.ability;
 
-import com.gotze.spellcasting.feature.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import org.bukkit.entity.Player;
 
 public class LaserAbility extends Ability {
