@@ -84,7 +84,45 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
     }
 
     @EventHandler
-    public void onHandSwapActivateAbilities(PlayerSwapHandItemsEvent event) {
+    public void onBlockDamageEvent(BlockDamageEvent event) {
+        Player player = event.getPlayer();
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
+
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+
+        for (Enchantment enchantment : pickaxeData.getEnchantments()) {
+            if (enchantment instanceof BlockDamageAware blockDamageAware) {
+                blockDamageAware.onBlockDamage(player, event, pickaxeData);
+            }
+        }
+
+        for (Ability ability : pickaxeData.getAbilities()) {
+            if (ability instanceof BlockDamageAware blockDamageAware) {
+                blockDamageAware.onBlockDamage(player, event, pickaxeData);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockBreakEvent(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
+
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+
+        for (Enchantment enchantment : pickaxeData.getEnchantments()) {
+            enchantment.onBlockBreak(player, event, pickaxeData);
+        }
+
+        for (Ability ability : pickaxeData.getAbilities()) {
+            if (ability instanceof BlockBreakAware blockBreakAware) {
+                blockBreakAware.onBlockBreak(player, event, pickaxeData);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onHandSwapActivatePickaxeAbilities(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
         event.setCancelled(true);
