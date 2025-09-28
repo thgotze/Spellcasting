@@ -20,7 +20,7 @@ public abstract class Enchantment {
         this.level = 1;
     }
 
-    public abstract void activate(Player player, BlockBreakEvent event, PickaxeData pickaxeData);
+    public abstract void onBlockBreak(Player player, BlockBreakEvent event, PickaxeData pickaxeData);
 
     public EnchantmentType getEnchantmentType() {
         return enchantmentType;
