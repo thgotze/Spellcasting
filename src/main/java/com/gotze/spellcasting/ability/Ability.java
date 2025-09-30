@@ -76,7 +76,7 @@ public abstract class Ability {
         PEEK(PeekAbility.class, Rarity.COMMON, 1),
         SLICE(SliceAbility.class, Rarity.LEGENDARY, 1),
         BAZOOKA(BazookaAbility.class, Rarity.LEGENDARY, 1),
-        LASER(LaserAbility.class, Rarity.LEGENDARY, 1),
+//        LASER(LaserAbility.class, Rarity.LEGENDARY, 1),
         HAMMER(HammerAbility.class, Rarity.LEGENDARY, 1),
         ;
 
@@ -114,10 +114,10 @@ public abstract class Ability {
 
         public ItemStack getUpgradeToken() {
             Material material = switch (this) {
-                case PEEK -> Material.GLASS;
+                case PEEK -> Material.SPYGLASS;
                 case SLICE -> Material.IRON_SWORD;
                 case BAZOOKA -> Material.FIREWORK_ROCKET;
-                case LASER -> Material.LIGHTNING_ROD;
+//                case LASER -> Material.AMETHYST_SHARD;
                 case HAMMER -> Material.MACE;
             };
 

@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.menu;
 
-import com.gotze.blockbreaksounds.gui.blockbreaksounds.BlockBreakSoundsGUI;
-import com.gotze.blockbreaksounds.model.CurrentSoundData;
+//import com.gotze.blockbreaksounds.gui.blockbreaksounds.BlockBreakSoundsGUI;
+//import com.gotze.blockbreaksounds.model.CurrentSoundData;
 import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
 import com.gotze.spellcasting.util.menu.MenuUtils;
@@ -27,20 +27,20 @@ public class PickaxeMenu extends Menu {
 
     private void populate(Player player) {
         MenuUtils.setFrames(getInventory());
-        item(2, new ItemStackBuilder(Material.BOOK) // TODO fix implementation of statistics, currently is just a static view
-                .name(Component.text("Statistics")
-                        .color(NamedTextColor.GOLD))
-                .lore(Component.text(StringUtils.convertToSmallFont("Material Tier: Diamond"))
-                                .color(NamedTextColor.GRAY),
-                        Component.text(StringUtils.convertToSmallFont("Enchants unlocked: 5/8"))
-                                .color(NamedTextColor.GRAY),
-                        Component.text(StringUtils.convertToSmallFont("Spells unlocked: 2/6"))
-                                .color(NamedTextColor.GRAY),
-                        Component.text(StringUtils.convertToSmallFont("Blocks broken: 175"))
-                                .color(NamedTextColor.GRAY),
-                        Component.text(StringUtils.convertToSmallFont("Durability: 1250"))
-                                .color(NamedTextColor.GRAY))
-                .build());
+//        item(2, new ItemStackBuilder(Material.BOOK) // TODO fix implementation of statistics, currently is just a static view
+//                .name(Component.text("Statistics")
+//                        .color(NamedTextColor.GOLD))
+//                .lore(Component.text(StringUtils.convertToSmallFont("Material Tier: Diamond"))
+//                                .color(NamedTextColor.GRAY),
+//                        Component.text(StringUtils.convertToSmallFont("Enchants unlocked: 5/8"))
+//                                .color(NamedTextColor.GRAY),
+//                        Component.text(StringUtils.convertToSmallFont("Spells unlocked: 2/6"))
+//                                .color(NamedTextColor.GRAY),
+//                        Component.text(StringUtils.convertToSmallFont("Blocks broken: 175"))
+//                                .color(NamedTextColor.GRAY),
+//                        Component.text(StringUtils.convertToSmallFont("Durability: 1250"))
+//                                .color(NamedTextColor.GRAY))
+//                .build());
 
         item(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
 
@@ -82,16 +82,16 @@ public class PickaxeMenu extends Menu {
             }
         });
 
-        button(new Button(6, CurrentSoundData.createCurrentSoundButton(player)) { // TODO: fix poor implementation
-            @Override
-            public void onClick(InventoryClickEvent event) {
-                CurrentSoundData.currentSoundButtonHandler(event.getClickedInventory(), event.getClick(), player, 6);
-                if (event.getClickedInventory().getItem(44).getType().equals(Material.GLASS_PANE)) {
-                    new BlockBreakSoundsGUI(player);
-                    SoundUtils.playUIClickSound(player);
-                }
-            }
-        });
+//        button(new Button(6, CurrentSoundData.createCurrentSoundButton(player)) { // TODO: fix poor implementation
+//            @Override
+//            public void onClick(InventoryClickEvent event) {
+//                CurrentSoundData.currentSoundButtonHandler(event.getClickedInventory(), event.getClick(), player, 6);
+//                if (event.getClickedInventory().getItem(44).getType().equals(Material.GLASS_PANE)) {
+//                    new BlockBreakSoundsGUI(player);
+//                    SoundUtils.playUIClickSound(player);
+//                }
+//            }
+//        });
     }
 
     @Override

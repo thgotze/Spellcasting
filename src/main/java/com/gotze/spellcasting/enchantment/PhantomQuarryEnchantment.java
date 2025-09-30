@@ -2,6 +2,7 @@ package com.gotze.spellcasting.enchantment;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.util.BlockBreakAware;
 import com.gotze.spellcasting.util.BlockDamageAware;
 import com.gotze.spellcasting.util.BlockUtils;
 import org.bukkit.Color;
@@ -23,7 +24,7 @@ import org.joml.Matrix4f;
 
 import java.util.*;
 
-public class PhantomQuarryEnchantment extends Enchantment implements BlockDamageAware {
+public class PhantomQuarryEnchantment extends Enchantment implements BlockDamageAware, BlockBreakAware {
     private static final BlockData TINTED_GLASS = Material.TINTED_GLASS.createBlockData();
     private static final long BASE_COOLDOWN = 1_000; // 15 seconds
 
@@ -155,7 +156,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockDamage
                     // Break up to 3 blocks every tick
                     for (int i = 0; i < 3 && !blocksToBreak.isEmpty(); i++) {
                         Block blockToBreak = blocksToBreak.removeFirst();
-                        blockToBreak.breakNaturally(true);
+                        FortuneEnchantment.handleBlockBreak(event,pickaxeData, blockToBreak);
                     }
                 }
             }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0L, 1L);

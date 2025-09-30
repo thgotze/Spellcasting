@@ -22,3 +22,8 @@ run/
 # OS
 .DS_Store
 Thumbs.db
+
+build.gradle.kts
+settings.gradle.kts
+gradlew
+gradlew.bat

@@ -1,10 +1,7 @@
 package com.gotze.spellcasting.enchantment;
 
 import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.util.BlockCategories;
-import com.gotze.spellcasting.util.BlockDamageAware;
-import com.gotze.spellcasting.util.BlockUtils;
-import com.gotze.spellcasting.util.StringUtils;
+import com.gotze.spellcasting.util.*;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SpreadEnchantment extends Enchantment implements BlockDamageAware {
+public class SpreadEnchantment extends Enchantment implements BlockDamageAware, BlockBreakAware {
 
     private boolean isActive;
     private BlockFace blockFace;
