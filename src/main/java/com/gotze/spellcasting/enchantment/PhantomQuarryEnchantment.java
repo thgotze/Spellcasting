@@ -40,12 +40,6 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockDamage
     }
 
     @Override
-    public void onBlockDamage(Player player, BlockDamageEvent event, PickaxeData pickaxeData) {
-        if (this.isActive) return;
-        this.blockFace = event.getBlockFace();
-    }
-
-    @Override
     public void onBlockBreak(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
         // First time
         if (!this.isActive) {
@@ -54,19 +48,16 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockDamage
 
             List<Block> cornerBlocks = new ArrayList<>();
             if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
-                // Flat on the ground (X/Z plane)
                 cornerBlocks.add(originBlock.getRelative(2, 0, 2));
                 cornerBlocks.add(originBlock.getRelative(2, 0, -2));
                 cornerBlocks.add(originBlock.getRelative(-2, 0, 2));
                 cornerBlocks.add(originBlock.getRelative(-2, 0, -2));
             } else if (blockFace == BlockFace.EAST || blockFace == BlockFace.WEST) {
-                // E/W vertical wall (X/Y plane)
                 cornerBlocks.add(originBlock.getRelative(0, 2, 2));
                 cornerBlocks.add(originBlock.getRelative(0, -2, 2));
                 cornerBlocks.add(originBlock.getRelative(0, 2, -2));
                 cornerBlocks.add(originBlock.getRelative(0, -2, -2));
             } else if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
-                // N/S vertical wall (Z/Y plane)
                 cornerBlocks.add(originBlock.getRelative(2, 2, 0));
                 cornerBlocks.add(originBlock.getRelative(2, -2, 0));
                 cornerBlocks.add(originBlock.getRelative(-2, 2, 0));
@@ -75,26 +66,28 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockDamage
 
             World world = originBlock.getWorld();
             for (Block cornerBlock : cornerBlocks) {
-                if (cornerBlock.getType() != Material.AIR) {
-                    Location blockLocation = cornerBlock.getLocation().add(0.0625f, 0.0625f, 0.0625f);
-                    BlockDisplay blockDisplay = (BlockDisplay) world.spawnEntity(blockLocation, EntityType.BLOCK_DISPLAY);
-                    blockDisplay.setBlock(TINTED_GLASS);
-                    blockDisplay.setGlowing(true);
-                    blockDisplay.setGlowColorOverride(Color.YELLOW);
-                    blockDisplay.setBrightness(new Display.Brightness(15, 15));
-                    blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.875f, 0.875f, 0.875f));
-                    blockDisplay.setVisibleByDefault(false);
-                    player.showEntity(JavaPlugin.getPlugin(Spellcasting.class), blockDisplay);
+                Material cornerBlockType = cornerBlock.getType();
+                if (cornerBlockType == Material.AIR || cornerBlockType == Material.GLASS) continue;
 
-                    markedBlocks.put(cornerBlock, blockDisplay);
-                }
+                Location blockLocation = cornerBlock.getLocation().add(0.0625f, 0.0625f, 0.0625f);
+                BlockDisplay blockDisplay = (BlockDisplay) world.spawnEntity(blockLocation, EntityType.BLOCK_DISPLAY);
+                blockDisplay.setBlock(TINTED_GLASS);
+                blockDisplay.setGlowing(true);
+                blockDisplay.setGlowColorOverride(Color.YELLOW);
+                blockDisplay.setBrightness(new Display.Brightness(15, 15));
+                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.875f, 0.875f, 0.875f));
+                blockDisplay.setVisibleByDefault(false);
+                player.showEntity(JavaPlugin.getPlugin(Spellcasting.class), blockDisplay);
+
+                markedBlocks.put(cornerBlock, blockDisplay);
             }
 
-            // If none of the 4 corners were created then don't activate the enchantment
-            if (markedBlocks.isEmpty()) {
+            // If less than 3 corners were created then don't activate the enchantment
+            if (markedBlocks.size() < 3) {
                 reset();
                 return;
             }
+
             isActive = true;
             cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
 
@@ -156,25 +149,31 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockDamage
                     // Break up to 3 blocks every tick
                     for (int i = 0; i < 3 && !blocksToBreak.isEmpty(); i++) {
                         Block blockToBreak = blocksToBreak.removeFirst();
-                        FortuneEnchantment.handleBlockBreak(event,pickaxeData, blockToBreak);
+                        blockToBreak.breakNaturally(true);
                     }
                 }
             }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0L, 1L);
         }
     }
 
+    @Override
+    public void onBlockDamage(Player player, BlockDamageEvent event, PickaxeData pickaxeData) {
+        if (this.isActive) return;
+        this.blockFace = event.getBlockFace();
+    }
+
     private void reset() {
+        isActive = false;
+        originBlock = null;
+        blockFace = null;
+        if (timeoutTask != null) {
+            timeoutTask.cancel();
+        }
         for (BlockDisplay display : markedBlocks.values()) {
             if (display.isValid()) {
                 display.remove();
             }
         }
-        isActive = false;
-        originBlock = null;
-        blockFace = null;
         markedBlocks.clear();
-        if (timeoutTask != null) {
-            timeoutTask.cancel();
-        }
     }
 }

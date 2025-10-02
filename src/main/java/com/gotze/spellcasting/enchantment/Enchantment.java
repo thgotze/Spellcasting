@@ -1,7 +1,10 @@
 package com.gotze.spellcasting.enchantment;
 
 import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.util.*;
+import com.gotze.spellcasting.util.BlockBreakAware;
+import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.util.Rarity;
+import com.gotze.spellcasting.util.StringUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -11,7 +14,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Enchantment {
     private final EnchantmentType enchantmentType;
@@ -209,30 +211,31 @@ public abstract class Enchantment {
 //
 //                // drop custom ore drop
 //                block.getWorld().dropItem(block.getLocation().toCenterLocation(), itemStack);
-            }
-        }
+//        }
+
 
 //            BlockCategories.ORE_BLOCKS.get(blockType).rollChance().ifPresent(itemStack ->
 //                    block.getWorld().dropItemNaturally(block.getLocation().toCenterLocation(), itemStack)
 //            );
 
-        // level 1
-        // 66% 1×
-        //33% 2×
-        //(avg. 1.33× - +33%)
+            // level 1
+            // 66% 1×
+            //33% 2×
+            //(avg. 1.33× - +33%)
 
-        // level 2
-        //50% 1×
-        //25% 2×
-        //25% 3×
-        //(avg. 1.75× - +75%)
+            // level 2
+            //50% 1×
+            //25% 2×
+            //25% 3×
+            //(avg. 1.75× - +75%)
 
-        // level 3
-        //40% 1×
-        //20% 2×
-        //20% 3×
-        //20% 4×
-        //(avg. 2.2× - +120%)
+            // level 3
+            //40% 1×
+            //20% 2×
+            //20% 3×
+            //20% 4×
+            //(avg. 2.2× - +120%)
+        }
     }
 
     public static class UnbreakingEnchantment extends Enchantment {

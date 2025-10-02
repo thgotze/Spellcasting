@@ -2,7 +2,6 @@ package com.gotze.spellcasting.enchantment;
 
 import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.util.*;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -17,7 +16,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class SpreadEnchantment extends Enchantment implements BlockDamageAware, BlockBreakAware {
 
-    private boolean isActive;
     private BlockFace blockFace;
 
     public SpreadEnchantment() {
@@ -25,19 +23,11 @@ public class SpreadEnchantment extends Enchantment implements BlockDamageAware, 
     }
 
     @Override
-    public void onBlockDamage(Player player, BlockDamageEvent event, PickaxeData pickaxeData) {
-        this.blockFace = event.getBlockFace();
-    }
-
-    @Override
     public void onBlockBreak(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
-        if (player.getGameMode() != GameMode.SURVIVAL) return;
-
         Block originBlock = event.getBlock();
         Material originBlockType = originBlock.getType();
         if (!BlockCategories.ORE_BLOCKS.containsKey(originBlockType)) return;
 
-        this.isActive = true;
         BlockFace oppositeFace = blockFace.getOppositeFace();
 
         List<Block> spreadableBlocks = new ArrayList<>();
@@ -75,11 +65,11 @@ public class SpreadEnchantment extends Enchantment implements BlockDamageAware, 
             }
         }
         player.sendMessage("You spread " + StringUtils.toTitleCase(originBlockType.toString()) + " to " + blocksSpread + "/" + amountToSpread + " blocks");
-        reset();
+        blockFace = null;
     }
 
-    private void reset() {
-        blockFace = null;
-        isActive = false;
+    @Override
+    public void onBlockDamage(Player player, BlockDamageEvent event, PickaxeData pickaxeData) {
+        this.blockFace = event.getBlockFace();
     }
 }

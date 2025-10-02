@@ -52,7 +52,7 @@ public class BazookaAbility extends Ability {
                         block.breakNaturally(player.getInventory().getItemInMainHand(), true);
                     }
                     player.sendMessage("You broke: " + blocksToBreak.size() + " blocks");
-                    world.playSound(targetBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 10.0f, 1.0f);
+                    world.playSound(targetBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1.0f);
                     world.spawnParticle(Particle.POOF, laserLocation, 350, 2, 2, 2, 0.35);
 
                     this.cancel();

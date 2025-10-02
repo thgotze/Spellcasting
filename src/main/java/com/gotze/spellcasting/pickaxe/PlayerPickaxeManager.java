@@ -28,8 +28,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class PlayerPickaxeManager implements Listener, BasicCommand {
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -41,11 +39,10 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         World world = block.getWorld();
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
 
+        if (player.getGameMode() == GameMode.CREATIVE) return;
+
         // *** check player is holding their pickaxe
-        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) {
-            event.setCancelled(true);
-            return;
-        }
+        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
 
         // *** check if pickaxe is about to break, cancel event if so
         if (pickaxeData.getDurabilityDamage() + 1 == pickaxeData.getPickaxeMaterial().getMaxDurability()) {
@@ -75,12 +72,14 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
 
         // *** check if broken blocks blocktype is an ore
         Loot loot = BlockCategories.ORE_BLOCKS.get(blockType);
-        if (loot == null) return;
-        if (!BlockCategories.ORE_BLOCKS.containsKey(blockType)) return;
-        event.setDropItems(false);
-        BlockCategories.ORE_BLOCKS.get(blockType).rollChance().ifPresent(itemStack ->
-                world.dropItemNaturally(block.getLocation().toCenterLocation(), itemStack)
-        );
+        if (loot != null) {
+            if (BlockCategories.ORE_BLOCKS.containsKey(blockType)) {
+                event.setDropItems(false);
+                BlockCategories.ORE_BLOCKS.get(blockType).rollChance().ifPresent(itemStack ->
+                        world.dropItemNaturally(block.getLocation().toCenterLocation(), itemStack)
+                );
+            }
+        }
 
 
         // *** abilities and enchantments
@@ -96,27 +95,28 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
             }
         }
 
-        // *** handle extra broken blocks
-        List<Block> blocks = BlockUtils.getBlocksInSquarePattern(block, 3, 3, 3);
-        blocks.remove(block);
 
-        for (Block b : blocks) {
-            Material type = b.getType();
-            if (type.isAir()) continue;
-
-            Location blockLocation = b.getLocation().toCenterLocation();
-            world.playEffect(blockLocation, Effect.STEP_SOUND, b.getBlockData());
-            SoundGroup soundGroup = b.getBlockSoundGroup();
-
-            world.playSound(blockLocation, soundGroup.getBreakSound(), soundGroup.getVolume(), soundGroup.getPitch());
-
-            if (BlockCategories.ORE_BLOCKS.containsKey(type)) {
-                BlockCategories.ORE_BLOCKS.get(type).rollChance().ifPresent(itemStack ->
-                        world.dropItemNaturally(blockLocation, itemStack)
-                );
-            }
-            b.setType(Material.AIR, false);
-        }
+//        // *** handle extra broken blocks
+//        List<Block> blocks = BlockUtils.getBlocksInSquarePattern(block, 3, 3, 3);
+//        blocks.remove(block);
+//
+//        for (Block b : blocks) {
+//            Material type = b.getType();
+//            if (type.isAir()) continue;
+//
+//            Location blockLocation = b.getLocation().toCenterLocation();
+//            world.playEffect(blockLocation, Effect.STEP_SOUND, b.getBlockData());
+//            SoundGroup soundGroup = b.getBlockSoundGroup();
+//
+//            world.playSound(blockLocation, soundGroup.getBreakSound(), soundGroup.getVolume(), soundGroup.getPitch());
+//
+//            if (BlockCategories.ORE_BLOCKS.containsKey(type)) {
+//                BlockCategories.ORE_BLOCKS.get(type).rollChance().ifPresent(itemStack ->
+//                        world.dropItemNaturally(blockLocation, itemStack)
+//                );
+//            }
+//            b.setType(Material.AIR, false);
+//        }
     }
 
     @EventHandler

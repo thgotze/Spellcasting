@@ -32,6 +32,11 @@ public class PlayerPickaxeService {
     public static ItemStack getPickaxe(Player player) {
         PickaxeData pickaxeData = getPickaxeData(player);
 
+        if (pickaxeData == null) { // TODO: debug remove later
+            player.sendMessage("No pickaxe data available!");
+            return null;
+        }
+
         ItemStackBuilder builder = new ItemStackBuilder(pickaxeData.getPickaxeMaterial().getType())
                 .persistentDataContainer("owner", player.getUniqueId().toString())
                 .lore(getPickaxeLore(pickaxeData))

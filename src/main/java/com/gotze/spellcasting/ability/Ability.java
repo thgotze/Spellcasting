@@ -78,6 +78,7 @@ public abstract class Ability {
         BAZOOKA(BazookaAbility.class, Rarity.LEGENDARY, 1),
 //        LASER(LaserAbility.class, Rarity.LEGENDARY, 1),
         HAMMER(HammerAbility.class, Rarity.LEGENDARY, 1),
+//        TECTONIC_SHOCKWAVE(TectonicShockwaveAbility.class, Rarity.LEGENDARY, 1),
         ;
 
         private final Class<? extends Ability> abilityClass;
@@ -119,6 +120,7 @@ public abstract class Ability {
                 case BAZOOKA -> Material.FIREWORK_ROCKET;
 //                case LASER -> Material.AMETHYST_SHARD;
                 case HAMMER -> Material.MACE;
+//                case TECTONIC_SHOCKWAVE -> Material.SCULK_CATALYST;
             };
 
             return new ItemStackBuilder(Material.PAPER)

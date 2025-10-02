@@ -29,11 +29,6 @@ public class HammerAbility extends Ability implements BlockBreakAware, BlockDama
     }
 
     @Override
-    public void onBlockDamage(Player player, BlockDamageEvent event, PickaxeData pickaxeData) {
-        this.blockFace = event.getBlockFace();
-    }
-
-    @Override
     public void activate(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         isActive = true;
@@ -80,9 +75,15 @@ public class HammerAbility extends Ability implements BlockBreakAware, BlockDama
         blocksToBreak.removeIf(Block::isEmpty);
 
         for (Block block : blocksToBreak) {
-            block.breakNaturally();
+            block.breakNaturally(true);
         }
 
         pickaxeData.addBlocksBroken(blocksToBreak.size() - 1);
+    }
+
+    @Override
+    public void onBlockDamage(Player player, BlockDamageEvent event, PickaxeData pickaxeData) {
+        if (!this.isActive) return;
+        this.blockFace = event.getBlockFace();
     }
 }
