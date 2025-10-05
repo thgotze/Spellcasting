@@ -3,7 +3,7 @@ package com.gotze.spellcasting.lootpot;
 import com.gotze.spellcasting.ability.Ability;
 import com.gotze.spellcasting.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
-import com.gotze.spellcasting.util.BlockUtils;
+import com.gotze.spellcasting.util.block.BlockUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.Rarity;
@@ -41,14 +41,14 @@ public class LootPotManager implements Listener {
             // Ability tokens
             // --------------
             Stream.of(Ability.AbilityType.values()) // TODO: will need to filter all the types and their rarity and their weight
-                    .map(abilityType -> new Loot(abilityType.getUpgradeToken(), abilityType.getRarity().getWeight()))
+                    .map(abilityType -> new Loot(abilityType.upgradeToken(), abilityType.rarity().weight()))
                     .toList(),
             // --------------
 
             // Enchant tokens
             // --------------
             Stream.of(Enchantment.EnchantmentType.values())
-                    .map(enchantmentType -> new Loot(enchantmentType.getUpgradeToken(), enchantmentType.getRarity().getWeight()))
+                    .map(enchantmentType -> new Loot(enchantmentType.upgradeToken(), enchantmentType.rarity().weight()))
                     .toList(),
             // --------------
             // Machine parts
@@ -119,24 +119,24 @@ public class LootPotManager implements Listener {
                     new Loot(new ItemStackBuilder(Material.WHITE_SHULKER_BOX)
                             .name(Component.text("Common Loot Box")
                                     .color(NamedTextColor.WHITE))
-                            .build(), Rarity.COMMON.getWeight()),
+                            .build(), Rarity.COMMON.weight()),
 //                    .build(), Rarity.COMMON.getWeight() / Rarity.values().length), // TODO: reduce chance
                     new Loot(new ItemStackBuilder(Material.LIME_SHULKER_BOX)
                             .name(Component.text("Uncommon Loot Box")
                                     .color(NamedTextColor.GREEN))
-                            .build(), Rarity.UNCOMMON.getWeight()),
+                            .build(), Rarity.UNCOMMON.weight()),
                     new Loot(new ItemStackBuilder(Material.LIGHT_BLUE_SHULKER_BOX)
                             .name(Component.text("Rare Loot Box")
                                     .color(NamedTextColor.AQUA))
-                            .build(), Rarity.RARE.getWeight()),
+                            .build(), Rarity.RARE.weight()),
                     new Loot(new ItemStackBuilder(Material.MAGENTA_SHULKER_BOX)
                             .name(Component.text("Epic Loot Box")
                                     .color(NamedTextColor.LIGHT_PURPLE))
-                            .build(), Rarity.EPIC.getWeight()),
+                            .build(), Rarity.EPIC.weight()),
                     new Loot(new ItemStackBuilder(Material.ORANGE_SHULKER_BOX)
                             .name(Component.text("Legendary Loot Box")
                                     .color(NamedTextColor.GOLD))
-                            .build(), Rarity.LEGENDARY.getWeight())),
+                            .build(), Rarity.LEGENDARY.weight())),
             // --------------
             // Pot sherds
             // --------------
@@ -151,12 +151,12 @@ public class LootPotManager implements Listener {
             // --------------
             Stream.of(Enchantment.EnchantmentType.values())
                     .collect(Collectors.collectingAndThen(
-                            Collectors.groupingBy(Enchantment.EnchantmentType::getRarity, Collectors.counting()),
+                            Collectors.groupingBy(Enchantment.EnchantmentType::rarity, Collectors.counting()),
                             counts -> Stream.of(Enchantment.EnchantmentType.values())
                                     .map(type -> {
-                                        Rarity rarity = type.getRarity();
-                                        double chance = rarity.getWeight() / counts.get(rarity);
-                                        return new Loot(type.getUpgradeToken(), chance);
+                                        Rarity rarity = type.rarity();
+                                        double chance = rarity.weight() / counts.get(rarity);
+                                        return new Loot(type.upgradeToken(), chance);
                                     })
                                     .toList()
                     ))
@@ -218,7 +218,8 @@ public class LootPotManager implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onBlockBreakTrySpawnLootPot(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, false)) return;
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false).orElse(null);
+        if (pickaxe == null) return;
         if (ThreadLocalRandom.current().nextDouble() >= POT_SPAWN_CHANCE) return;
 
         Block block = event.getBlock();

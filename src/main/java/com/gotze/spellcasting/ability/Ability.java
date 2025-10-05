@@ -12,8 +12,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 public abstract class Ability {
     private final AbilityType abilityType;
     private int level;
@@ -23,62 +21,41 @@ public abstract class Ability {
         this.level = 1;
     }
 
-    public abstract void activate(Player player, PickaxeData pickaxeData);
+    public abstract void activateAbility(Player player, PickaxeData pickaxeData);
 
-    public AbilityType getAbilityType() {
+    public AbilityType abilityType() {
         return abilityType;
     }
 
-    public int getLevel() {
+    public int level() {
         return level;
     }
 
-    public int getMaxLevel() {
-        return abilityType.getMaxLevel();
+    public int maxLevel() {
+        return abilityType.maxLevel();
     }
 
-    public Rarity getRarity() {
-        return abilityType.getRarity();
+    public Rarity rarity() {
+        return abilityType.rarity();
     }
 
     public boolean isMaxLevel() {
-        return level == abilityType.getMaxLevel();
+        return level == abilityType.maxLevel();
     }
 
     public void increaseLevel() {
-        if (level < getMaxLevel()) {
+        if (level < maxLevel()) {
             this.level++;
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Ability that)) return false;
-        return level == that.level &&
-                abilityType == that.abilityType;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(abilityType, level);
-    }
-
-    @Override
-    public String toString() {
-        return "Ability{" +
-                "abilityType=" + abilityType +
-                ", level=" + level +
-                '}';
-    }
-
     public enum AbilityType {
-        PEEK(PeekAbility.class, Rarity.COMMON, 1),
-        SLICE(SliceAbility.class, Rarity.LEGENDARY, 1),
-        BAZOOKA(BazookaAbility.class, Rarity.LEGENDARY, 1),
-//        LASER(LaserAbility.class, Rarity.LEGENDARY, 1),
-        HAMMER(HammerAbility.class, Rarity.LEGENDARY, 1),
-//        TECTONIC_SHOCKWAVE(TectonicShockwaveAbility.class, Rarity.LEGENDARY, 1),
+        PEEK(PeekAbility.class, Rarity.COMMON, 5),
+//        CONGLOMERATE(ConglomerateAbility.class, Rarity.RARE, 5),
+        HAMMER(HammerAbility.class, Rarity.EPIC, 5),
+        FLURRY(FlurryAbility.class, Rarity.LEGENDARY, 5),
+        BAZOOKA(BazookaAbility.class, Rarity.LEGENDARY, 5),
+//        LASER(LaserAbility.class, Rarity.LEGENDARY, 5),
         ;
 
         private final Class<? extends Ability> abilityClass;
@@ -95,44 +72,44 @@ public abstract class Ability {
             return abilityClass;
         }
 
-        public Rarity getRarity() {
+        public Rarity rarity() {
             return rarity;
         }
 
-        public int getMaxLevel() {
+        public int maxLevel() {
             return maxLevel;
         }
 
-        public Component getColoredName() {
+        public Component formattedName() {
             return Component.text()
                     .append(Component.text("⚡ ")
                             .color(NamedTextColor.RED)
                             .decorate(TextDecoration.BOLD))
                     .append(Component.text(this.toString())
-                            .color(this.getRarity().getColor()))
+                            .color(this.rarity().color()))
                     .build();
         }
 
-        public ItemStack getUpgradeToken() {
+        public ItemStack upgradeToken() {
             Material material = switch (this) {
                 case PEEK -> Material.SPYGLASS;
-                case SLICE -> Material.IRON_SWORD;
+//                case CONGLOMERATE -> Material.DIORITE;
+                case HAMMER -> Material.MACE;
+                case FLURRY -> Material.IRON_SWORD;
                 case BAZOOKA -> Material.FIREWORK_ROCKET;
 //                case LASER -> Material.AMETHYST_SHARD;
-                case HAMMER -> Material.MACE;
-//                case TECTONIC_SHOCKWAVE -> Material.SCULK_CATALYST;
             };
 
             return new ItemStackBuilder(Material.PAPER)
-                    .name(getUpgradeTokenName())
+                    .name(upgradeTokenName())
                     .itemModel(NamespacedKey.minecraft(material.name().toLowerCase()))
                     .build();
         }
 
-        public Component getUpgradeTokenName() {
-            return getColoredName()
+        public Component upgradeTokenName() {
+            return formattedName()
                     .append(Component.text(" Token")
-                            .color(this.getRarity().getColor()));
+                            .color(this.rarity().color()));
         }
 
         @Override

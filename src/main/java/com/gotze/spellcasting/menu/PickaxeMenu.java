@@ -42,7 +42,7 @@ public class PickaxeMenu extends Menu {
 //                                .color(NamedTextColor.GRAY))
 //                .build());
 
-        item(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
+        item(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player));
 
         button(new Button(21, new ItemStackBuilder(Material.ENCHANTED_BOOK)
                 .name(Component.text("Enchantments")

@@ -1,25 +1,20 @@
 package com.gotze.spellcasting.ability;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.util.BlockBreakAware;
-import com.gotze.spellcasting.util.BlockDamageAware;
-import com.gotze.spellcasting.util.BlockUtils;
-import io.papermc.paper.datacomponent.DataComponentTypes;
+import com.gotze.spellcasting.util.ItemModelModifier;
+import com.gotze.spellcasting.util.block.BlockBreakListener;
+import com.gotze.spellcasting.util.block.BlockBreaker;
+import com.gotze.spellcasting.util.block.BlockDamageListener;
+import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
-public class HammerAbility extends Ability implements BlockBreakAware, BlockDamageAware {
+public class HammerAbility extends Ability implements BlockBreakListener, BlockDamageListener, BlockBreaker, ItemModelModifier {
 
     boolean isActive;
     BlockFace blockFace;
@@ -29,56 +24,30 @@ public class HammerAbility extends Ability implements BlockBreakAware, BlockDama
     }
 
     @Override
-    public void activate(Player player, PickaxeData pickaxeData) {
+    public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
-        isActive = true;
+        this.isActive = true;
         player.sendMessage("Hammer ability activated!");
 
-//        Material material = Material.REDSTONE;
-//        ItemStack itemStack = new ItemStackBuilder(Material.PAPER)
-//                .itemModel(NamespacedKey.minecraft(material.name().toLowerCase()))
-//                .build();
-//
-//        ItemStack itemStack1 = new ItemStackBuilder(heldItemClone)
-//                .itemModel(NamespacedKey.minecraft(material1.name().toLowerCase()))
-//                .build();
-
-        ItemStack heldItem = player.getInventory().getItemInMainHand();
-        Material originalType = heldItem.getType();
-        Material mace = Material.MACE;
-
-        heldItem.setData(DataComponentTypes.ITEM_MODEL, NamespacedKey.minecraft(mace.name().toLowerCase()));
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                heldItem.setData(DataComponentTypes.ITEM_MODEL, NamespacedKey.minecraft(originalType.name().toLowerCase()));
-                isActive = false;
-            }
-        }.runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), 20L * 10);
+        modifyItemModelTemporarily(player.getInventory().getItemInMainHand(),
+                Material.MACE,
+                20L * 10,
+                () -> this.isActive = false);
     }
 
     @Override
-    public void onBlockBreak(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
+    public void onBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
         if (!this.isActive) return;
+        if (!isNaturalBreak) return;
 
-        Block centerBlock = event.getBlock();
-
-        List<Block> blocksToBreak;
-        if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
-            blocksToBreak = BlockUtils.getBlocksInSquarePattern(centerBlock, 3, 1, 3);
-        } else if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
-            blocksToBreak = BlockUtils.getBlocksInSquarePattern(centerBlock, 3, 3, 1);
-        } else {
-            blocksToBreak = BlockUtils.getBlocksInSquarePattern(centerBlock, 1, 3, 3);
-        }
-        blocksToBreak.removeIf(Block::isEmpty);
-
-        for (Block block : blocksToBreak) {
-            block.breakNaturally(true);
-        }
-
-        pickaxeData.addBlocksBroken(blocksToBreak.size() - 1);
+        List<Block> blocksToBreak = switch (blockFace) {
+            case NORTH, SOUTH -> BlockUtils.getBlocksInSquarePattern(block, 3, 3, 1);
+            case EAST, WEST -> BlockUtils.getBlocksInSquarePattern(block, 1, 3, 3);
+            case UP, DOWN -> BlockUtils.getBlocksInSquarePattern(block, 3, 1, 3);
+            default -> throw new IllegalStateException();
+        };
+        blocksToBreak.remove(block);
+        breakBlocks(player, blocksToBreak, pickaxeData, false);
     }
 
     @Override

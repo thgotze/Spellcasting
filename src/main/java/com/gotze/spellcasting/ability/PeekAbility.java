@@ -1,9 +1,11 @@
 package com.gotze.spellcasting.ability;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.enchantment.Enchantment;
+import com.gotze.spellcasting.enchantment.PhantomQuarryEnchantment;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.util.BlockCategories;
-import com.gotze.spellcasting.util.BlockUtils;
+import com.gotze.spellcasting.util.block.BlockCategories;
+import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -28,24 +30,34 @@ public class PeekAbility extends Ability {
     }
 
     @Override
-    public void activate(Player player, PickaxeData pickaxeData) {
+    public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
 
         Block centerBlock = player.getLocation().getBlock().getRelative(BlockFace.UP);
 
-        List<Block> blockList = switch (getLevel() + 4) {
+        List<Block> blockList = switch (level()) {
             case 1 -> BlockUtils.getBlocksInSquarePattern(centerBlock, 5, 4, 5);
             case 2 -> BlockUtils.getBlocksInSquarePattern(centerBlock, 7, 6, 7);
             case 3 -> BlockUtils.getBlocksInSquarePattern(centerBlock, 9, 8, 9);
             case 4 -> BlockUtils.getBlocksInSquarePattern(centerBlock, 11, 10, 11);
             case 5 -> BlockUtils.getBlocksInSquarePattern(centerBlock, 13, 12, 13);
-            default -> throw new IllegalStateException("Unexpected value: " + getLevel());
+            default -> throw new IllegalStateException("Unexpected value: " + level());
         };
 
-        blockList.removeIf(block -> block.isEmpty() || !BlockCategories.FILLER_BLOCKS.contains(block.getType()));
+        // Edge case to not glassify marked blocks from phantom quarry enchantment
+        PhantomQuarryEnchantment phantomQuarryEnchantment = (PhantomQuarryEnchantment) pickaxeData.getEnchantment(Enchantment.EnchantmentType.PHANTOM_QUARRY);
 
         for (Block block : blockList) {
+            Material blockType = block.getType();
+            if (blockType.isEmpty()) continue;
+
+            if (!BlockCategories.FILLER_BLOCKS.contains(blockType)) continue;
+
+            // Edge case to not glassify marked blocks from phantom quarry enchantment
+            if (phantomQuarryEnchantment != null && phantomQuarryEnchantment.isActive) {
+                if (phantomQuarryEnchantment.markedBlocks.containsKey(block)) continue;
+            }
             blocksAffected.put(block, block.getBlockData());
             block.setType(Material.GLASS);
         }
@@ -60,12 +72,8 @@ public class PeekAbility extends Ability {
             public void run() {
                 for (Map.Entry<Block, BlockData> entry : blocksAffected.entrySet()) {
                     Block block = entry.getKey();
-                    BlockData blockData = entry.getValue();
-
                     if (block.getType().isEmpty()) continue;
-
-
-                    block.setBlockData(blockData);
+                    block.setBlockData(entry.getValue());
                 }
                 isActive = false;
                 blocksAffected.clear();

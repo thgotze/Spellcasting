@@ -1,23 +1,23 @@
 package com.gotze.spellcasting.menu;
 
 import com.gotze.spellcasting.enchantment.Enchantment;
-import com.gotze.spellcasting.util.menu.Button;
-import com.gotze.spellcasting.util.menu.Menu;
-import com.gotze.spellcasting.util.menu.MenuUtils;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
+import com.gotze.spellcasting.util.menu.Button;
+import com.gotze.spellcasting.util.menu.Menu;
+import com.gotze.spellcasting.util.menu.MenuUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -31,13 +31,29 @@ public class EnchantmentMenu extends Menu {
 
     private void populate(Player player) {
         MenuUtils.setFrames(getInventory());
-        item(4, PlayerPickaxeService.getPickaxeCloneWithoutDurability(player));
+
+        button(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) {
+            @Override
+            public void onClick(InventoryClickEvent event) {
+                ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true).orElse(null);
+                if (pickaxe == null) return;
+
+                PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
+                pickaxeData.removeEnchantments();
+
+                ItemStack updatedPickaxe = PlayerPickaxeService.playerPickaxe(player);
+                player.getInventory().setItem(EquipmentSlot.HAND, updatedPickaxe);
+
+                getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));
+                SoundUtils.playUIClickSound(player);
+            }
+        });
 
         int startingIndex = 19;
         for (Enchantment.EnchantmentType enchantmentType : Enchantment.EnchantmentType.values()) {
-            ItemStack upgradeToken = enchantmentType.getUpgradeToken();
+            ItemStack upgradeToken = enchantmentType.upgradeToken();
 
-            int tokenAmount = switch (enchantmentType.getRarity()) { // TODO: placeholder amounts
+            int tokenAmount = switch (enchantmentType.rarity()) { // TODO: placeholder amounts
                 case COMMON -> 16;
                 case UNCOMMON -> 8;
                 case RARE -> 4;
@@ -46,17 +62,31 @@ public class EnchantmentMenu extends Menu {
             };
 
             button(new Button(startingIndex++, new ItemStackBuilder(upgradeToken)
-                    .name(enchantmentType.getColoredName())
+                    .name(enchantmentType.formattedName())
                     .lore(Component.text(""),
                             Component.text(StringUtils.convertToSmallFont("requirements")),
                             Component.text(tokenAmount + "x [")
-                                    .append(enchantmentType.getUpgradeTokenName())
+                                    .append(enchantmentType.upgradeTokenName())
                                     .append(Component.text("]")))
                     .hideAttributes()
                     .hideAdditionalTooltip()
                     .build()) {
                 @Override
-                public void onClick (InventoryClickEvent event){
+                public void onClick(InventoryClickEvent event) {
+                    if (event.getClick() == ClickType.DROP) { // TODO: debug
+                        ItemStack upgradeToken = enchantmentType.upgradeToken();
+                        int tokenAmount = switch (enchantmentType.rarity()) { // TODO: placeholder amounts
+                            case COMMON -> 16;
+                            case UNCOMMON -> 8;
+                            case RARE -> 4;
+                            case EPIC -> 2;
+                            case LEGENDARY -> 1;
+                        };
+                        upgradeToken.setAmount(tokenAmount);
+                        player.getInventory().addItem(upgradeToken);
+                        SoundUtils.playUIClickSound(player);
+                        return;
+                    }
                     upgradeEnchantment(player, enchantmentType);
                 }
             });
@@ -69,63 +99,16 @@ public class EnchantmentMenu extends Menu {
                 SoundUtils.playUIClickSound(player);
             }
         });
-
-        button(new Button(43, new ItemStackBuilder(Material.BARRIER) // TODO: debug
-                .name(Component.text("DEBUG: CLEAR ENCHANTMENTS")
-                        .color(NamedTextColor.RED)
-                        .decorate(TextDecoration.BOLD))
-                .build()) {
-            @Override
-            public void onClick(InventoryClickEvent event) {
-                if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, true)) return;
-
-                PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
-                pickaxeData.removeEnchantments();
-
-                PlayerInventory playerInventory = player.getInventory();
-                playerInventory.remove(playerInventory.getItemInMainHand());
-
-                ItemStack pickaxe = PlayerPickaxeService.getPickaxe(player);
-                playerInventory.addItem(pickaxe);
-
-                getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(pickaxe));
-                SoundUtils.playUIClickSound(player);
-            }
-        });
-
-        button(new Button(44, new ItemStackBuilder(Material.CHEST) // TODO: debug
-                .name(Component.text("DEBUG: GIVE TOKENS")
-                        .color(NamedTextColor.RED)
-                        .decorate(TextDecoration.BOLD))
-                .build()) {
-            @Override
-            public void onClick(InventoryClickEvent event) {
-                for (Enchantment.EnchantmentType enchantmentType : Enchantment.EnchantmentType.values()) {
-                    ItemStack upgradeToken = enchantmentType.getUpgradeToken();
-
-                    int tokenAmount = switch (enchantmentType.getRarity()) { // TODO: placeholder amounts
-                        case COMMON -> 16;
-                        case UNCOMMON -> 8;
-                        case RARE -> 4;
-                        case EPIC -> 2;
-                        case LEGENDARY -> 1;
-                    };
-                    upgradeToken.setAmount(tokenAmount);
-                    player.getInventory().addItem(upgradeToken);
-                }
-                SoundUtils.playUIClickSound(player);
-            }
-        });
     }
 
     private void upgradeEnchantment(Player player, Enchantment.EnchantmentType clickedEnchantmentType) {
-        if (!PlayerPickaxeService.isPlayerHoldingOwnPickaxe(player, true)) return;
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true).orElse(null);
+        if (pickaxe == null) return;
 
         PlayerInventory playerInventory = player.getInventory();
-        ItemStack heldItem = playerInventory.getItemInMainHand();
 
-        ItemStack upgradeToken = clickedEnchantmentType.getUpgradeToken();
-        int tokenAmount = switch (clickedEnchantmentType.getRarity()) { // TODO: placeholder amounts
+        ItemStack upgradeToken = clickedEnchantmentType.upgradeToken();
+        int tokenAmount = switch (clickedEnchantmentType.rarity()) { // TODO: placeholder amounts
             case COMMON -> 16;
             case UNCOMMON -> 8;
             case RARE -> 4;
@@ -136,19 +119,19 @@ public class EnchantmentMenu extends Menu {
 
         if (!playerInventory.containsAtLeast(upgradeToken, tokenAmount)) {
             player.sendMessage(Component.text("You don't have the required tokens (" + tokenAmount + "x [")
-                    .append(clickedEnchantmentType.getUpgradeTokenName())
+                    .append(clickedEnchantmentType.upgradeTokenName())
                     .append(Component.text("]) to enchant your pickaxe!"))
                     .color(NamedTextColor.RED));
             SoundUtils.playErrorSound(player);
             return;
         }
 
-        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+        PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
         Enchantment enchantment = pickaxeData.getEnchantment(clickedEnchantmentType);
 
         if (enchantment == null) {
             try {
-                Enchantment newEnchantment = clickedEnchantmentType.getEnchantmentClass().getDeclaredConstructor().newInstance();
+                Enchantment newEnchantment = clickedEnchantmentType.enchantmentClass().getDeclaredConstructor().newInstance();
                 pickaxeData.addEnchantment(newEnchantment);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -156,8 +139,8 @@ public class EnchantmentMenu extends Menu {
         } else {
             if (enchantment.isMaxLevel()) {
                 player.sendMessage(Component.text("Cannot upgrade ")
-                        .append(clickedEnchantmentType.getColoredName())
-                        .append(Component.text(" past level " + clickedEnchantmentType.getMaxLevel() + "!"))
+                        .append(clickedEnchantmentType.formattedName())
+                        .append(Component.text(" past level " + clickedEnchantmentType.maxLevel() + "!"))
                         .color(NamedTextColor.RED));
                 SoundUtils.playErrorSound(player);
                 return;
@@ -167,12 +150,10 @@ public class EnchantmentMenu extends Menu {
         }
 
         playerInventory.removeItem(upgradeToken);
-        playerInventory.remove(heldItem);
+        ItemStack updatedPickaxe = PlayerPickaxeService.playerPickaxe(player);
+        player.getInventory().setItem(EquipmentSlot.HAND, updatedPickaxe);
 
-        ItemStack pickaxe = PlayerPickaxeService.getPickaxe(player);
-        playerInventory.addItem(pickaxe);
-
-        getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(pickaxe));
+        getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));
         player.playSound(player, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f);
     }
 

@@ -34,7 +34,7 @@ public record Loot(ItemStack itemStack, int min, int max, double chance) {
             }
         }
         // Roll for amount to receive
-        if (min > 1 && min == max ) {
+        if (min > 1 && min == max) {
             itemStack.setAmount(min);
         } else {
             itemStack.setAmount(ThreadLocalRandom.current().nextInt(min, max + 1));

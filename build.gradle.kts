@@ -28,8 +28,8 @@ tasks {
         minecraftVersion("1.21.4")
 
         jvmArgs(
-            "-Xms12G",
-            "-Xmx12G",
+            "-Xms4G",
+            "-Xmx4G",
 
             "-XX:+AlwaysPreTouch",
             "-XX:+DisableExplicitGC",

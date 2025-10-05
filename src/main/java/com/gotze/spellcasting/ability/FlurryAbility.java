@@ -2,7 +2,8 @@ package com.gotze.spellcasting.ability;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.util.BlockUtils;
+import com.gotze.spellcasting.util.block.BlockBreaker;
+import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -18,7 +19,7 @@ import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SliceAbility extends Ability {
+public class FlurryAbility extends Ability implements BlockBreaker {
     private final int[] START_DELAYS = {0, 6, 38, 44, 76, 82};
     private final float[] DISPLAY_ROTATIONS = {-75f, 75f, -45f, 45f, -15f, 15f};
     private final String[] ANTI_CLOCKWISE_SPRITES = {
@@ -32,12 +33,12 @@ public class SliceAbility extends Ability {
             "crescent_backside08", "crescent_backside09", "crescent_backside10", "crescent_backside11"
     };
 
-    public SliceAbility() {
-        super(AbilityType.SLICE);
+    public FlurryAbility() {
+        super(AbilityType.FLURRY);
     }
 
     @Override
-    public void activate(Player player, PickaxeData pickaxeData) {
+    public void activateAbility(Player player, PickaxeData pickaxeData) {
         Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
         World world = player.getWorld();
 
@@ -72,11 +73,7 @@ public class SliceAbility extends Ability {
                             player.playSound(player, Sound.ITEM_TRIDENT_THROW, 0.20f, 1.35f);
 
                             List<Block> blocksToBreak = getBlocksInLineOfSight(i, player);
-                            for (Block block : blocksToBreak) {
-                                if (!block.getType().isAir()) {
-                                    block.breakNaturally(true);
-                                }
-                            }
+                            breakBlocks(player, blocksToBreak, pickaxeData, false);
                         }
 
                         String spriteName = (i % 2 == 0) ? ANTI_CLOCKWISE_SPRITES[spriteIndex] : CLOCKWISE_SPRITES[spriteIndex];
@@ -119,8 +116,8 @@ public class SliceAbility extends Ability {
 
             blocksToBreak.addAll(switch (displayIndex) {
                 case 0, 1 -> BlockUtils.getVerticalBlocks(block);
-                case 2 -> BlockUtils.getPositiveDiagonalBlocks(block, playerFacing);
-                case 3 -> BlockUtils.getNegativeDiagonalBlocks(block, playerFacing);
+                case 2 -> BlockUtils.getPositiveDiagonalBlocks(block, playerFacing, 1);
+                case 3 -> BlockUtils.getNegativeDiagonalBlocks(block, playerFacing, 1);
                 case 4, 5 -> BlockUtils.getHorizontalBlocks(block, playerFacing);
                 default -> throw new IllegalStateException("Unexpected value: " + displayIndex);
             });

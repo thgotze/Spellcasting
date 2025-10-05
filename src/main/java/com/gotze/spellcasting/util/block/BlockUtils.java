@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.util;
+package com.gotze.spellcasting.util.block;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -19,49 +19,65 @@ public class BlockUtils {
         return blocks;
     }
 
-    public static List<Block> getPositiveDiagonalBlocks(Block origin, BlockFace playerFacing) {
+    public static List<Block> getPositiveDiagonalBlocks(Block origin, BlockFace blockFace, int distance) {
         List<Block> blocks = new ArrayList<>();
 
-        switch (playerFacing) {
+        switch (blockFace) {
+            case UP -> {
+                blocks.add(origin.getRelative(distance, 0, -distance));
+                blocks.add(origin.getRelative(-distance, 0, distance));
+            }
+            case DOWN -> {
+                blocks.add(origin.getRelative(-distance, 0, -distance));
+                blocks.add(origin.getRelative(distance, 0, distance));
+            }
             case NORTH -> {
-                blocks.add(origin.getRelative(-1, -1, 0));
-                blocks.add(origin.getRelative(1, 1, 0));
+                blocks.add(origin.getRelative(-distance, -distance, 0));
+                blocks.add(origin.getRelative(distance, distance, 0));
             }
             case SOUTH -> {
-                blocks.add(origin.getRelative(1, -1, 0));
-                blocks.add(origin.getRelative(-1, 1, 0));
+                blocks.add(origin.getRelative(distance, -distance, 0));
+                blocks.add(origin.getRelative(-distance, distance, 0));
             }
             case EAST -> {
-                blocks.add(origin.getRelative(0, -1, -1));
-                blocks.add(origin.getRelative(0, 1, 1));
+                blocks.add(origin.getRelative(0, -distance, -distance));
+                blocks.add(origin.getRelative(0, distance, distance));
             }
             case WEST -> {
-                blocks.add(origin.getRelative(0, -1, 1));
-                blocks.add(origin.getRelative(0, 1, -1));
+                blocks.add(origin.getRelative(0, -distance, distance));
+                blocks.add(origin.getRelative(0, distance, -distance));
             }
         }
         return blocks;
     }
 
-    public static List<Block> getNegativeDiagonalBlocks(Block origin, BlockFace playerFacing) {
+    public static List<Block> getNegativeDiagonalBlocks(Block origin, BlockFace playerFacing, int distance) {
         List<Block> blocks = new ArrayList<>();
 
         switch (playerFacing) {
+            case UP -> {
+                blocks.add(origin.getRelative(-distance, 0, -distance));
+                blocks.add(origin.getRelative(distance, 0, distance));
+            }
+            case DOWN -> {
+                blocks.add(origin.getRelative(distance, 0, -distance));
+                blocks.add(origin.getRelative(-distance, 0, distance));
+            }
             case NORTH -> {
-                blocks.add(origin.getRelative(1, -1, 0));
-                blocks.add(origin.getRelative(-1, 1, 0));
+                blocks.add(origin.getRelative(distance, -distance, 0));
+                blocks.add(origin.getRelative(-distance, distance, 0));
             }
             case SOUTH -> {
-                blocks.add(origin.getRelative(-1, -1, 0));
-                blocks.add(origin.getRelative(1, 1, 0));
+                blocks.add(origin.getRelative(-distance, -distance, 0));
+                blocks.add(origin.getRelative(distance, distance, 0));
             }
             case EAST -> {
-                blocks.add(origin.getRelative(0, -1, 1));
-                blocks.add(origin.getRelative(0, 1, -1));
+                blocks.add(origin.getRelative(0, -distance, distance));
+                blocks.add(origin.getRelative(0, distance, -distance));
             }
             case WEST -> {
-                blocks.add(origin.getRelative(0, -1, -1));
-                blocks.add(origin.getRelative(0, 1, 1));
+                blocks.add(origin.getRelative(0, -distance, -distance));
+                blocks.add(origin.getRelative(0, distance, distance));
             }
         }
         return blocks;

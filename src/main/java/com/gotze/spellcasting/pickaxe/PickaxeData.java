@@ -4,7 +4,6 @@ import com.gotze.spellcasting.ability.Ability;
 import com.gotze.spellcasting.enchantment.Enchantment;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class PickaxeData {
@@ -22,23 +21,15 @@ public class PickaxeData {
         this.durabilityDamage = 0;
     }
 
-    public PickaxeData(PickaxeData other) {
-        this.pickaxeMaterial = other.pickaxeMaterial;
-        this.enchantments = new HashSet<>(other.enchantments);
-        this.abilities = new HashSet<>(other.abilities);
-        this.blocksBroken = other.blocksBroken;
-        this.durabilityDamage = other.durabilityDamage;
-    }
-
-    public PickaxeMaterial getPickaxeMaterial() {
+    public PickaxeMaterial pickaxeMaterial() {
         return pickaxeMaterial;
     }
 
-    public void setPickaxeMaterial(PickaxeMaterial pickaxeMaterial) {
+    public void pickaxeMaterial(PickaxeMaterial pickaxeMaterial) {
         this.pickaxeMaterial = pickaxeMaterial;
     }
 
-    public Set<Enchantment> getEnchantments() {
+    public Set<Enchantment> enchantments() {
         return enchantments;
     }
 
@@ -51,12 +42,12 @@ public class PickaxeData {
     }
 
     public Enchantment getEnchantment(Enchantment enchantment) {
-        return getEnchantment(enchantment.getEnchantmentType());
+        return getEnchantment(enchantment.enchantmentType());
     }
 
     public Enchantment getEnchantment(Enchantment.EnchantmentType enchantmentType) {
         for (Enchantment enchantment : enchantments) {
-            if (enchantmentType == enchantment.getEnchantmentType()) {
+            if (enchantmentType == enchantment.enchantmentType()) {
                 return enchantment;
             }
         }
@@ -68,12 +59,12 @@ public class PickaxeData {
     }
 
     public boolean hasEnchantment(Enchantment enchantment) {
-        return hasEnchantment(enchantment.getEnchantmentType());
+        return hasEnchantment(enchantment.enchantmentType());
     }
 
     public boolean hasEnchantment(Enchantment.EnchantmentType enchantmentType) {
         for (Enchantment enchant : enchantments) {
-            if (enchantmentType == enchant.getEnchantmentType()) {
+            if (enchantmentType == enchant.enchantmentType()) {
                 return true;
             }
         }
@@ -84,7 +75,7 @@ public class PickaxeData {
         enchantments.clear();
     }
 
-    public Set<Ability> getAbilities() {
+    public Set<Ability> abilities() {
         return abilities;
     }
 
@@ -97,12 +88,12 @@ public class PickaxeData {
     }
 
     public Ability getAbility(Ability ability) {
-        return getAbility(ability.getAbilityType());
+        return getAbility(ability.abilityType());
     }
 
     public Ability getAbility(Ability.AbilityType abilityType) {
         for (Ability ability : abilities) {
-            if (abilityType == ability.getAbilityType()) {
+            if (abilityType == ability.abilityType()) {
                 return ability;
             }
         }
@@ -114,12 +105,12 @@ public class PickaxeData {
     }
 
     public boolean hasAbility(Ability ability) {
-        return hasAbility(ability.getAbilityType());
+        return hasAbility(ability.abilityType());
     }
 
     public boolean hasAbility(Ability.AbilityType abilityType) {
         for (Ability ability : abilities) {
-            if (abilityType == ability.getAbilityType()) {
+            if (abilityType == ability.abilityType()) {
                 return true;
             }
         }
@@ -130,7 +121,7 @@ public class PickaxeData {
         abilities.clear();
     }
 
-    public int getBlocksBroken() {
+    public int blocksBroken() {
         return blocksBroken;
     }
 
@@ -138,31 +129,15 @@ public class PickaxeData {
         this.blocksBroken += amount;
     }
 
-    public int getDurabilityDamage() {
+    public int durabilityDamage() {
         return durabilityDamage;
-    }
-
-    public void addDurabilityDamage(int amount) {
-        this.durabilityDamage += amount;
     }
 
     public void setDurabilityDamage(int amount) {
         this.durabilityDamage = amount;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PickaxeData that)) return false;
-        return blocksBroken == that.blocksBroken &&
-                durabilityDamage == that.durabilityDamage &&
-                pickaxeMaterial == that.pickaxeMaterial &&
-                Objects.equals(enchantments, that.enchantments) &&
-                Objects.equals(abilities, that.abilities);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(pickaxeMaterial, enchantments, abilities, blocksBroken, durabilityDamage);
+    public void addDurabilityDamage(int amount) {
+        this.durabilityDamage += amount;
     }
 }

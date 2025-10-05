@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.enchantment;
+package com.gotze.spellcasting.enchantment.todo;
 
 //public class MomentumEnchantment extends Enchantment {
 

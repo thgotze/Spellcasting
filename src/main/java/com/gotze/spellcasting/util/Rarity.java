@@ -18,11 +18,11 @@ public enum Rarity {
         this.weight = weight;
     }
 
-    public NamedTextColor getColor() {
+    public NamedTextColor color() {
         return color;
     }
 
-    public double getWeight() {
+    public double weight() {
         return weight;
     }
 

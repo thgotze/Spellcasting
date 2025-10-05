@@ -1,43 +1,41 @@
 package com.gotze.spellcasting.pickaxe;
 
 import com.gotze.spellcasting.util.StringUtils;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public enum PickaxeMaterial {
-    WOOD(Material.WOODEN_PICKAXE, 256),
-    STONE(Material.STONE_PICKAXE, 512),
-    IRON(Material.IRON_PICKAXE, 1024),
-    GOLD(Material.GOLDEN_PICKAXE, 2048),
-    DIAMOND(Material.DIAMOND_PICKAXE, 4096),
-    NETHERITE(Material.NETHERITE_PICKAXE, 8192),
+    WOOD(Material.WOODEN_PICKAXE),
+    STONE(Material.STONE_PICKAXE),
+    IRON(Material.IRON_PICKAXE),
+    GOLD(Material.GOLDEN_PICKAXE),
+    DIAMOND(Material.DIAMOND_PICKAXE),
+    NETHERITE(Material.NETHERITE_PICKAXE),
     ;
 
     private final Material material;
-    private final int maxDurability;
 
-    PickaxeMaterial(Material material, int maxDurability) {
+    PickaxeMaterial(Material material) {
         this.material = material;
-        this.maxDurability = maxDurability;
     }
 
-    public Material getType() {
+    public Material material() {
         return material;
     }
 
-    public int getMaxDurability() {
-        return maxDurability;
+    public int maxDurability() {
+        return this.material.getDefaultData(DataComponentTypes.MAX_DAMAGE);
     }
 
-    public PickaxeMaterial getNextTier() {
+    public PickaxeMaterial nextTier() {
         PickaxeMaterial[] values = values();
         int nextIndex = (ordinal() + 1) % values.length;
         return values[nextIndex];
     }
 
-
-    public ItemStack getUpgradeToken() {
+    public ItemStack upgradeToken() {
         Material material = switch (this) {
             case WOOD -> Material.OAK_PLANKS; // TODO: debug
             case STONE -> Material.COBBLESTONE;
@@ -50,7 +48,7 @@ public enum PickaxeMaterial {
         return ItemStack.of(material);
     }
 
-    public Component getUpgradeTokenName() {
+    public Component upgradeTokenName() {
         Material material = switch (this) {
             case WOOD -> Material.OAK_PLANKS; // TODO: debug
             case STONE -> Material.COBBLESTONE;

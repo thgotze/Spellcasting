@@ -2,9 +2,7 @@ package com.gotze.spellcasting.enchantment;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.util.BlockBreakAware;
-import com.gotze.spellcasting.util.BlockDamageAware;
-import com.gotze.spellcasting.util.BlockUtils;
+import com.gotze.spellcasting.util.block.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,10 +11,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
-import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,72 +20,67 @@ import org.joml.Matrix4f;
 
 import java.util.*;
 
-public class PhantomQuarryEnchantment extends Enchantment implements BlockDamageAware, BlockBreakAware {
+public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
     private static final BlockData TINTED_GLASS = Material.TINTED_GLASS.createBlockData();
-    private static final long BASE_COOLDOWN = 1_000; // 15 seconds
+    private static final long BASE_COOLDOWN = 15;
 
-    private boolean isActive;
-    private Block originBlock;
-    private final Map<Block, BlockDisplay> markedBlocks = new HashMap<>();
+    private boolean isProcessingQuarry;
+    private Block centerBlock;
     private long cooldown;
     private BukkitRunnable timeoutTask;
     private BlockFace blockFace;
+
+    // public >>> other enchants and abilities might need to know what blocks have been marked
+    public boolean isActive;
+    public final Map<Block, BlockDisplay> markedBlocks = new HashMap<>();
 
     public PhantomQuarryEnchantment() {
         super(EnchantmentType.PHANTOM_QUARRY);
     }
 
     @Override
-    public void onBlockBreak(Player player, BlockBreakEvent event, PickaxeData pickaxeData) {
-        // First time
-        if (!this.isActive) {
-            if (System.currentTimeMillis() < cooldown) return;
-            this.originBlock = event.getBlock();
+    public void onBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
+        if (this.isProcessingQuarry) return;
 
+        // ***
+        // First time
+        // ***
+
+        if (!this.isActive) {
+            if (!isNaturalBreak) return;
+            if (System.currentTimeMillis() < cooldown) return;
+
+            this.centerBlock = block;
             List<Block> cornerBlocks = new ArrayList<>();
-            if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
-                cornerBlocks.add(originBlock.getRelative(2, 0, 2));
-                cornerBlocks.add(originBlock.getRelative(2, 0, -2));
-                cornerBlocks.add(originBlock.getRelative(-2, 0, 2));
-                cornerBlocks.add(originBlock.getRelative(-2, 0, -2));
-            } else if (blockFace == BlockFace.EAST || blockFace == BlockFace.WEST) {
-                cornerBlocks.add(originBlock.getRelative(0, 2, 2));
-                cornerBlocks.add(originBlock.getRelative(0, -2, 2));
-                cornerBlocks.add(originBlock.getRelative(0, 2, -2));
-                cornerBlocks.add(originBlock.getRelative(0, -2, -2));
-            } else if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
-                cornerBlocks.add(originBlock.getRelative(2, 2, 0));
-                cornerBlocks.add(originBlock.getRelative(2, -2, 0));
-                cornerBlocks.add(originBlock.getRelative(-2, 2, 0));
-                cornerBlocks.add(originBlock.getRelative(-2, -2, 0));
+            cornerBlocks.addAll(BlockUtils.getPositiveDiagonalBlocks(block, blockFace, 2));
+            cornerBlocks.addAll(BlockUtils.getNegativeDiagonalBlocks(block, blockFace, 2));
+            cornerBlocks.removeIf(b -> b.getType().isEmpty() ||
+                    (!BlockCategories.ORE_BLOCKS.containsKey(b.getType()) && !BlockCategories.FILLER_BLOCKS.contains(b.getType())));
+
+            // If less than 3 corners were found then don't activate the enchantment
+            if (cornerBlocks.size() < 3) {
+                reset();
+                return;
             }
 
-            World world = originBlock.getWorld();
-            for (Block cornerBlock : cornerBlocks) {
-                Material cornerBlockType = cornerBlock.getType();
-                if (cornerBlockType == Material.AIR || cornerBlockType == Material.GLASS) continue;
+            this.isActive = true;
+            this.cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
+            World world = player.getWorld();
 
-                Location blockLocation = cornerBlock.getLocation().add(0.0625f, 0.0625f, 0.0625f);
-                BlockDisplay blockDisplay = (BlockDisplay) world.spawnEntity(blockLocation, EntityType.BLOCK_DISPLAY);
+            for (Block cornerBlock : cornerBlocks) {
+                Location displayLocation = cornerBlock.getLocation().add(0.0625f, 0.0625f, 0.0625f);
+                BlockDisplay blockDisplay = (BlockDisplay) world.spawnEntity(displayLocation, EntityType.BLOCK_DISPLAY);
+                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.875f, 0.875f, 0.875f));
+
                 blockDisplay.setBlock(TINTED_GLASS);
                 blockDisplay.setGlowing(true);
                 blockDisplay.setGlowColorOverride(Color.YELLOW);
-                blockDisplay.setBrightness(new Display.Brightness(15, 15));
-                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.875f, 0.875f, 0.875f));
+
                 blockDisplay.setVisibleByDefault(false);
                 player.showEntity(JavaPlugin.getPlugin(Spellcasting.class), blockDisplay);
 
                 markedBlocks.put(cornerBlock, blockDisplay);
             }
-
-            // If less than 3 corners were created then don't activate the enchantment
-            if (markedBlocks.size() < 3) {
-                reset();
-                return;
-            }
-
-            isActive = true;
-            cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
 
             // The player has 15 seconds to break the corner blocks
             timeoutTask = new BukkitRunnable() {
@@ -101,42 +92,33 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockDamage
                     }
                 }
             };
-            timeoutTask.runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), 15 * 20L);
+            timeoutTask.runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), BASE_COOLDOWN * 20L);
             return;
         }
 
+        // ***
         // Subsequent times
-        Iterator<Map.Entry<Block, BlockDisplay>> iterator = markedBlocks.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Block, BlockDisplay> entry = iterator.next();
+        // ***
 
-            if (event.getBlock().equals(entry.getKey())) {
+        markedBlocks.entrySet().removeIf(entry -> {
+            if (entry.getKey().equals(block)) {
                 BlockDisplay display = entry.getValue();
-                if (display.isValid()) {
-                    display.remove();
-                }
-                iterator.remove();
+                display.remove();
+                return true;
             }
-        }
+            return false;
+        });
 
         if (markedBlocks.isEmpty()) {
-            if (originBlock == null) return;
-
-            // Use the stored broken face to determine pattern
-            List<Block> blocksToBreak;
-            if (blockFace == BlockFace.UP || blockFace == BlockFace.DOWN) {
-                // Horizontal pattern: 5x1x5
-                blocksToBreak = BlockUtils.getBlocksInSquarePattern(originBlock, 5, 1, 5);
-            } else if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
-                // Vertical wall facing North/South: 5x5x1
-                blocksToBreak = BlockUtils.getBlocksInSquarePattern(originBlock, 5, 5, 1);
-            } else {
-                // Vertical wall facing East/West: 1x5x5
-                blocksToBreak = BlockUtils.getBlocksInSquarePattern(originBlock, 1, 5, 5);
-            }
-            blocksToBreak.removeIf(block -> block.getType() == Material.AIR);
+            this.isProcessingQuarry = true;
+            List<Block> blocksToBreak = switch (blockFace) {
+                case NORTH, SOUTH -> BlockUtils.getBlocksInSquarePattern(centerBlock, 5, 5, 1);
+                case EAST, WEST -> BlockUtils.getBlocksInSquarePattern(centerBlock, 1, 5, 5);
+                case UP, DOWN -> BlockUtils.getBlocksInSquarePattern(centerBlock, 5, 1, 5);
+                default -> throw new IllegalStateException();
+            };
+            blocksToBreak.removeIf(b -> b.getType().isEmpty());
             Collections.shuffle(blocksToBreak);
-            pickaxeData.addBlocksBroken(blocksToBreak.size() - 1);
 
             new BukkitRunnable() {
                 @Override
@@ -148,8 +130,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockDamage
 
                     // Break up to 3 blocks every tick
                     for (int i = 0; i < 3 && !blocksToBreak.isEmpty(); i++) {
-                        Block blockToBreak = blocksToBreak.removeFirst();
-                        blockToBreak.breakNaturally(true);
+                        breakBlock(player, blocksToBreak.removeFirst(), pickaxeData, false);
                     }
                 }
             }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0L, 1L);
@@ -164,7 +145,8 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockDamage
 
     private void reset() {
         isActive = false;
-        originBlock = null;
+        isProcessingQuarry = false;
+        centerBlock = null;
         blockFace = null;
         if (timeoutTask != null) {
             timeoutTask.cancel();
