@@ -2,13 +2,10 @@ package com.gotze.spellcasting.util;
 
 import com.gotze.spellcasting.Spellcasting;
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
-import io.papermc.paper.datacomponent.item.ItemEnchantments;
 import io.papermc.paper.datacomponent.item.ItemLore;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -19,6 +16,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
+import static net.kyori.adventure.text.format.TextDecoration.State.FALSE;
 
 public class ItemStackBuilder {
     private ItemStack itemStack;
@@ -31,7 +32,7 @@ public class ItemStackBuilder {
     private boolean hideAttributes = false;
     private boolean hideTooltipBox = false;
     private boolean hideEnchantTooltip = false;
-    private boolean enchantGlint = false;
+    private boolean enchantmentGlint = false;
     private Map<Enchantment, Integer> enchantments;
     private Map<String, String> persistentDataContainer;
     private int durabilityDamage;
@@ -71,6 +72,11 @@ public class ItemStackBuilder {
         return this;
     }
 
+    public ItemStackBuilder itemModel(Material itemModel) {
+        this.itemModel = itemModel.getKey();
+        return this;
+    }
+
     public ItemStackBuilder itemModel(Key itemModel) {
         this.itemModel = itemModel;
         return this;
@@ -97,7 +103,7 @@ public class ItemStackBuilder {
     }
 
     public ItemStackBuilder toggleEnchantmentGlint() {
-        this.enchantGlint = true;
+        this.enchantmentGlint = true;
         return this;
     }
 
@@ -138,7 +144,7 @@ public class ItemStackBuilder {
         }
 
         if (name != null) {
-            Component fixedName = name.colorIfAbsent(NamedTextColor.WHITE);
+            Component fixedName = name.colorIfAbsent(WHITE);
             itemStack.setData(DataComponentTypes.ITEM_NAME, fixedName);
         }
 
@@ -149,8 +155,8 @@ public class ItemStackBuilder {
         if (lore != null) {
             List<Component> fixedLore = lore.stream()
                     .map(component -> component
-                            .colorIfAbsent(NamedTextColor.WHITE)
-                            .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+                            .colorIfAbsent(WHITE)
+                            .decorationIfAbsent(ITALIC, FALSE)
                     ).toList();
 
             itemStack.setData(DataComponentTypes.LORE, ItemLore.lore(fixedLore));
@@ -160,29 +166,25 @@ public class ItemStackBuilder {
             itemStack.setData(DataComponentTypes.ITEM_MODEL, itemModel);
         }
 
-        if (hideAdditionalTooltip) {
-            itemStack.setData(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP);
-        }
+        if (hideAttributes || hideEnchantTooltip || hideTooltipBox) {
+            TooltipDisplay.Builder tooltipBuilder = TooltipDisplay.tooltipDisplay();
 
-        if (hideAttributes) {
-            ItemAttributeModifiers data = itemStack.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
-            if (data != null) {
-                itemStack.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, data.showInTooltip(false));
+            TooltipDisplay toolTipDisplay = TooltipDisplay.tooltipDisplay().addHiddenComponents(DataComponentTypes.ATTRIBUTE_MODIFIERS).build();
+            itemStack.setData(DataComponentTypes.TOOLTIP_DISPLAY, toolTipDisplay);
+            if (hideAttributes) {
+                tooltipBuilder.addHiddenComponents(DataComponentTypes.ATTRIBUTE_MODIFIERS);
             }
-        }
-
-        if (hideTooltipBox) {
-            itemStack.setData(DataComponentTypes.HIDE_TOOLTIP);
-        }
-
-        if (hideEnchantTooltip) {
-            ItemEnchantments enchantments = itemStack.getData(DataComponentTypes.ENCHANTMENTS);
-            if (enchantments != null) {
-                itemStack.setData(DataComponentTypes.ENCHANTMENTS, enchantments.showInTooltip(false));
+            if (hideEnchantTooltip) {
+                tooltipBuilder.addHiddenComponents(DataComponentTypes.ENCHANTMENTS);
             }
+            if (hideTooltipBox) {
+                tooltipBuilder.hideTooltip(true);
+            }
+
+            itemStack.setData(DataComponentTypes.TOOLTIP_DISPLAY, tooltipBuilder.build());
         }
 
-        if (enchantGlint) {
+        if (enchantmentGlint) {
             itemStack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
         }
 

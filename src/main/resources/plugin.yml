@@ -1,6 +1,4 @@
-name: MagicParticles
+name: Spellcasting
 version: '1.0'
 main: com.gotze.spellcasting.Spellcasting
-api-version: '1.21'
-commands:
-  crescent: {}
+api-version: '1.21.9'

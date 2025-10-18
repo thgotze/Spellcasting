@@ -2,6 +2,12 @@ package com.gotze.spellcasting.util;
 
 public class StringUtils {
 
+    /**
+     * Converts a string to a "title case" string by
+     * removing underscores and uppercasing the first letter of every word
+     * <p>"I_WanT_a_titlecase_STRING!" ->
+     * <p> "I Want A Titlecase String!"
+     */
     public static String toTitleCase(String input) {
         if (input == null || input.isEmpty()) return input;
 

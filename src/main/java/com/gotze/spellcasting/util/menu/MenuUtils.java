@@ -3,11 +3,12 @@ package com.gotze.spellcasting.util.menu;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.StringUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class MenuUtils {
 
@@ -25,8 +26,7 @@ public class MenuUtils {
     }
 
     public static final ItemStack RETURN_ITEM = new ItemStackBuilder(Material.ARROW)
-            .name(Component.text(StringUtils.convertToSmallFont("← return"))
-                    .color(NamedTextColor.YELLOW))
+            .name(text(StringUtils.convertToSmallFont("← return"), YELLOW))
             .build();
 
     public static ItemStack cloneItemWithoutDamage(ItemStack itemStack) {

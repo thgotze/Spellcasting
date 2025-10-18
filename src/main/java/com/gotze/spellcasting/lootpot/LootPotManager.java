@@ -1,21 +1,19 @@
 package com.gotze.spellcasting.lootpot;
 
-import com.gotze.spellcasting.ability.Ability;
-import com.gotze.spellcasting.enchantment.Enchantment;
+import com.gotze.spellcasting.pickaxe.ability.Ability;
+import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
-import com.gotze.spellcasting.util.block.BlockUtils;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.Rarity;
+import com.gotze.spellcasting.util.block.BlockUtils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.DecoratedPot;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -28,137 +26,86 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
+
 public class LootPotManager implements Listener {
     private static final float POT_SPAWN_CHANCE = 1.0f / 300; // 1 in 300 chance
     private static final List<List<Loot>> LOOT_POT_LOOT = List.of(
-            // --------------
             // Raw Ore
-            // --------------
             List.of(new Loot(ItemStack.of(Material.RAW_COPPER), 21, 34),
                     new Loot(ItemStack.of(Material.RAW_IRON), 6, 10),
                     new Loot(ItemStack.of(Material.RAW_GOLD), 6, 10)),
-            // --------------
             // Ability tokens
-            // --------------
             Stream.of(Ability.AbilityType.values()) // TODO: will need to filter all the types and their rarity and their weight
-                    .map(abilityType -> new Loot(abilityType.upgradeToken(), abilityType.rarity().weight()))
+                    .map(abilityType -> new Loot(abilityType.getUpgradeToken(), abilityType.getRarity().weight()))
                     .toList(),
-            // --------------
-
-            // Enchant tokens
-            // --------------
+            // Enchantment tokens
             Stream.of(Enchantment.EnchantmentType.values())
-                    .map(enchantmentType -> new Loot(enchantmentType.upgradeToken(), enchantmentType.rarity().weight()))
+                    .map(enchantmentType -> new Loot(enchantmentType.getUpgradeToken(), enchantmentType.getRarity().weight()))
                     .toList(),
-            // --------------
             // Machine parts
-            // --------------
-
-            List.of( // TODO: placeholder
-                    new Loot(new ItemStackBuilder(Material.REPEATER)
-                            .name(Component.text("Machine Part 1")
-                                    .color(NamedTextColor.RED))
+            List.of(new Loot(new ItemStackBuilder(Material.REPEATER)
+                            .name(text("Machine Part 1", RED))
                             .build(), 0.33),
                     new Loot(new ItemStackBuilder(Material.COMPARATOR)
-                            .name(Component.text("Machine Part 2")
-                                    .color(NamedTextColor.RED))
+                            .name(text("Machine Part 2", RED))
                             .build(), 0.33),
                     new Loot(new ItemStackBuilder(Material.POWERED_RAIL)
-                            .name(Component.text("Machine Part 3")
-                                    .color(NamedTextColor.RED))
-                            .build(), 0.33)),
-            // --------------
+                            .name(text("Machine Part 3", RED))
+                            .build(), 0.33)
+            ),
             // Money loot
-            // --------------
-            List.of( // TODO: placeholder
-//            new Loot(new ItemStackBuilder(Material.DIAMOND)
-//                    .name(Component.text("Valuable item $$$")
-//                            .color(NamedTextColor.YELLOW))
-//                    .build(), 0.10),
-//
-//            new Loot(new ItemStackBuilder(Material.EMERALD)
-//                    .name(Component.text("Valuable item $$$")
-//                            .color(NamedTextColor.YELLOW))
-//                    .build(), 0.10),
-//
-//            new Loot(new ItemStackBuilder(Material.QUARTZ)
-//                    .name(Component.text("Valuable item $$$")
-//                            .color(NamedTextColor.YELLOW))
-//                    .build(), 0.10),
-                    new Loot(new ItemStackBuilder(Material.AMETHYST_SHARD)
-                            .name(Component.text("Valuable item $$$")
-                                    .color(NamedTextColor.YELLOW))
+            List.of(new Loot(new ItemStackBuilder(Material.AMETHYST_SHARD)
+                            .name(text("Valuable item $$$", YELLOW))
                             .build(), 0.10),
-//            new Loot(new ItemStackBuilder(Material.DISC_FRAGMENT_5)
-//                    .name(Component.text("Valuable item $$$")
-//                            .color(NamedTextColor.YELLOW))
-//                    .build(), 0.10),
                     new Loot(new ItemStackBuilder(Material.ECHO_SHARD)
-                            .name(Component.text("Valuable item $$$")
-                                    .color(NamedTextColor.YELLOW))
+                            .name(text("Valuable item $$$", YELLOW))
                             .build(), 0.10),
-
                     new Loot(new ItemStackBuilder(Material.PRISMARINE_CRYSTALS)
-                            .name(Component.text("Valuable item $$$")
-                                    .color(NamedTextColor.YELLOW))
+                            .name(text("Valuable item $$$", YELLOW))
                             .build(), 0.10),
-
                     new Loot(new ItemStackBuilder(Material.PRISMARINE_SHARD)
-                            .name(Component.text("Valuable item $$$")
-                                    .color(NamedTextColor.YELLOW))
+                            .name(text("Valuable item $$$", YELLOW))
                             .build(), 0.10),
-
                     new Loot(new ItemStackBuilder(Material.RESIN_CLUMP)
-                            .name(Component.text("Valuable item $$$")
-                                    .color(NamedTextColor.YELLOW))
-                            .build(), 0.10)),
-            // --------------
+                            .name(text("Valuable item $$$", YELLOW))
+                            .build(), 0.10)
+            ),
             // Lootboxes
-            // --------------
-            List.of(
-                    new Loot(new ItemStackBuilder(Material.WHITE_SHULKER_BOX)
-                            .name(Component.text("Common Loot Box")
-                                    .color(NamedTextColor.WHITE))
-                            .build(), Rarity.COMMON.weight()),
-//                    .build(), Rarity.COMMON.getWeight() / Rarity.values().length), // TODO: reduce chance
+            List.of(new Loot(new ItemStackBuilder(Material.WHITE_SHULKER_BOX)
+                            .name(text("Common Loot Box", WHITE))
+                            .build(),
+                            Rarity.COMMON.weight()),
+//                    Rarity.COMMON.getWeight() / Rarity.values().length), // TODO: reduce chance
                     new Loot(new ItemStackBuilder(Material.LIME_SHULKER_BOX)
-                            .name(Component.text("Uncommon Loot Box")
-                                    .color(NamedTextColor.GREEN))
+                            .name(text("Uncommon Loot Box", GREEN))
                             .build(), Rarity.UNCOMMON.weight()),
                     new Loot(new ItemStackBuilder(Material.LIGHT_BLUE_SHULKER_BOX)
-                            .name(Component.text("Rare Loot Box")
-                                    .color(NamedTextColor.AQUA))
+                            .name(text("Rare Loot Box", AQUA))
                             .build(), Rarity.RARE.weight()),
                     new Loot(new ItemStackBuilder(Material.MAGENTA_SHULKER_BOX)
-                            .name(Component.text("Epic Loot Box")
-                                    .color(NamedTextColor.LIGHT_PURPLE))
+                            .name(text("Epic Loot Box", LIGHT_PURPLE))
                             .build(), Rarity.EPIC.weight()),
                     new Loot(new ItemStackBuilder(Material.ORANGE_SHULKER_BOX)
-                            .name(Component.text("Legendary Loot Box")
-                                    .color(NamedTextColor.GOLD))
+                            .name(text("Legendary Loot Box", GOLD))
                             .build(), Rarity.LEGENDARY.weight())),
-            // --------------
             // Pot sherds
-            // --------------
-            List.of(
-                    new Loot(new ItemStackBuilder(Material.MINER_POTTERY_SHERD)
-                            .lore(Component.text("Collect 4 to craft a lootpot!")
-                                    .color(NamedTextColor.YELLOW))
+            // ---------------
+            List.of(new Loot(new ItemStackBuilder(Material.MINER_POTTERY_SHERD)
+                            .lore(text("Collect 4 to craft a lootpot!",YELLOW))
                             .build(), 0.50)
             ),
-            // --------------
-            // Enchantment tokens again?
-            // --------------
+            // Enchantment tokens again? // TODO: figure out which one to use, this or the one above
             Stream.of(Enchantment.EnchantmentType.values())
                     .collect(Collectors.collectingAndThen(
-                            Collectors.groupingBy(Enchantment.EnchantmentType::rarity, Collectors.counting()),
+                            Collectors.groupingBy(Enchantment.EnchantmentType::getRarity, Collectors.counting()),
                             counts -> Stream.of(Enchantment.EnchantmentType.values())
-                                    .map(type -> {
-                                        Rarity rarity = type.rarity();
+                                    .map(enchantmentType -> {
+                                        Rarity rarity = enchantmentType.getRarity();
                                         double chance = rarity.weight() / counts.get(rarity);
-                                        return new Loot(type.upgradeToken(), chance);
-                                    })
-                                    .toList()
+                                        return new Loot(enchantmentType.getUpgradeToken(), chance);
+                                    }).toList()
                     ))
     );
 
@@ -175,18 +122,15 @@ public class LootPotManager implements Listener {
 
         event.setDropItems(false);
 
-
         List<ItemStack> itemsInPot = new ArrayList<>();
 
         for (List<Loot> lootList : LOOT_POT_LOOT) {
             for (Loot loot : lootList) {
-                loot.rollChance().ifPresent(itemsInPot::add);
+                loot.rollDrop().ifPresent(itemsInPot::add);
             }
         }
 
-        player.sendMessage(Component.text("You uncovered a lootpot!")
-                .color(NamedTextColor.GREEN));
-
+        player.sendMessage(text("You uncovered a lootpot!",GREEN));
 
         Location blockCenterLocation = block.getLocation().toCenterLocation();
         World world = block.getWorld();
@@ -200,22 +144,20 @@ public class LootPotManager implements Listener {
             Enchantment.EnchantmentType[] enchantmentTypes = Enchantment.EnchantmentType.values();
             int enchantmentIndex = ThreadLocalRandom.current().nextInt(enchantmentTypes.length);
             Enchantment.EnchantmentType enchantmentType = enchantmentTypes[enchantmentIndex];
-            player.sendMessage(Component.text("Your pickaxe has been enchanted with " + enchantmentType + " for 30 seconds!")
-                    .color(NamedTextColor.GREEN));
+            player.sendMessage(text("Your pickaxe has been enchanted with " + enchantmentType + " for 30 seconds!", GREEN));
         }
 
         if (ThreadLocalRandom.current().nextDouble() < 0.2) {
             Ability.AbilityType[] abilityTypes = Ability.AbilityType.values();
             int abilityIndex = ThreadLocalRandom.current().nextInt(abilityTypes.length);
             Ability.AbilityType abilityType = abilityTypes[abilityIndex];
-            player.sendMessage(Component.text("Your have received 1 usage of the " + abilityType + " ability!")
-                    .color(NamedTextColor.GREEN));
+            player.sendMessage(text("Your have received 1 usage of the " + abilityType + " ability!", GREEN));
         }
 
         world.spawn(blockCenterLocation, ExperienceOrb.class, orb -> orb.setExperience(10));
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler
     public void onBlockBreakTrySpawnLootPot(BlockBreakEvent event) {
         Player player = event.getPlayer();
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false).orElse(null);
@@ -230,7 +172,7 @@ public class LootPotManager implements Listener {
         Block chosenBlock = candidates.get(ThreadLocalRandom.current().nextInt(candidates.size()));
         chosenBlock.setType(Material.DECORATED_POT);
 
-        // Cracked will disallow picking up the pot
+        // cracked will disallow picking up the pot
         org.bukkit.block.data.type.DecoratedPot potData = (org.bukkit.block.data.type.DecoratedPot) chosenBlock.getBlockData();
         potData.setCracked(true);
         chosenBlock.setBlockData(potData);
