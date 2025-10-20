@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.enchantment.todo;
+package com.gotze.spellcasting.pickaxe.enchantment.todo;
 
 //public class RechargeEnchantment extends Enchantment {
 //

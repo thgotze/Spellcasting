@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.ability.todo;
+package com.gotze.spellcasting.pickaxe.ability.todo;
 
 //public class SlamAbility extends Ability implements BlockBreaker {
 //
