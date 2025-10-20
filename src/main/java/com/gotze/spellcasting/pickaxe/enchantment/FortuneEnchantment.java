@@ -1,9 +1,10 @@
-package com.gotze.spellcasting.enchantment;
+package com.gotze.spellcasting.pickaxe.enchantment;
 
 import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.util.Loot;
-import com.gotze.spellcasting.util.block.BlockBreakListener;
 import com.gotze.spellcasting.util.block.BlockCategories;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -22,11 +23,11 @@ public class FortuneEnchantment extends Enchantment implements BlockBreakListene
         Loot loot = BlockCategories.ORE_BLOCKS.get(block.getType());
         if (loot == null) return;
 
-        ItemStack itemStack = loot.rollChance().orElseThrow(); // shouldn't ever throw since ore block loot is 100%
+        ItemStack itemStack = loot.drop();
         Location blockLocation = block.getLocation().toCenterLocation();
 
         double random = ThreadLocalRandom.current().nextDouble();
-        int multiplier = switch (level()) {
+        int multiplier = switch (getLevel()) {
             case 1 -> {
                 if (random < 0.33) yield 2;
                 else yield 1;
@@ -42,7 +43,7 @@ public class FortuneEnchantment extends Enchantment implements BlockBreakListene
                 else if (random < 0.60) yield 2;
                 else yield 1;
             }
-            default -> throw new IllegalStateException("Unexpected fortune level: " + level());
+            default -> throw new IllegalStateException("Unexpected fortune level: " + getLevel());
         };
         if (multiplier == 1) return;
 
