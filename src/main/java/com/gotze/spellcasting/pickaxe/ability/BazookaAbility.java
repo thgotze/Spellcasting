@@ -1,8 +1,8 @@
-package com.gotze.spellcasting.ability;
+package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.util.block.BlockBreaker;
+import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -16,12 +16,20 @@ import java.util.List;
 
 public class BazookaAbility extends Ability implements BlockBreaker {
 
+    private static final long BASE_COOLDOWN = 5_000;
+
+    private long cooldown;
+
     public BazookaAbility() {
         super(AbilityType.BAZOOKA);
     }
 
     @Override
     public void activateAbility(Player player, PickaxeData pickaxeData) {
+        if (System.currentTimeMillis() < cooldown) return;
+        this.cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
+        player.sendMessage("Bazooka ability activated!");
+
         World world = player.getWorld();
         Location startLocation = player.getEyeLocation();
         Vector lookingDirection = player.getLocation().getDirection();

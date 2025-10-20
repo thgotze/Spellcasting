@@ -1,9 +1,11 @@
-package com.gotze.spellcasting.util.block;
+package com.gotze.spellcasting.pickaxe.capability;
 
-import com.gotze.spellcasting.ability.Ability;
-import com.gotze.spellcasting.enchantment.Enchantment;
+import com.gotze.spellcasting.pickaxe.ability.Ability;
+import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.Loot;
+import com.gotze.spellcasting.util.block.BlockCategories;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -21,13 +23,13 @@ public interface BlockBreaker {
         Material blockType = block.getType();
         if (blockType.isAir() || blockType == Material.BEDROCK) return;
 
-        for (Enchantment enchantment : pickaxeData.enchantments()) {
+        for (Enchantment enchantment : pickaxeData.getEnchantments()) {
             if (enchantment instanceof BlockBreakListener blockBreakListener) {
                 blockBreakListener.onBlockBreak(player, block, pickaxeData, isNaturalBreak);
             }
         }
 
-        for (Ability ability : pickaxeData.abilities()) {
+        for (Ability ability : pickaxeData.getAbilities()) {
             if (ability instanceof BlockBreakListener blockBreakListener) {
                 blockBreakListener.onBlockBreak(player, block, pickaxeData, isNaturalBreak);
             }
@@ -37,24 +39,23 @@ public interface BlockBreaker {
     }
 
     static void handleBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
-        pickaxeData.addBlocksBroken(1);
-
-        World world = player.getWorld();
-        Location blockLocation = block.getLocation().toCenterLocation();
-
         Loot oreLoot = BlockCategories.ORE_BLOCKS.get(block.getType());
+
         if (oreLoot != null) {
-            world.dropItemNaturally(blockLocation, oreLoot.rollChance().orElseThrow());
+            World world = player.getWorld();
+            Location blockLocation = block.getLocation().toCenterLocation();
+            world.dropItemNaturally(blockLocation, oreLoot.drop());
 
-            world.playEffect(blockLocation, Effect.STEP_SOUND, block.getBlockData());
-            SoundGroup soundGroup = block.getBlockSoundGroup();
+            if (!isNaturalBreak) {
+                world.playEffect(blockLocation, Effect.STEP_SOUND, block.getBlockData());
 
-            world.playSound(blockLocation, soundGroup.getBreakSound(), soundGroup.getVolume(), soundGroup.getPitch());
-
-            block.setType(Material.AIR, false);
-
+                SoundGroup soundGroup = block.getBlockSoundGroup();
+                world.playSound(blockLocation, soundGroup.getBreakSound(), soundGroup.getVolume(), soundGroup.getPitch());
+                block.setType(Material.AIR, false);
+            }
         } else if (!isNaturalBreak) {
             block.breakNaturally(true);
         }
+        PlayerPickaxeService.addBlocksBroken(player, 1);
     }
 }

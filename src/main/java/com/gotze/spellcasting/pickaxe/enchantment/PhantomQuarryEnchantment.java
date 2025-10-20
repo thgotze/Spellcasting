@@ -1,7 +1,10 @@
-package com.gotze.spellcasting.enchantment;
+package com.gotze.spellcasting.pickaxe.enchantment;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
+import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
+import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
 import com.gotze.spellcasting.util.block.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -22,17 +25,19 @@ import java.util.*;
 
 public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
     private static final BlockData TINTED_GLASS = Material.TINTED_GLASS.createBlockData();
-    private static final long BASE_COOLDOWN = 15;
+//    private static final long BASE_COOLDOWN = 15_000;
+    private static final long BASE_COOLDOWN = 1_000; // TODO: for testing
 
     private boolean isProcessingQuarry;
     private Block centerBlock;
     private long cooldown;
     private BukkitRunnable timeoutTask;
     private BlockFace blockFace;
-
-    // public >>> other enchants and abilities might need to know what blocks have been marked
+    // ---------------
+    // public as other enchants and abilities might need to know what blocks have been marked
+    // ---------------
     public boolean isActive;
-    public final Map<Block, BlockDisplay> markedBlocks = new HashMap<>();
+    public final Map<Block, BlockDisplay> markedCornerBlocks = new HashMap<>();
 
     public PhantomQuarryEnchantment() {
         super(EnchantmentType.PHANTOM_QUARRY);
@@ -41,11 +46,9 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
     @Override
     public void onBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
         if (this.isProcessingQuarry) return;
-
-        // ***
+        // ---------------
         // First time
-        // ***
-
+        // ---------------
         if (!this.isActive) {
             if (!isNaturalBreak) return;
             if (System.currentTimeMillis() < cooldown) return;
@@ -54,7 +57,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
             List<Block> cornerBlocks = new ArrayList<>();
             cornerBlocks.addAll(BlockUtils.getPositiveDiagonalBlocks(block, blockFace, 2));
             cornerBlocks.addAll(BlockUtils.getNegativeDiagonalBlocks(block, blockFace, 2));
-            cornerBlocks.removeIf(b -> b.getType().isEmpty() ||
+            cornerBlocks.removeIf(b -> b.getType().isAir() ||
                     (!BlockCategories.ORE_BLOCKS.containsKey(b.getType()) && !BlockCategories.FILLER_BLOCKS.contains(b.getType())));
 
             // If less than 3 corners were found then don't activate the enchantment
@@ -79,7 +82,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 blockDisplay.setVisibleByDefault(false);
                 player.showEntity(JavaPlugin.getPlugin(Spellcasting.class), blockDisplay);
 
-                markedBlocks.put(cornerBlock, blockDisplay);
+                markedCornerBlocks.put(cornerBlock, blockDisplay);
             }
 
             // The player has 15 seconds to break the corner blocks
@@ -96,11 +99,10 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
             return;
         }
 
-        // ***
+        // ---------------
         // Subsequent times
-        // ***
-
-        markedBlocks.entrySet().removeIf(entry -> {
+        // ---------------
+        markedCornerBlocks.entrySet().removeIf(entry -> {
             if (entry.getKey().equals(block)) {
                 BlockDisplay display = entry.getValue();
                 display.remove();
@@ -109,15 +111,16 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
             return false;
         });
 
-        if (markedBlocks.isEmpty()) {
+        if (markedCornerBlocks.isEmpty()) {
             this.isProcessingQuarry = true;
             List<Block> blocksToBreak = switch (blockFace) {
                 case NORTH, SOUTH -> BlockUtils.getBlocksInSquarePattern(centerBlock, 5, 5, 1);
                 case EAST, WEST -> BlockUtils.getBlocksInSquarePattern(centerBlock, 1, 5, 5);
                 case UP, DOWN -> BlockUtils.getBlocksInSquarePattern(centerBlock, 5, 1, 5);
-                default -> throw new IllegalStateException();
+                default -> null;
             };
-            blocksToBreak.removeIf(b -> b.getType().isEmpty());
+            if (blocksToBreak == null) return;
+            blocksToBreak.removeIf(b -> b.getType().isAir());
             Collections.shuffle(blocksToBreak);
 
             new BukkitRunnable() {
@@ -151,11 +154,11 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
         if (timeoutTask != null) {
             timeoutTask.cancel();
         }
-        for (BlockDisplay display : markedBlocks.values()) {
+        for (BlockDisplay display : markedCornerBlocks.values()) {
             if (display.isValid()) {
                 display.remove();
             }
         }
-        markedBlocks.clear();
+        markedCornerBlocks.clear();
     }
 }

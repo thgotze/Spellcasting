@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.menu;
+package com.gotze.spellcasting.pickaxe.menu;
 
 import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
@@ -9,8 +9,6 @@ import com.gotze.spellcasting.util.StringUtils;
 import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
 import com.gotze.spellcasting.util.menu.MenuUtils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -21,10 +19,13 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-public class MaterialsMenu extends Menu {
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-    public MaterialsMenu(Player player) {
-        super(5, Component.text("Materials"));
+public class MaterialMenu extends Menu {
+
+    public MaterialMenu(Player player) {
+        super(5, text("Materials"));
         populate(player);
         open(player);
     }
@@ -34,48 +35,40 @@ public class MaterialsMenu extends Menu {
 
         item(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player));
 
-        int[] slotIndexes = {31, 20, 21, 22, 23, 24};
+        int[] slotIndexes = {19, 20, 21, 22, 23, 24, 25};
         int startingIndex = 0;
         for (PickaxeMaterial pickaxeMaterial : PickaxeMaterial.values()) {
-            ItemStack upgradeToken = pickaxeMaterial.upgradeToken();
 
             int tokenAmount = switch (pickaxeMaterial) { // TODO: placeholder amounts
                 case WOOD -> 32;
                 case STONE -> 32;
+                case COPPER -> 32;
                 case IRON -> 32;
                 case GOLD -> 32;
                 case DIAMOND -> 32;
                 case NETHERITE -> 32;
             };
-            upgradeToken.setAmount(tokenAmount);
 
-            button(new Button(slotIndexes[startingIndex++], new ItemStackBuilder(pickaxeMaterial.material())
-                    .name(Component.text(pickaxeMaterial + " Pickaxe")
-                            .color(NamedTextColor.AQUA))
-                    .lore(Component.text(""),
-                            Component.text(StringUtils.convertToSmallFont("requirements")),
-                            Component.text(tokenAmount + "x [")
-                                    .append(pickaxeMaterial.upgradeTokenName())
-                                    .append(Component.text("]")))
+            button(new Button(slotIndexes[startingIndex++], new ItemStackBuilder(pickaxeMaterial.pickaxeType())
+                    .name(pickaxeMaterial.formattedPickaxeTypeName().color(pickaxeMaterial.textColor()))
+                    .lore(text(""),
+                            text(StringUtils.convertToSmallFont("requirements")),
+                            text(tokenAmount + "x [")
+                                    .append(pickaxeMaterial.formattedUpgradeTokenName())
+                                    .append(text("]")))
+                    .hideAttributes()
                     .build()) {
                 @Override
                 public void onClick(InventoryClickEvent event) {
                     ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true).orElse(null);
                     if (pickaxe == null) return;
+
+                    ItemStack upgradeToken = ItemStack.of(pickaxeMaterial.upgradeTokenType());
+
+                    upgradeToken.setAmount(tokenAmount);
+
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
-                        ItemStack upgradeToken = pickaxeMaterial.upgradeToken();
-
-                        int tokenAmount = switch (pickaxeMaterial) { // TODO: placeholder amounts
-                            case WOOD -> 32;
-                            case STONE -> 32;
-                            case IRON -> 32;
-                            case GOLD -> 32;
-                            case DIAMOND -> 32;
-                            case NETHERITE -> 32;
-                        };
-                        upgradeToken.setAmount(tokenAmount);
                         player.getInventory().addItem(upgradeToken);
-
                         SoundUtils.playUIClickSound(player);
                         return;
                     }
@@ -83,28 +76,26 @@ public class MaterialsMenu extends Menu {
                     PlayerInventory playerInventory = player.getInventory();
 
                     PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
-                    PickaxeMaterial currentPickaxeMaterial = pickaxeData.pickaxeMaterial();
+                    PickaxeMaterial currentPickaxeMaterial = pickaxeData.getPickaxeMaterial();
                     PickaxeMaterial nextTierPickaxe = currentPickaxeMaterial.nextTier();
 
                     if (pickaxeMaterial != nextTierPickaxe) {
-                        player.sendMessage(Component.text("Cannot upgrade from " + currentPickaxeMaterial + " to " + pickaxeMaterial + "!")
-                                .color(NamedTextColor.RED));
+                        player.sendMessage(text("Cannot upgrade from " + currentPickaxeMaterial + " to " + pickaxeMaterial + "!", RED));
                         SoundUtils.playErrorSound(player);
                         return;
                     }
 
                     if (!playerInventory.containsAtLeast(upgradeToken, tokenAmount)) {
-                        player.sendMessage(Component.text("You don't have the required materials (" + tokenAmount + "x [")
-                                .append(pickaxeMaterial.upgradeTokenName())
-                                .append(Component.text("]) to upgrade your pickaxe!"))
-                                .color(NamedTextColor.RED));
+                        player.sendMessage(text("You need " + tokenAmount + "x [")
+                                .append(pickaxeMaterial.formattedUpgradeTokenName())
+                                .append(text("] to upgrade your pickaxe!"))
+                                .color(RED));
                         SoundUtils.playErrorSound(player);
                         return;
                     }
 
                     playerInventory.removeItem(upgradeToken);
-
-                    pickaxeData.pickaxeMaterial(nextTierPickaxe);
+                    PlayerPickaxeService.setPickaxeMaterial(player, nextTierPickaxe);
                     ItemStack updatedPickaxe = PlayerPickaxeService.playerPickaxe(player);
                     playerInventory.setItem(EquipmentSlot.HAND, updatedPickaxe);
 

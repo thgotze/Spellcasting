@@ -1,10 +1,10 @@
-package com.gotze.spellcasting.ability;
+package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.util.ItemModelModifier;
-import com.gotze.spellcasting.util.block.BlockBreakListener;
-import com.gotze.spellcasting.util.block.BlockBreaker;
-import com.gotze.spellcasting.util.block.BlockDamageListener;
+import com.gotze.spellcasting.pickaxe.capability.ItemModelModifier;
+import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
+import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
+import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
 import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,8 +31,12 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
 
         modifyItemModelTemporarily(player.getInventory().getItemInMainHand(),
                 Material.MACE,
-                20L * 10,
-                () -> this.isActive = false);
+                20L * 20,
+                () -> {
+                    player.sendMessage("Hammer ability deactivated");
+                    this.isActive = false;
+                }
+        );
     }
 
     @Override
@@ -44,8 +48,9 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
             case NORTH, SOUTH -> BlockUtils.getBlocksInSquarePattern(block, 3, 3, 1);
             case EAST, WEST -> BlockUtils.getBlocksInSquarePattern(block, 1, 3, 3);
             case UP, DOWN -> BlockUtils.getBlocksInSquarePattern(block, 3, 1, 3);
-            default -> throw new IllegalStateException();
+            default -> null;
         };
+        if (blocksToBreak == null) return;
         blocksToBreak.remove(block);
         breakBlocks(player, blocksToBreak, pickaxeData, false);
     }
