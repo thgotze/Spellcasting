@@ -2,6 +2,13 @@
   "providers": [
     {
       "type": "bitmap",
+      "file": "minecraft:font/splitter.png",
+      "ascent": -32768,
+      "height": -3,
+      "chars": ["\uF001"]
+    },
+    {
+      "type": "bitmap",
       "file": "minecraft:font/gradient_test.png",
       "ascent": 1,
       "height": 8,
@@ -237,6 +244,20 @@
       "ascent": 1,
       "height": 8,
       "chars": ["\uE335"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/shredder_blade_left.png",
+      "ascent": 1,
+      "height": 8,
+      "chars": ["\uE336"]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/blank27.png",
+      "ascent": 13,
+      "height": 256,
+      "chars": ["\uE337"]
     }
   ]
 }
