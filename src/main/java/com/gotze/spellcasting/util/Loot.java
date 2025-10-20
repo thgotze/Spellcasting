@@ -38,13 +38,6 @@ public final class Loot {
         this(itemStack, 1, 1, 1.0);
     }
 
-    public Optional<ItemStack> rollChance() {
-        // Roll for chance to receive item
-        if (chance < 1.0) {
-            if (ThreadLocalRandom.current().nextDouble() > chance) {
-                return Optional.empty();
-            }
-        }
     public int min() {
         return min;
     }
@@ -57,12 +50,22 @@ public final class Loot {
         return chance;
     }
 
-        // Roll for amount to receive
-        if (min > 1 && min == max) {
-            itemStack.setAmount(min);
-        } else {
-            itemStack.setAmount(ThreadLocalRandom.current().nextInt(min, max + 1));
+    public Optional<ItemStack> rollDrop() {
+        // Roll for a chance to receive item
+        if (ThreadLocalRandom.current().nextDouble() > chance) {
+            return Optional.empty();
         }
-        return Optional.of(itemStack);
+        return Optional.of(drop());
+    }
+
+    public ItemStack drop() {
+        ItemStack clone = this.itemStack.clone();
+        // Roll for amount to receive
+        if (min == max) {
+            clone.setAmount(min);
+        } else {
+            clone.setAmount(ThreadLocalRandom.current().nextInt(min, max + 1));
+        }
+        return clone;
     }
 }
