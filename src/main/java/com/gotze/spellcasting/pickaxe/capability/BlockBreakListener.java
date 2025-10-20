@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.util.block;
+package com.gotze.spellcasting.pickaxe.capability;
 
 import com.gotze.spellcasting.pickaxe.PickaxeData;
 import org.bukkit.block.Block;
