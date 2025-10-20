@@ -5,7 +5,19 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-public record Loot(ItemStack itemStack, int min, int max, double chance) {
+public final class Loot {
+    private final ItemStack itemStack;
+    private final int min;
+    private final int max;
+    private final double chance;
+
+    public Loot(ItemStack itemStack, int min, int max, double chance) {
+        this.itemStack = itemStack;
+        this.min = min;
+        this.max = max;
+        this.chance = chance;
+    }
+
     public Loot(ItemStack itemStack, int min, int max) {
         this(itemStack, min, max, 1.0);
     }
@@ -33,6 +45,18 @@ public record Loot(ItemStack itemStack, int min, int max, double chance) {
                 return Optional.empty();
             }
         }
+    public int min() {
+        return min;
+    }
+
+    public int max() {
+        return max;
+    }
+
+    public double chance() {
+        return chance;
+    }
+
         // Roll for amount to receive
         if (min > 1 && min == max) {
             itemStack.setAmount(min);
