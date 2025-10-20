@@ -18,14 +18,25 @@ import java.util.Map;
 
 public abstract class Menu implements InventoryHolder {
     private final Inventory inventory;
+    private final boolean interactable;
     private final Map<Integer, Button> buttons = new HashMap<>();
 
     public Menu(int rows, Component title) {
-        inventory = Bukkit.createInventory(this, rows * 9, title);
+        this(rows, title, false);
+    }
+
+    public Menu(int rows, Component title, boolean interactable) {
+        this.inventory = Bukkit.createInventory(this, rows * 9, title);
+        this.interactable = interactable;
     }
 
     public Menu(InventoryType type, Component title) {
-        inventory = Bukkit.createInventory(this, type, title);
+        this(type, title, false);
+    }
+
+    public Menu(InventoryType type, Component title, boolean interactable) {
+        this.inventory = Bukkit.createInventory(this, type, title);
+        this.interactable = interactable;
     }
 
     protected abstract void onOpen(InventoryOpenEvent event);
@@ -33,6 +44,10 @@ public abstract class Menu implements InventoryHolder {
     protected abstract void onClose(InventoryCloseEvent event);
 
     protected abstract void onClick(InventoryClickEvent event);
+
+    public boolean isInteractable() {
+        return interactable;
+    }
 
     public void open(Player player) {
         player.setItemOnCursor(null);
