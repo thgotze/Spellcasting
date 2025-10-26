@@ -18,13 +18,35 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.EnumSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class CrusherManager implements Listener {
 
-    private final CrusherService crusherService;
+    private final Map<Location, Crusher> crushers = new ConcurrentHashMap<>();
 
-    public CrusherManager(CrusherService crusherService) {
-        this.crusherService = crusherService;
+    public CrusherManager() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(
+                JavaPlugin.getPlugin(Spellcasting.class),
+                () -> {
+                    for (Crusher crusher : crushers.values()) {
+                        crusher.tick();
+                    }
+                },
+                0L,
+                1L);
+    }
+
+    public Crusher getCrusher(Location location) {
+        return crushers.get(location);
+    }
+
+    public void addCrusher(Crusher crusher) {
+        crushers.put(crusher.getLocation(), crusher);
+    }
+
+    public void removeCrusher(Location location) {
+        crushers.remove(location);
     }
 
     @EventHandler
@@ -35,10 +57,10 @@ public final class CrusherManager implements Listener {
         if (!player.isSneaking()) return;
 
         Location blockLocation = event.getBlock().getLocation();
-        if (crusherService.getCrusher(blockLocation) != null) return;
+        if (getCrusher(blockLocation) != null) return;
 
         Crusher crusher = new Crusher(blockLocation, player);
-        crusherService.addCrusher(crusher);
+        addCrusher(crusher);
         event.setCancelled(true);
 
         player.spawnParticle(Particle.HAPPY_VILLAGER, blockLocation.toCenterLocation(), 10, 0.5, 0.5, 0.5);
@@ -55,7 +77,7 @@ public final class CrusherManager implements Listener {
             Player player = event.getPlayer();
             Location blockLocation = event.getBlockPlaced().getLocation();
             Crusher crusher = new Crusher(blockLocation, player);
-            crusherService.addCrusher(crusher);
+            addCrusher(crusher);
             player.spawnParticle(Particle.HAPPY_VILLAGER, blockLocation.toCenterLocation(), 10, 0.5, 0.5, 0.5);
         }
     }
@@ -63,7 +85,7 @@ public final class CrusherManager implements Listener {
     @EventHandler
     public void onBreakCrusher(BlockBreakEvent event) {
         Location blockLocation = event.getBlock().getLocation();
-        Crusher crusher = crusherService.getCrusher(blockLocation);
+        Crusher crusher = getCrusher(blockLocation);
         if (crusher == null) return;
 
         event.setDropItems(false);
@@ -83,7 +105,7 @@ public final class CrusherManager implements Listener {
             world.dropItemNaturally(centerCrusherLocation, outputItem);
         }
 
-        crusherService.removeCrusher(blockLocation);
+        removeCrusher(blockLocation);
     }
 
     @EventHandler
@@ -93,7 +115,7 @@ public final class CrusherManager implements Listener {
         Block block = event.getClickedBlock();
         if (block == null) return;
 
-        Crusher crusher = crusherService.getCrusher(block.getLocation());
+        Crusher crusher = getCrusher(block.getLocation());
         if (crusher == null) return;
 
         event.setCancelled(true);
@@ -123,10 +145,10 @@ public final class CrusherManager implements Listener {
             int slot = event.getSlot();
 
             // Allow interaction with the input slot
-            if (slot == 20) return;
+            if (slot == 11) return;
 
             // Allow interaction with the output slot if the action is allowed
-            if (slot == 24 && ALLOWED_OUTPUT_ACTIONS.contains(event.getAction())) return;
+            if (slot == 15 && ALLOWED_OUTPUT_ACTIONS.contains(event.getAction())) return;
 
             // Cancel event for all other slots and output slot if the action wasn't allowed
             event.setCancelled(true);
@@ -162,8 +184,8 @@ public final class CrusherManager implements Listener {
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         if (!(event.getInventory().getHolder() instanceof Crusher)) return;
-        // Cancel event if player tries to drag an item to the output slot (24)
-        if (event.getRawSlots().contains(24)) {
+        // Cancel event if player tries to drag an item to the output slot (15)
+        if (event.getRawSlots().contains(15)) {
             event.setCancelled(true);
         }
     }
