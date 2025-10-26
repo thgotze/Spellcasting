@@ -5,7 +5,8 @@ import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
-import com.gotze.spellcasting.util.block.*;
+import com.gotze.spellcasting.util.block.BlockCategories;
+import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -60,7 +61,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
             cornerBlocks.removeIf(b -> b.getType().isAir() ||
                     (!BlockCategories.ORE_BLOCKS.containsKey(b.getType()) && !BlockCategories.FILLER_BLOCKS.contains(b.getType())));
 
-            // If less than 3 corners were found then don't activate the enchantment
+            // If less than 3 corners were found, then don't activate the enchantment
             if (cornerBlocks.size() < 3) {
                 reset();
                 return;
@@ -71,9 +72,20 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
             World world = player.getWorld();
 
             for (Block cornerBlock : cornerBlocks) {
-                Location displayLocation = cornerBlock.getLocation().add(0.0625f, 0.0625f, 0.0625f);
+//                Location displayLocation = cornerBlock.getLocation().add(0.0625f, 0.0625f, 0.0625f);
+//                Location displayLocation = cornerBlock.getLocation().add(0.03125f, 0.03125f, 0.03125f);
+//                Location displayLocation = cornerBlock.getLocation().add(0.015625f, 0.015625, 0.015625);
+
+//                Location displayLocation = cornerBlock.getLocation().add(0.00390625f, 0.00390625f, 0.00390625f);
+
+                Location displayLocation = cornerBlock.getLocation().add(0.001953125f, 0.001953125f, 0.001953125f);
+
                 BlockDisplay blockDisplay = (BlockDisplay) world.spawnEntity(displayLocation, EntityType.BLOCK_DISPLAY);
-                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.875f, 0.875f, 0.875f));
+//                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.875f, 0.875f, 0.875f));
+//                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.9375f, 0.9375f, 0.9375f));
+//                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.96875f, 0.96875f, 0.96875f));
+
+                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.9921875f, 0.9921875f, 0.9921875f));
 
                 blockDisplay.setBlock(TINTED_GLASS);
                 blockDisplay.setGlowing(true);
