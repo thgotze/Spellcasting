@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.machine;
 
 import com.gotze.spellcasting.util.ItemStackBuilder;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -10,20 +11,36 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 public class Crusher implements InventoryHolder {
-    private static final int INPUT_SLOT = 20;
-    private static final int MIDDLE_SLOT = 22;
-    private static final int OUTPUT_SLOT = 24;
-    private static final int DEFAULT_PROCESSING_TIME_IN_TICKS = 10;
-    private static final Map<Material, List<Integer>> FRAME_LOCATIONS = Map.of(
-            Material.BLACK_STAINED_GLASS_PANE, List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 17, 18, 26, 27, 31, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44),
-            Material.GRAY_STAINED_GLASS_PANE, List.of(10, 11, 12, 14, 15, 16, 19, 21, 23, 25, 28, 29, 30, 32, 33, 34));
+
+    private static final String NEG_SPACE = "\uF001";
+    private static final String NEG_SPACE_8 = NEG_SPACE.repeat(8);
+    private static final String NEG_SPACE_169 = NEG_SPACE.repeat(169);
+
+    private static final int INPUT_SLOT = 11;
+    private static final int OUTPUT_SLOT = 15;
+    private static final int DEFAULT_PROCESSING_TIME_IN_TICKS = 100;
+
+    private static final String[] LEFT_ARROW_SPRITES = {
+            "crusher_left_arrow00", "crusher_left_arrow01", "crusher_left_arrow02",
+            "crusher_left_arrow03", "crusher_left_arrow04", "crusher_left_arrow05",
+            "crusher_left_arrow06", "crusher_left_arrow07", "crusher_left_arrow08",
+            "crusher_left_arrow09", "crusher_left_arrow10", "crusher_left_arrow11",
+            "crusher_left_arrow12", "crusher_left_arrow13", "crusher_left_arrow14"
+    };
+
+    private static final String[] RIGHT_ARROW_SPRITES = {
+            "crusher_right_arrow00", "crusher_right_arrow01", "crusher_right_arrow02",
+            "crusher_right_arrow03", "crusher_right_arrow04", "crusher_right_arrow05",
+            "crusher_right_arrow06", "crusher_right_arrow07", "crusher_right_arrow08",
+            "crusher_right_arrow09", "crusher_right_arrow10", "crusher_right_arrow11",
+            "crusher_right_arrow12", "crusher_right_arrow13", "crusher_right_arrow14"
+    };
 
     private final @NotNull Location location;
     private final @NotNull UUID placedBy;
@@ -37,28 +54,38 @@ public class Crusher implements InventoryHolder {
     }
 
     private Inventory defaultInventory() {
-        this.inventory = Bukkit.createInventory(this, 45);
+        this.inventory = Bukkit.createInventory(this, 27, text(NEG_SPACE_8 + "\uD027").color(WHITE)
+                .append(text(NEG_SPACE_169 + "Crusher").color(TextColor.color(64, 64, 64))));
 
-        for (Map.Entry<Material, List<Integer>> entry : FRAME_LOCATIONS.entrySet()) {
-            Material paneColor = entry.getKey();
-            for (int slot : entry.getValue()) {
-                inventory.setItem(slot, new ItemStackBuilder(paneColor)
-                        .hideTooltipBox()
-                        .build());
-            }
+        for (int i = 0; i <= 10; i++) {
+            inventory.setItem(i, new ItemStackBuilder(Material.PAPER)
+                    .itemModel(NamespacedKey.minecraft("air"))
+                    .hideTooltipBox()
+                    .build());
         }
 
-        inventory.setItem(MIDDLE_SLOT, new ItemStackBuilder(Material.WHITE_STAINED_GLASS_PANE)
-                .name(text("Click to crush ores!"))
+        for (int i = 16; i <= 26; i++) {
+            inventory.setItem(i, new ItemStackBuilder(Material.PAPER)
+                    .itemModel(NamespacedKey.minecraft("air"))
+                    .hideTooltipBox()
+                    .build());
+        }
+
+        inventory.setItem(12, new ItemStackBuilder(Material.PAPER)
+                .itemModel(NamespacedKey.minecraft("crusher_left_arrow00"))
+                .hideTooltipBox()
                 .build());
 
-        ItemStack itemStack = ItemStack.of(Material.PAPER);
-        itemStack.editMeta(itemMeta -> itemMeta.setItemModel(NamespacedKey.minecraft("shredder_blade_left")));
-        inventory.setItem(13, itemStack);
-        inventory.setItem(31, itemStack);
-        inventory.clear(21);
-        inventory.clear(22);
-        inventory.clear(23);
+        inventory.setItem(13, new ItemStackBuilder(Material.PAPER)
+                .itemModel(NamespacedKey.minecraft("crusher_saws0"))
+                .hideTooltipBox()
+                .build());
+
+        inventory.setItem(14, new ItemStackBuilder(Material.PAPER)
+                .itemModel(NamespacedKey.minecraft("crusher_right_arrow00"))
+                .hideTooltipBox()
+                .build());
+
         return inventory;
     }
 
@@ -94,6 +121,19 @@ public class Crusher implements InventoryHolder {
     }
 
     public void tick() {
+        if (progress == 0) {
+            inventory.getItem(12).editMeta(itemMeta ->
+                    itemMeta.setItemModel(NamespacedKey.minecraft("crusher_left_arrow00")));
+
+            inventory.getItem(14).editMeta(itemMeta ->
+                    itemMeta.setItemModel(NamespacedKey.minecraft("crusher_right_arrow00")));
+        } else {
+            int frame = progress % 3;
+            inventory.getItem(13).editMeta(itemMeta ->
+                    itemMeta.setItemModel(NamespacedKey.minecraft("crusher_saws" + frame)));
+        }
+
+        // Check if there is something in the input slot
         ItemStack inputItem = getInputItem();
         if (inputItem == null) {
             progress = 0;
@@ -107,56 +147,55 @@ public class Crusher implements InventoryHolder {
             return;
         }
 
-        World world = location.getWorld();
-        BlockData blockData = Material.RAW_COPPER_BLOCK.createBlockData();
-//        world.playEffect(location, Effect.STEP_SOUND, blockData);
-//        SoundGroup soundGroup = blockData.getSoundGroup();
-//        world.playSound(location, soundGroup.getBreakSound(), soundGroup.getVolume(), soundGroup.getPitch());
-
-        if (progress < DEFAULT_PROCESSING_TIME_IN_TICKS) {
-            progress++;
-
-            if (progress % 2 == 0) {
-                inventory.setItem(12, ItemStack.of(Material.WHITE_STAINED_GLASS_PANE));
-                inventory.setItem(14, ItemStack.of(Material.WHITE_STAINED_GLASS_PANE));
-                inventory.setItem(30, ItemStack.of(Material.WHITE_STAINED_GLASS_PANE));
-                inventory.setItem(32, ItemStack.of(Material.WHITE_STAINED_GLASS_PANE));
-
-                inventory.setItem(13, ItemStack.of(Material.GRAY_STAINED_GLASS_PANE));
-                inventory.setItem(21, ItemStack.of(Material.GRAY_STAINED_GLASS_PANE));
-                inventory.setItem(23, ItemStack.of(Material.GRAY_STAINED_GLASS_PANE));
-                inventory.setItem(31, ItemStack.of(Material.GRAY_STAINED_GLASS_PANE));
-            } else {
-                inventory.setItem(13, ItemStack.of(Material.WHITE_STAINED_GLASS_PANE));
-                inventory.setItem(21, ItemStack.of(Material.WHITE_STAINED_GLASS_PANE));
-                inventory.setItem(23, ItemStack.of(Material.WHITE_STAINED_GLASS_PANE));
-                inventory.setItem(31, ItemStack.of(Material.WHITE_STAINED_GLASS_PANE));
-
-                inventory.setItem(12, ItemStack.of(Material.GRAY_STAINED_GLASS_PANE));
-                inventory.setItem(14, ItemStack.of(Material.GRAY_STAINED_GLASS_PANE));
-                inventory.setItem(30, ItemStack.of(Material.GRAY_STAINED_GLASS_PANE));
-                inventory.setItem(32, ItemStack.of(Material.GRAY_STAINED_GLASS_PANE));
-            }
-
-            return;
-        }
-        progress = 0;
-
+        // Check if the output item matches the result item
         ItemStack resultItem = crushingRecipe.getResultItem();
         ItemStack outputItem = getOutputItem();
-
         if (outputItem != null) {
             // Output slot has items - check if we can add more
-            if (outputItem.getType() != resultItem.getType()) return; // Different item type
-            if (outputItem.getAmount() + resultItem.getAmount() > outputItem.getMaxStackSize()) return; // Would overflow
-            outputItem.add(2);
-        } else {
-            // Output slot is empty - set output item
-            setOutputItem(resultItem);
+            if (!outputItem.isSimilar(resultItem)) {
+//            if (outputItem.getType() != resultItem.getType()) {
+                progress = 0;
+                return; // Different item type
+            }
+            if (outputItem.getAmount() + resultItem.getAmount() > outputItem.getMaxStackSize()) {
+                progress = 0;
+                return; // Would overflow
+            }
         }
-        world.playEffect(location, Effect.STEP_SOUND, blockData);
 
-        inputItem.subtract();
+        // ---------------
+        // At this point we know that the machine can process the item
+        // ---------------
+        if (progress < 50) {
+            progress++;
+
+            int leftArrowFrame = (progress * 14) / 50;
+            String leftFrameStr = String.format("%02d", leftArrowFrame);
+
+            inventory.getItem(12).editMeta(itemMeta ->
+                    itemMeta.setItemModel(NamespacedKey.minecraft("crusher_left_arrow" + leftFrameStr)));
+
+        } else if (progress < 100) {
+            progress++;
+
+            int rightArrowFrame = ((progress - 50) * 14) / 50;
+            String rightFrameStr = String.format("%02d", rightArrowFrame);
+
+            inventory.getItem(14).editMeta(itemMeta ->
+                    itemMeta.setItemModel(NamespacedKey.minecraft("crusher_right_arrow" + rightFrameStr)));
+
+        } else if (progress >= DEFAULT_PROCESSING_TIME_IN_TICKS) {
+            progress = 0;
+
+            inputItem.subtract();
+
+            if (outputItem != null) {
+                outputItem.add(2);
+            } else {
+                setOutputItem(resultItem);
+            }
+            location.getWorld().playEffect(location, Effect.STEP_SOUND, crushingRecipe.getBlockData());
+        }
     }
 
     @Override
@@ -165,20 +204,37 @@ public class Crusher implements InventoryHolder {
     }
 
     public enum CrushingRecipe {
-        CRUSHED_COPPER(Material.RAW_COPPER, new ItemStackBuilder(Material.GUNPOWDER)
-                .name(text("Crushed Copper")).amount(2).build()),
-        CRUSHED_IRON(Material.RAW_IRON, new ItemStackBuilder(Material.SUGAR)
-                .name(text("Crushed Iron")).amount(2).build()),
-        CRUSHED_GOLD(Material.RAW_GOLD, new ItemStackBuilder(Material.GLOWSTONE_DUST)
-                .name(text("Crushed Gold")).amount(2).build()),
+        CRUSHED_COPPER(Material.RAW_COPPER,
+                new ItemStackBuilder(Material.PAPER)
+                        .name(text("Crushed Copper"))
+                        .itemModel(NamespacedKey.minecraft("crushed_copper"))
+                        .amount(2)
+                        .build(),
+                Material.RAW_COPPER_BLOCK.createBlockData()),
+        CRUSHED_IRON(Material.RAW_IRON,
+                new ItemStackBuilder(Material.PAPER)
+                        .name(text("Crushed Iron"))
+                        .itemModel(NamespacedKey.minecraft("crushed_iron"))
+                        .amount(2)
+                        .build(),
+                Material.RAW_IRON_BLOCK.createBlockData()),
+        CRUSHED_GOLD(Material.RAW_GOLD,
+                new ItemStackBuilder(Material.PAPER)
+                        .name(text("Crushed Gold"))
+                        .itemModel(NamespacedKey.minecraft("crushed_gold"))
+                        .amount(2)
+                        .build(),
+                Material.RAW_GOLD_BLOCK.createBlockData()),
         ;
 
         private final Material ingredient;
         private final ItemStack resultItem;
+        private final BlockData blockData;
 
-        CrushingRecipe(Material ingredient, ItemStack resultItem) {
+        CrushingRecipe(Material ingredient, ItemStack resultItem, BlockData blockData) {
             this.ingredient = ingredient;
             this.resultItem = resultItem;
+            this.blockData = blockData;
         }
 
         public Material getIngredient() {
@@ -189,9 +245,13 @@ public class Crusher implements InventoryHolder {
             return resultItem.clone();
         }
 
+        public BlockData getBlockData() {
+            return blockData;
+        }
+
         public static @Nullable CrushingRecipe fromMaterial(Material material) {
             for (CrushingRecipe recipe : values()) {
-                if (recipe.ingredient == material) {
+                if (recipe.getIngredient() == material) {
                     return recipe;
                 }
             }
