@@ -2,13 +2,13 @@ package com.gotze.spellcasting.pickaxe;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
+import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
+import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
+import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.menu.PickaxeMenu;
 import com.gotze.spellcasting.util.SoundUtils;
-import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
-import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.util.block.BlockCategories;
-import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -19,7 +19,6 @@ import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -40,8 +39,8 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PlayerPickaxeManager implements Listener, BasicCommand {
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void masterBlockBreakEventHandler(BlockBreakEvent event) {
+    @EventHandler
+    public void onBlockBreakWithPickaxe(BlockBreakEvent event) {
         Player player = event.getPlayer();
 
         // check player is holding their pickaxe
@@ -60,7 +59,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         }
 
         // ---------------
-        // at this point the block break event is allowed to go through i.e. NOT cancelled
+        // at this point the block break event is allowed to go through i.e., NOT cancelled
         // ---------------
         Block block = event.getBlock();
         // notify all listeners about this natural block break
