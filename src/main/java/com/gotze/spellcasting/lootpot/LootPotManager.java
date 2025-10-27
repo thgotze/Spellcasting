@@ -38,11 +38,11 @@ public class LootPotManager implements Listener {
                     new Loot(ItemStack.of(Material.RAW_GOLD), 6, 10)),
             // Ability tokens
             Stream.of(Ability.AbilityType.values()) // TODO: will need to filter all the types and their rarity and their weight
-                    .map(abilityType -> new Loot(abilityType.getUpgradeToken(), abilityType.getRarity().weight()))
+                    .map(abilityType -> new Loot(abilityType.getUpgradeToken(), abilityType.getRarity().getWeight()))
                     .toList(),
             // Enchantment tokens
             Stream.of(Enchantment.EnchantmentType.values())
-                    .map(enchantmentType -> new Loot(enchantmentType.getUpgradeToken(), enchantmentType.getRarity().weight()))
+                    .map(enchantmentType -> new Loot(enchantmentType.getUpgradeToken(), enchantmentType.getRarity().getWeight()))
                     .toList(),
             // Machine parts
             List.of(new Loot(new ItemStackBuilder(Material.REPEATER)
@@ -76,20 +76,20 @@ public class LootPotManager implements Listener {
             List.of(new Loot(new ItemStackBuilder(Material.WHITE_SHULKER_BOX)
                             .name(text("Common Loot Box", WHITE))
                             .build(),
-                            Rarity.COMMON.weight()),
+                            Rarity.COMMON.getWeight()),
 //                    Rarity.COMMON.getWeight() / Rarity.values().length), // TODO: reduce chance
                     new Loot(new ItemStackBuilder(Material.LIME_SHULKER_BOX)
                             .name(text("Uncommon Loot Box", GREEN))
-                            .build(), Rarity.UNCOMMON.weight()),
+                            .build(), Rarity.UNCOMMON.getWeight()),
                     new Loot(new ItemStackBuilder(Material.LIGHT_BLUE_SHULKER_BOX)
                             .name(text("Rare Loot Box", AQUA))
-                            .build(), Rarity.RARE.weight()),
+                            .build(), Rarity.RARE.getWeight()),
                     new Loot(new ItemStackBuilder(Material.MAGENTA_SHULKER_BOX)
                             .name(text("Epic Loot Box", LIGHT_PURPLE))
-                            .build(), Rarity.EPIC.weight()),
+                            .build(), Rarity.EPIC.getWeight()),
                     new Loot(new ItemStackBuilder(Material.ORANGE_SHULKER_BOX)
                             .name(text("Legendary Loot Box", GOLD))
-                            .build(), Rarity.LEGENDARY.weight())),
+                            .build(), Rarity.LEGENDARY.getWeight())),
             // Pot sherds
             // ---------------
             List.of(new Loot(new ItemStackBuilder(Material.MINER_POTTERY_SHERD)
@@ -103,7 +103,7 @@ public class LootPotManager implements Listener {
                             counts -> Stream.of(Enchantment.EnchantmentType.values())
                                     .map(enchantmentType -> {
                                         Rarity rarity = enchantmentType.getRarity();
-                                        double chance = rarity.weight() / counts.get(rarity);
+                                        double chance = rarity.getWeight() / counts.get(rarity);
                                         return new Loot(enchantmentType.getUpgradeToken(), chance);
                                     }).toList()
                     ))

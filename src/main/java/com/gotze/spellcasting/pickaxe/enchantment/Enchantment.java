@@ -89,12 +89,12 @@ public abstract class Enchantment {
         }
 
         public Component getFormattedName() {
-            return text(this.toString(), this.getRarity().color());
+            return text(this.toString(), this.getRarity().getColor());
         }
 
         public Component getUpgradeTokenName() {
             return getFormattedName()
-                    .append(text(" Token", this.getRarity().color()));
+                    .append(text(" Token", this.getRarity().getColor()));
         }
 
         @Override

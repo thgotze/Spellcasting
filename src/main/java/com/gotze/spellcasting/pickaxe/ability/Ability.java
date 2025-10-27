@@ -91,7 +91,7 @@ public abstract class Ability {
 
         public Component getFormattedName() {
             return textOfChildren(text("⚡ ", RED, BOLD),
-                    text(this.toString(), this.rarity.color()));
+                    text(this.toString(), this.rarity.getColor()));
         }
 
         public ItemStack getUpgradeToken() {
@@ -103,7 +103,7 @@ public abstract class Ability {
 
         public Component upgradeTokenName() {
             return getFormattedName()
-                    .append(text(" Token", this.getRarity().color()));
+                    .append(text(" Token", this.getRarity().getColor()));
         }
 
         @Override

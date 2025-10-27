@@ -165,8 +165,8 @@ public class PlayerPickaxeService {
 
         PickaxeMaterial pickaxeMaterial = pickaxeData.getPickaxeMaterial();
 
-        ItemStackBuilder builder = new ItemStackBuilder(pickaxeData.getPickaxeMaterial().pickaxeType())
-                .name(pickaxeMaterial.formattedPickaxeTypeName().color(pickaxeMaterial.textColor()))
+        ItemStackBuilder builder = new ItemStackBuilder(pickaxeData.getPickaxeMaterial().getPickaxeType())
+                .name(pickaxeMaterial.getFormattedPickaxeTypeName().color(pickaxeMaterial.getRarity().getColor()))
                 .persistentDataContainer("owner", player.getUniqueId().toString())
                 .lore(pickaxeLore(pickaxeData))
                 .hideAttributes()
@@ -269,7 +269,7 @@ public class PlayerPickaxeService {
                 Enchantment.EnchantmentType enchantmentType = enchantment.getEnchantmentType();
                 lore.add(enchantmentType.getFormattedName()
                         .append(text(" " + StringUtils.toRomanNumeral(enchantment.getLevel())))
-                        .color(enchantmentType.getRarity().color()));
+                        .color(enchantmentType.getRarity().getColor()));
             }
             lore.add(empty());
         }
@@ -288,7 +288,7 @@ public class PlayerPickaxeService {
                 Ability.AbilityType abilityType = ability.getAbilityType();
                 lore.add(abilityType.getFormattedName()
                         .append(text(" " + StringUtils.toRomanNumeral(ability.getLevel())))
-                        .color(abilityType.getRarity().color()));
+                        .color(abilityType.getRarity().getColor()));
             }
             lore.add(empty());
         }
@@ -299,8 +299,8 @@ public class PlayerPickaxeService {
 
         PickaxeMaterial pickaxeMaterial = pickaxeData.getPickaxeMaterial();
         int damage = pickaxeData.getDurabilityDamage();
-        int remaining = pickaxeMaterial.maxDurability() - damage;
-        double percentage = (double) remaining / pickaxeMaterial.maxDurability();
+        int remaining = pickaxeMaterial.getMaxDurability() - damage;
+        double percentage = (double) remaining / pickaxeMaterial.getMaxDurability();
 
         NamedTextColor durabilityColor;
         if (percentage >= 0.60) durabilityColor = GREEN;
@@ -312,7 +312,7 @@ public class PlayerPickaxeService {
         lore.add(text("Durability: ", GRAY)
                 .append(text(remaining, durabilityColor))
                 .append(text(" | ", DARK_GRAY))
-                .append(text(pickaxeMaterial.maxDurability(), GRAY))
+                .append(text(pickaxeMaterial.getMaxDurability(), GRAY))
         );
 
         return lore.stream().map(component -> component
