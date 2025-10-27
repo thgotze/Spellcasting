@@ -1,7 +1,7 @@
 package com.gotze.spellcasting;
 
 import com.gotze.spellcasting.lootpot.LootPotManager;
-import com.gotze.spellcasting.machine.CrusherManager;
+import com.gotze.spellcasting.machine.MachineManager;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
 import com.gotze.spellcasting.util.menu.MenuListener;
 import org.bukkit.plugin.PluginManager;
@@ -14,12 +14,14 @@ public final class Spellcasting extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
 
         pluginManager.registerEvents(new MenuListener(), this);
-        pluginManager.registerEvents(new CrusherManager(), this);
+        pluginManager.registerEvents(new MachineManager(), this);
         pluginManager.registerEvents(new LootPotManager(), this);
 //        pluginManager.registerEvents(new ResourcePackManager(), this);
 
         PlayerPickaxeManager playerPickaxeManager = new PlayerPickaxeManager();
         pluginManager.registerEvents(playerPickaxeManager, this);
         registerCommand("pickaxe", playerPickaxeManager);
+
+        RecipeRegistry.registerRecipes();
     }
 }
