@@ -52,7 +52,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         if (pickaxeData.getDurabilityDamage() + 1 == pickaxeData.getPickaxeMaterial().getMaxDurability()) {
             event.setCancelled(true);
             player.sendMessage(text("Pickaxe durability too low to continue mining!", RED));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 100, 2));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20 * 3 /*3 seconds*/, 2));
             player.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.MASTER, 1.0f, 1.0f, 404);
             SoundUtils.playErrorSound(player);
             return;
