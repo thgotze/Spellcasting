@@ -31,7 +31,7 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
 
         modifyItemModelTemporarily(player.getInventory().getItemInMainHand(),
                 Material.MACE,
-                20L * 20,
+                20L * 15,
                 () -> {
                     player.sendMessage("Hammer ability deactivated");
                     this.isActive = false;
