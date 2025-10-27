@@ -1,22 +1,20 @@
-package com.gotze.spellcasting.machine;
+package com.gotze.spellcasting.machine.crusher;
 
+import com.gotze.spellcasting.machine.Machine;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
-
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
-public class Crusher implements InventoryHolder {
+public final class Crusher extends Machine {
 
     private static final String NEG_SPACE = "\uF001";
     private static final String NEG_SPACE_8 = NEG_SPACE.repeat(8);
@@ -42,20 +40,18 @@ public class Crusher implements InventoryHolder {
             "crusher_right_arrow12", "crusher_right_arrow13", "crusher_right_arrow14"
     };
 
-    private final @NotNull Location location;
-    private final @NotNull UUID placedBy;
-    private Inventory inventory;
-    private int progress;
-
     public Crusher(@NotNull Location location, @NotNull Player player) {
-        this.location = location;
-        this.placedBy = player.getUniqueId();
-        this.inventory = defaultInventory();
+        super(location, player);
+        populate();
     }
 
-    private Inventory defaultInventory() {
-        this.inventory = Bukkit.createInventory(this, 27, text(NEG_SPACE_8 + "\uD027").color(WHITE)
-                .append(text(NEG_SPACE_169 + "Crusher").color(TextColor.color(64, 64, 64))));
+    @Override
+    protected Inventory populate() {
+        Inventory inventory = Bukkit.createInventory(this, 27,
+                text(NEG_SPACE_8 + "\uD027")
+                        .color(WHITE)
+                        .append(text(NEG_SPACE_169 + "Crusher")
+                                .color(TextColor.color(64, 64, 64))));
 
         for (int i = 0; i <= 10; i++) {
             inventory.setItem(i, new ItemStackBuilder(Material.PAPER)
@@ -89,47 +85,25 @@ public class Crusher implements InventoryHolder {
         return inventory;
     }
 
-    public Location getLocation() {
-        return location.clone();
-    }
-
-    public @NotNull UUID getWhoPlaced() {
-        return placedBy;
-    }
-
-    public @Nullable ItemStack getInputItem() {
-        return inventory.getItem(INPUT_SLOT);
-    }
-
-    public void setInputItem(@Nullable ItemStack inputItem) {
-        inventory.setItem(INPUT_SLOT, inputItem);
-    }
-
-    public @Nullable ItemStack getOutputItem() {
-        return inventory.getItem(OUTPUT_SLOT);
-    }
-
-    public void setOutputItem(@Nullable ItemStack outputItem) {
-        inventory.setItem(OUTPUT_SLOT, outputItem);
-    }
-
-    public @NotNull ItemStack toItemStack() {
+    @Override
+    public ItemStack toItemStack() {
         return new ItemStackBuilder(Material.STONECUTTER)
                 .name(text("Crusher"))
                 .persistentDataContainer("machine", "crusher") // TODO: DEBUG
                 .build();
     }
 
+    @Override
     public void tick() {
         if (progress == 0) {
-            inventory.getItem(12).editMeta(itemMeta ->
+            getInventory().getItem(12).editMeta(itemMeta ->
                     itemMeta.setItemModel(NamespacedKey.minecraft("crusher_left_arrow00")));
 
-            inventory.getItem(14).editMeta(itemMeta ->
+            getInventory().getItem(14).editMeta(itemMeta ->
                     itemMeta.setItemModel(NamespacedKey.minecraft("crusher_right_arrow00")));
         } else {
             int frame = progress % 3;
-            inventory.getItem(13).editMeta(itemMeta ->
+            getInventory().getItem(13).editMeta(itemMeta ->
                     itemMeta.setItemModel(NamespacedKey.minecraft("crusher_saws" + frame)));
         }
 
@@ -153,7 +127,6 @@ public class Crusher implements InventoryHolder {
         if (outputItem != null) {
             // Output slot has items - check if we can add more
             if (!outputItem.isSimilar(resultItem)) {
-//            if (outputItem.getType() != resultItem.getType()) {
                 progress = 0;
                 return; // Different item type
             }
@@ -172,7 +145,7 @@ public class Crusher implements InventoryHolder {
             int leftArrowFrame = (progress * 14) / 50;
             String leftFrameStr = String.format("%02d", leftArrowFrame);
 
-            inventory.getItem(12).editMeta(itemMeta ->
+            getInventory().getItem(12).editMeta(itemMeta ->
                     itemMeta.setItemModel(NamespacedKey.minecraft("crusher_left_arrow" + leftFrameStr)));
 
         } else if (progress < 100) {
@@ -181,7 +154,7 @@ public class Crusher implements InventoryHolder {
             int rightArrowFrame = ((progress - 50) * 14) / 50;
             String rightFrameStr = String.format("%02d", rightArrowFrame);
 
-            inventory.getItem(14).editMeta(itemMeta ->
+            getInventory().getItem(14).editMeta(itemMeta ->
                     itemMeta.setItemModel(NamespacedKey.minecraft("crusher_right_arrow" + rightFrameStr)));
 
         } else if (progress >= DEFAULT_PROCESSING_TIME_IN_TICKS) {
@@ -194,13 +167,24 @@ public class Crusher implements InventoryHolder {
             } else {
                 setOutputItem(resultItem);
             }
-            location.getWorld().playEffect(location, Effect.STEP_SOUND, crushingRecipe.getBlockData());
+            getLocation().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, crushingRecipe.getBlockData());
         }
     }
 
-    @Override
-    public @NotNull Inventory getInventory() {
-        return inventory;
+    public @Nullable ItemStack getInputItem() {
+        return getInventory().getItem(INPUT_SLOT);
+    }
+
+    public void setInputItem(@Nullable ItemStack inputItem) {
+        getInventory().setItem(INPUT_SLOT, inputItem);
+    }
+
+    public @Nullable ItemStack getOutputItem() {
+        return getInventory().getItem(OUTPUT_SLOT);
+    }
+
+    public void setOutputItem(@Nullable ItemStack outputItem) {
+        getInventory().setItem(OUTPUT_SLOT, outputItem);
     }
 
     public enum CrushingRecipe {
