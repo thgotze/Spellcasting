@@ -78,11 +78,6 @@ public abstract class Menu implements InventoryHolder {
         inventory.setItem(button.slot(), button.item());
     }
 
-    @Override
-    public @NotNull Inventory getInventory() {
-        return inventory;
-    }
-
     public Map<Integer, Button> buttons() {
         return Collections.unmodifiableMap(buttons);
     }
@@ -90,5 +85,10 @@ public abstract class Menu implements InventoryHolder {
     public void clear() {
         inventory.clear();
         buttons.clear();
+    }
+
+    @Override
+    public @NotNull Inventory getInventory() {
+        return inventory;
     }
 }
