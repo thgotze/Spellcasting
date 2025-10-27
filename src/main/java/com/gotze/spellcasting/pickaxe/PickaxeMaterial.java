@@ -1,58 +1,57 @@
 package com.gotze.spellcasting.pickaxe;
 
+import com.gotze.spellcasting.util.Rarity;
 import com.gotze.spellcasting.util.StringUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 
 public enum PickaxeMaterial {
-    WOOD(Material.WOODEN_PICKAXE, NamedTextColor.GRAY, Material.OAK_PLANKS),
-    STONE(Material.STONE_PICKAXE, NamedTextColor.WHITE, Material.COBBLESTONE),
-    COPPER(Material.COPPER_PICKAXE, NamedTextColor.GREEN, Material.COPPER_INGOT),
-    IRON(Material.IRON_PICKAXE, NamedTextColor.AQUA, Material.IRON_INGOT),
-    GOLD(Material.GOLDEN_PICKAXE, NamedTextColor.LIGHT_PURPLE, Material.GOLD_INGOT),
-    DIAMOND(Material.DIAMOND_PICKAXE, NamedTextColor.GOLD, Material.DIAMOND),
-    NETHERITE(Material.NETHERITE_PICKAXE, NamedTextColor.DARK_RED, Material.NETHERITE_INGOT),
+    WOOD(Material.WOODEN_PICKAXE, Rarity.COMMON, Material.OAK_PLANKS),
+    STONE(Material.STONE_PICKAXE, Rarity.COMMON, Material.COBBLESTONE),
+    COPPER(Material.COPPER_PICKAXE, Rarity.UNCOMMON, Material.COPPER_INGOT),
+    IRON(Material.IRON_PICKAXE, Rarity.RARE, Material.IRON_INGOT),
+    DIAMOND(Material.DIAMOND_PICKAXE, Rarity.EPIC, Material.DIAMOND),
+    NETHERITE(Material.NETHERITE_PICKAXE, Rarity.LEGENDARY, Material.NETHERITE_INGOT),
     ;
 
     private final Material pickaxeType;
-    private final NamedTextColor textColor;
+    private final Rarity rarity;
     private final Material upgradeTokenType;
 
-    PickaxeMaterial(Material pickaxeType, NamedTextColor textColor, Material upgradeTokenType) {
+    PickaxeMaterial(Material pickaxeType, Rarity rarity, Material upgradeTokenType) {
         this.pickaxeType = pickaxeType;
-        this.textColor = textColor;
+        this.rarity = rarity;
         this.upgradeTokenType = upgradeTokenType;
     }
 
-    public Material pickaxeType() {
+    public Material getPickaxeType() {
         return pickaxeType;
     }
 
-    public Material upgradeTokenType() {
+    public Material getUpgradeTokenType() {
         return upgradeTokenType;
     }
 
-    public NamedTextColor textColor() {
-        return textColor;
+    public Rarity getRarity() {
+        return rarity;
     }
 
-    public int maxDurability() {
+    public int getMaxDurability() {
         return this.pickaxeType.getDefaultData(DataComponentTypes.MAX_DAMAGE);
     }
 
-    public PickaxeMaterial nextTier() {
+    public PickaxeMaterial getNextTier() {
         PickaxeMaterial[] values = values();
         int nextIndex = (ordinal() + 1) % values.length;
         return values[nextIndex];
     }
 
-    public Component formattedPickaxeTypeName() {
+    public Component getFormattedPickaxeTypeName() {
         return Component.text(StringUtils.toTitleCase(this.pickaxeType.toString()));
     }
 
-    public Component formattedUpgradeTokenName() {
+    public Component getFormattedUpgradeTokenName() {
         return Component.text(StringUtils.toTitleCase(this.upgradeTokenType.toString()));
     }
 

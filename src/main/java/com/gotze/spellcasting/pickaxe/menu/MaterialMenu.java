@@ -44,17 +44,16 @@ public class MaterialMenu extends Menu {
                 case STONE -> 32;
                 case COPPER -> 32;
                 case IRON -> 32;
-                case GOLD -> 32;
                 case DIAMOND -> 32;
                 case NETHERITE -> 32;
             };
 
-            button(new Button(slotIndexes[startingIndex++], new ItemStackBuilder(pickaxeMaterial.pickaxeType())
-                    .name(pickaxeMaterial.formattedPickaxeTypeName().color(pickaxeMaterial.textColor()))
+            button(new Button(slotIndexes[startingIndex++], new ItemStackBuilder(pickaxeMaterial.getPickaxeType())
+                    .name(pickaxeMaterial.getFormattedPickaxeTypeName().color(pickaxeMaterial.getRarity().getColor()))
                     .lore(text(""),
                             text(StringUtils.convertToSmallFont("requirements")),
                             text(tokenAmount + "x [")
-                                    .append(pickaxeMaterial.formattedUpgradeTokenName())
+                                    .append(pickaxeMaterial.getFormattedUpgradeTokenName())
                                     .append(text("]")))
                     .hideAttributes()
                     .build()) {
@@ -63,7 +62,7 @@ public class MaterialMenu extends Menu {
                     ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true).orElse(null);
                     if (pickaxe == null) return;
 
-                    ItemStack upgradeToken = ItemStack.of(pickaxeMaterial.upgradeTokenType());
+                    ItemStack upgradeToken = ItemStack.of(pickaxeMaterial.getUpgradeTokenType());
 
                     upgradeToken.setAmount(tokenAmount);
 
@@ -77,7 +76,7 @@ public class MaterialMenu extends Menu {
 
                     PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
                     PickaxeMaterial currentPickaxeMaterial = pickaxeData.getPickaxeMaterial();
-                    PickaxeMaterial nextTierPickaxe = currentPickaxeMaterial.nextTier();
+                    PickaxeMaterial nextTierPickaxe = currentPickaxeMaterial.getNextTier();
 
                     if (pickaxeMaterial != nextTierPickaxe) {
                         player.sendMessage(text("Cannot upgrade from " + currentPickaxeMaterial + " to " + pickaxeMaterial + "!", RED));
@@ -87,7 +86,7 @@ public class MaterialMenu extends Menu {
 
                     if (!playerInventory.containsAtLeast(upgradeToken, tokenAmount)) {
                         player.sendMessage(text("You need " + tokenAmount + "x [")
-                                .append(pickaxeMaterial.formattedUpgradeTokenName())
+                                .append(pickaxeMaterial.getFormattedUpgradeTokenName())
                                 .append(text("] to upgrade your pickaxe!"))
                                 .color(RED));
                         SoundUtils.playErrorSound(player);
