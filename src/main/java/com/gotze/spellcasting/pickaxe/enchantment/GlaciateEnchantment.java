@@ -12,15 +12,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GlaciateEnchantment extends Enchantment implements BlockBreakListener {
 
+    private final Map<Block, BlockData> frozenBlocks = new HashMap<>();
     private boolean isActive;
-    private final Map<Block, BlockData> affectedBlocks = new HashMap<>();
 
     public GlaciateEnchantment() {
         super(EnchantmentType.GLACIATE);
@@ -28,43 +26,60 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
 
     @Override
     public void onBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
-        // ---------------
-        // First time
-        // ---------------
-        if (!this.isActive) {
-            this.isActive = true;
+        BlockData originalBlockData = frozenBlocks.remove(block);
+        if (originalBlockData != null) {
+            block.setBlockData(originalBlockData);
+        }
 
-            List<Block> blocksToGlaciate = BlockUtils.getBlocksInSpherePattern(block, 5, 5, 5);
-            blocksToGlaciate.removeIf(b -> b.getType().isAir() || b.equals(block));
-            Collections.shuffle(blocksToGlaciate);
+        if (!isNaturalBreak) return;
+        if (this.isActive) return;
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (blocksToGlaciate.isEmpty()) {
-                        player.sendMessage("Glaciate froze " + affectedBlocks.size() + " blocks");
-                        cancel();
-                    }
+        double random = ThreadLocalRandom.current().nextDouble();
+        if (random < 0.99) return;
 
-                    // Convert up to 3 blocks to ice every tick
-                    for (int i = 0; i < 9 && !blocksToGlaciate.isEmpty(); i++) {
-                        Block blockToGlaciate = blocksToGlaciate.removeFirst();
-                        affectedBlocks.put(blockToGlaciate, blockToGlaciate.getBlockData());
-                        blockToGlaciate.setType(BlockCategories.ORE_BLOCKS.containsKey(blockToGlaciate.getType()) ? Material.BLUE_ICE : Material.PACKED_ICE);
-                    }
+        this.isActive = true;
+        List<Block> blocksToFreeze = BlockUtils.getBlocksInSpherePattern(block, 5, 5, 5);
+        blocksToFreeze.removeIf(b -> b.getType().isAir() || b.equals(block) ||
+                (!BlockCategories.FILLER_BLOCKS.contains(b.getType()) && !BlockCategories.ORE_BLOCKS.containsKey(b.getType())));
+        Collections.shuffle(blocksToFreeze);
+
+        List<Block> blocksToFreezeClone = new ArrayList<>(blocksToFreeze);
+
+        // Freeze up to 9 blocks every tick
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (blocksToFreeze.isEmpty()) {
+                    isActive = false;
+                    cancel();
                 }
-            }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0L, 1L);
-        }
 
-        // ---------------
-        // Subsequent times
-        // ---------------
-        BlockData originalData = affectedBlocks.remove(block);
-        if (originalData == null) return;
-        block.setBlockData(originalData);
+                for (int i = 0; i < 9 && !blocksToFreeze.isEmpty(); i++) {
+                    Block blockToFreeze = blocksToFreeze.removeFirst();
+                    frozenBlocks.put(blockToFreeze, blockToFreeze.getBlockData());
+                    blockToFreeze.setType(Material.PACKED_ICE);
+                }
+            }
+        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0L, 1L);
 
-        if (affectedBlocks.isEmpty()) {
-            this.isActive = false;
-        }
+        // Frozen block return to their previous block type after 15 seconds
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (blocksToFreezeClone.isEmpty()) {
+                    cancel();
+                }
+
+//                for (int i = 0; i < 3 && !blocksToFreezeClone.isEmpty(); i++) {
+                    Block blockToFreeze = blocksToFreezeClone.removeFirst();
+                    if (blockToFreeze.getType() != Material.PACKED_ICE) return;
+
+                    BlockData originalBlockData = frozenBlocks.remove(blockToFreeze);
+                    if (originalBlockData != null) {
+                        blockToFreeze.setBlockData(originalBlockData);
+                    }
+//                }
+            }
+        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 15 * 20L, 5L);
     }
 }
