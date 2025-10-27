@@ -22,7 +22,7 @@ public final class Crusher extends Machine {
 
     private static final int INPUT_SLOT = 11;
     private static final int OUTPUT_SLOT = 15;
-    private static final int DEFAULT_PROCESSING_TIME_IN_TICKS = 100;
+    private static final int DEFAULT_PROCESSING_TIME_IN_TICKS = 200 /*10 seconds*/;
 
     private static final String[] LEFT_ARROW_SPRITES = {
             "crusher_left_arrow00", "crusher_left_arrow01", "crusher_left_arrow02",
@@ -139,19 +139,19 @@ public final class Crusher extends Machine {
         // ---------------
         // At this point we know that the machine can process the item
         // ---------------
-        if (progress < 50) {
+        if (progress < 100) {
             progress++;
 
-            int leftArrowFrame = (progress * 14) / 50;
+            int leftArrowFrame = (progress * 14) / 100;
             String leftFrameStr = String.format("%02d", leftArrowFrame);
 
             getInventory().getItem(12).editMeta(itemMeta ->
                     itemMeta.setItemModel(NamespacedKey.minecraft("crusher_left_arrow" + leftFrameStr)));
 
-        } else if (progress < 100) {
+        } else if (progress < 200) {
             progress++;
 
-            int rightArrowFrame = ((progress - 50) * 14) / 50;
+            int rightArrowFrame = ((progress - 100) * 14) / 100;
             String rightFrameStr = String.format("%02d", rightArrowFrame);
 
             getInventory().getItem(14).editMeta(itemMeta ->
