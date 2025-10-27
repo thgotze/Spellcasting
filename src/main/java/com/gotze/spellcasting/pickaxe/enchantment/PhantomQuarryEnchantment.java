@@ -26,8 +26,9 @@ import java.util.*;
 
 public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
     private static final BlockData TINTED_GLASS = Material.TINTED_GLASS.createBlockData();
-//    private static final long BASE_COOLDOWN = 15_000;
-    private static final long BASE_COOLDOWN = 1_000; // TODO: for testing
+//    private static final long BASE_COOLDOWN = 15; // 15 seconds
+    private static final long BASE_COOLDOWN = 1 * 20; // 1 second
+    private static final long TIMEOUT_TASK_LENGTH = 15 * 20; // 15 seconds
 
     private boolean isProcessingQuarry;
     private Block centerBlock;
@@ -107,7 +108,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                     }
                 }
             };
-            timeoutTask.runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), BASE_COOLDOWN * 20L);
+            timeoutTask.runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), TIMEOUT_TASK_LENGTH);
             return;
         }
 
