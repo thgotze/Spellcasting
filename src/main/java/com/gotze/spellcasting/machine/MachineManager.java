@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.machine;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.machine.crusher.Crusher;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -21,32 +22,30 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class CrusherManager implements Listener {
+public final class MachineManager implements Listener {
 
-    private final Map<Location, Crusher> crushers = new ConcurrentHashMap<>();
+    private final Map<Location, Machine> machines = new ConcurrentHashMap<>();
 
-    public CrusherManager() {
+    public MachineManager() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(
                 JavaPlugin.getPlugin(Spellcasting.class),
                 () -> {
-                    for (Crusher crusher : crushers.values()) {
-                        crusher.tick();
+                    for (Machine machine : machines.values()) {
+                        machine.tick();
                     }
-                },
-                0L,
-                1L);
+                }, 0L, 1L);
     }
 
-    public Crusher getCrusher(Location location) {
-        return crushers.get(location);
+    public Machine getMachine(Location location) {
+        return machines.get(location);
     }
 
-    public void addCrusher(Crusher crusher) {
-        crushers.put(crusher.getLocation(), crusher);
+    public void addMachine(Machine machine) {
+        machines.put(machine.getLocation(), machine);
     }
 
-    public void removeCrusher(Location location) {
-        crushers.remove(location);
+    public void removeMachine(Location location) {
+        machines.remove(location);
     }
 
     @EventHandler
@@ -57,10 +56,10 @@ public final class CrusherManager implements Listener {
         if (!player.isSneaking()) return;
 
         Location blockLocation = event.getBlock().getLocation();
-        if (getCrusher(blockLocation) != null) return;
+        if (getMachine(blockLocation) != null) return;
 
         Crusher crusher = new Crusher(blockLocation, player);
-        addCrusher(crusher);
+        addMachine(crusher);
         event.setCancelled(true);
 
         player.spawnParticle(Particle.HAPPY_VILLAGER, blockLocation.toCenterLocation(), 10, 0.5, 0.5, 0.5);
@@ -77,7 +76,7 @@ public final class CrusherManager implements Listener {
             Player player = event.getPlayer();
             Location blockLocation = event.getBlockPlaced().getLocation();
             Crusher crusher = new Crusher(blockLocation, player);
-            addCrusher(crusher);
+            addMachine(crusher);
             player.spawnParticle(Particle.HAPPY_VILLAGER, blockLocation.toCenterLocation(), 10, 0.5, 0.5, 0.5);
         }
     }
@@ -85,7 +84,7 @@ public final class CrusherManager implements Listener {
     @EventHandler
     public void onBreakCrusher(BlockBreakEvent event) {
         Location blockLocation = event.getBlock().getLocation();
-        Crusher crusher = getCrusher(blockLocation);
+        Crusher crusher = (Crusher) getMachine(blockLocation);
         if (crusher == null) return;
 
         event.setDropItems(false);
@@ -105,7 +104,7 @@ public final class CrusherManager implements Listener {
             world.dropItemNaturally(centerCrusherLocation, outputItem);
         }
 
-        removeCrusher(blockLocation);
+        removeMachine(blockLocation);
     }
 
     @EventHandler
@@ -115,7 +114,7 @@ public final class CrusherManager implements Listener {
         Block block = event.getClickedBlock();
         if (block == null) return;
 
-        Crusher crusher = getCrusher(block.getLocation());
+        Crusher crusher = (Crusher) getMachine(block.getLocation());
         if (crusher == null) return;
 
         event.setCancelled(true);
