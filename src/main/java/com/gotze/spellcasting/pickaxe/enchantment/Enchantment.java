@@ -71,24 +71,23 @@ public abstract class Enchantment {
                 "Freeze nearby blocks"),
 //        "Chance to freeze nearby blocks",
         //                "making them quicker to mine"),
-        SCATTER(ScatterEnchantment.class,
-                Rarity.UNCOMMON, 5,
-                Material.BONE_MEAL,
-                "Spawn more ores outwards"),
-        //                "Chance to scatter mined ores",
-        //                "outwards, spawning more ores",
-        //                "of the same type"),
         PHANTOM_QUARRY(PhantomQuarryEnchantment.class,
                 Rarity.EPIC,
                 5,
                 Material.TINTED_GLASS,
                 "Quarry a 5x5 area after",
-                "mining marked corner blocks")
+                "breaking marked corner blocks"),
 //                "Chance to mark 3-4 corners of",
 //                "a 5x5 square centering from",
 //                "the broken block. Breaking all",
 //                "the marked corners quarries",
 //                "all blocks within the 5x5 square"),
+        ORE_MITOSIS(OreMitosisEnchantment.class,
+                Rarity.UNCOMMON,
+                5,
+                Material.BONE_MEAL,
+        "Chance to spawn more",
+        "ores around the mined ore")
         ;
 
         private final Class<? extends Enchantment> enchantmentClass;
