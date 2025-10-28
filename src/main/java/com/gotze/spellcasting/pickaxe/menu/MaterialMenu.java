@@ -59,7 +59,7 @@ public class MaterialMenu extends Menu {
                     .build()) {
                 @Override
                 public void onClick(InventoryClickEvent event) {
-                    ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true).orElse(null);
+                    ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                     if (pickaxe == null) return;
 
                     ItemStack upgradeToken = ItemStack.of(pickaxeMaterial.getUpgradeTokenType());

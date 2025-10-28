@@ -4,7 +4,6 @@ import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.block.BlockCategories;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

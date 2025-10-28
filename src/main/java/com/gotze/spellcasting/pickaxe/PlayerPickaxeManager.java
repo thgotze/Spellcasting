@@ -44,7 +44,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         Player player = event.getPlayer();
 
         // check player is holding their pickaxe
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false).orElse(null);
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
         // check if pickaxe is about to break, cancel event if so
@@ -95,7 +95,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
     public void onShiftRightClickHoldingPickaxeOpenMenu(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (!(event.getAction().isRightClick() && player.isSneaking())) return;
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false).orElse(null);
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
         event.setCancelled(true);
@@ -120,7 +120,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
     @EventHandler
     public void onBlockDamageEvent(BlockDamageEvent event) {
         Player player = event.getPlayer();
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false).orElse(null);
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
         PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
@@ -148,7 +148,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
     @EventHandler
     public void onHandSwapActivatePickaxeAbilities(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false).orElse(null);
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
         event.setCancelled(true);
 

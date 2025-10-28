@@ -36,7 +36,7 @@ public class EnchantmentMenu extends Menu {
         button(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) {
             @Override
             public void onClick(InventoryClickEvent event) {
-                ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true).orElse(null);
+                ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                 if (pickaxe == null) return;
 
                 PlayerPickaxeService.removeEnchantments(player);
@@ -101,7 +101,7 @@ public class EnchantmentMenu extends Menu {
     }
 
     private void upgradeEnchantment(Player player, Enchantment.EnchantmentType clickedEnchantmentType) {
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true).orElse(null);
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
         if (pickaxe == null) return;
 
         PlayerInventory playerInventory = player.getInventory();

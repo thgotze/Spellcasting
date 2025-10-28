@@ -160,7 +160,7 @@ public class LootPotManager implements Listener {
     @EventHandler
     public void onBlockBreakTrySpawnLootPot(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false).orElse(null);
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
         if (ThreadLocalRandom.current().nextDouble() >= POT_SPAWN_CHANCE) return;
 

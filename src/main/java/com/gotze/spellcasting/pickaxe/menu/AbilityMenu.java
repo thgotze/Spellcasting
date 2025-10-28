@@ -37,7 +37,7 @@ public class AbilityMenu extends Menu {
             @Override
             public void onClick(InventoryClickEvent event) {
                 if (event.getClick() != ClickType.DROP) return;
-                ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true).orElse(null);
+                ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                 if (pickaxe == null) return;
 
                 PlayerPickaxeService.removeAbilities(player);
@@ -99,7 +99,7 @@ public class AbilityMenu extends Menu {
     }
 
     private void upgradeAbility(Player player, Ability.AbilityType clickedAbilityType) {
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true).orElse(null);
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
         if (pickaxe == null) return;
         PlayerInventory playerInventory = player.getInventory();
 

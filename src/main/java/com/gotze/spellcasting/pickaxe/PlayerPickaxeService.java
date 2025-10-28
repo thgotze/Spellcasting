@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -321,7 +322,7 @@ public class PlayerPickaxeService {
         ).toList();
     }
 
-    public static Optional<ItemStack> getPlayerPickaxeFromMainHand(Player player, boolean notifyOnError) {
+    public static @Nullable ItemStack getPlayerPickaxeFromMainHand(Player player, boolean notifyOnError) {
         ItemStack heldItem = player.getInventory().getItemInMainHand();
 
         if (!isItemStackPlayerOwnPickaxe(heldItem, player)) {
@@ -329,9 +330,9 @@ public class PlayerPickaxeService {
                 player.sendMessage(text("You are not holding your own pickaxe!", RED));
                 SoundUtils.playErrorSound(player);
             }
-            return Optional.empty();
+            return null;
         }
-        return Optional.of(heldItem);
+        return heldItem;
     }
 
     public static boolean isItemStackPlayerOwnPickaxe(ItemStack itemStack, Player player) {
