@@ -1,11 +1,9 @@
 package com.gotze.spellcasting.pickaxe.menu;
 
-import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
-import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.SoundUtils;
-import com.gotze.spellcasting.util.StringUtils;
 import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
 import com.gotze.spellcasting.util.menu.MenuUtils;
@@ -51,37 +49,12 @@ public class EnchantmentMenu extends Menu {
 
         int startingIndex = 19;
         for (Enchantment.EnchantmentType enchantmentType : Enchantment.EnchantmentType.values()) {
-            ItemStack upgradeToken = enchantmentType.getUpgradeToken();
-
-            int tokenAmount = switch (enchantmentType.getRarity()) { // TODO: placeholder amounts
-                case COMMON -> 16;
-                case UNCOMMON -> 8;
-                case RARE -> 4;
-                case EPIC -> 2;
-                case LEGENDARY -> 1;
-            };
-
-            button(new Button(startingIndex++, new ItemStackBuilder(upgradeToken)
-                    .name(enchantmentType.getFormattedName())
-                    .lore(text(""),
-                            text(StringUtils.convertToSmallFont("requirements")),
-                            text(tokenAmount + "x [")
-                                    .append(enchantmentType.getUpgradeTokenName())
-                                    .append(text("]")))
-                    .hideAdditionalTooltip()
-                    .build()) {
+            button(new Button(startingIndex++, enchantmentType.getMenuItem()) {
                 @Override
                 public void onClick(InventoryClickEvent event) {
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
                         ItemStack upgradeToken = enchantmentType.getUpgradeToken();
-                        int tokenAmount = switch (enchantmentType.getRarity()) { // TODO: placeholder amounts
-                            case COMMON -> 16;
-                            case UNCOMMON -> 8;
-                            case RARE -> 4;
-                            case EPIC -> 2;
-                            case LEGENDARY -> 1;
-                        };
-                        upgradeToken.setAmount(tokenAmount);
+                        upgradeToken.setAmount(enchantmentType.getTokenAmount());
                         player.getInventory().addItem(upgradeToken);
                         SoundUtils.playUIClickSound(player);
                         return;
@@ -107,14 +80,7 @@ public class EnchantmentMenu extends Menu {
         PlayerInventory playerInventory = player.getInventory();
 
         ItemStack upgradeToken = clickedEnchantmentType.getUpgradeToken();
-        int tokenAmount = switch (clickedEnchantmentType.getRarity()) { // TODO: placeholder amounts
-            case COMMON -> 16;
-            case UNCOMMON -> 8;
-            case RARE -> 4;
-            case EPIC -> 2;
-            case LEGENDARY -> 1;
-        };
-        upgradeToken.setAmount(tokenAmount);
+        int tokenAmount = clickedEnchantmentType.getTokenAmount();
 
         if (!playerInventory.containsAtLeast(upgradeToken, tokenAmount)) {
             player.sendMessage(text("You need " + tokenAmount + "x [")
