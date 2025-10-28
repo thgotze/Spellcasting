@@ -39,8 +39,8 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
 
         this.isActive = true;
         List<Block> blocksToFreeze = BlockUtils.getBlocksInSpherePattern(block, 5, 5, 5);
-        blocksToFreeze.removeIf(b -> b.getType().isAir() || b.equals(block) ||
-                (!BlockCategories.FILLER_BLOCKS.contains(b.getType()) && !BlockCategories.ORE_BLOCKS.containsKey(b.getType())));
+        blocksToFreeze.removeIf(candidate -> !BlockCategories.FILLER_BLOCKS.contains(candidate.getType()) &&
+                !BlockCategories.ORE_BLOCKS.containsKey(candidate.getType()));
         Collections.shuffle(blocksToFreeze);
 
         List<Block> blocksToFreezeClone = new ArrayList<>(blocksToFreeze);
