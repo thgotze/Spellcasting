@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,17 +59,26 @@ public class ItemStackBuilder {
     }
 
     public ItemStackBuilder lore(Component lore) {
-        this.lore = List.of(lore);
+        if (this.lore == null) {
+            this.lore = new ArrayList<>();
+        }
+        this.lore.add(lore);
         return this;
     }
 
     public ItemStackBuilder lore(Component... lore) {
-        this.lore = List.of(lore);
+        if (this.lore == null) {
+            this.lore = new ArrayList<>();
+        }
+        this.lore.addAll(List.of(lore));
         return this;
     }
 
     public ItemStackBuilder lore(List<Component> lore) {
-        this.lore = lore;
+        if (this.lore == null) {
+            this.lore = new ArrayList<>();
+        }
+        this.lore.addAll(lore);
         return this;
     }
 
