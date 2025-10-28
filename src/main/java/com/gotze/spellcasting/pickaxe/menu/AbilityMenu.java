@@ -1,11 +1,9 @@
 package com.gotze.spellcasting.pickaxe.menu;
 
-import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
-import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.util.SoundUtils;
-import com.gotze.spellcasting.util.StringUtils;
 import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
 import com.gotze.spellcasting.util.menu.MenuUtils;
@@ -19,8 +17,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import static net.kyori.adventure.text.Component.*;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class AbilityMenu extends Menu {
 
@@ -52,34 +50,12 @@ public class AbilityMenu extends Menu {
 
         int startingIndex = 19;
         for (Ability.AbilityType abilityType : Ability.AbilityType.values()) {
-            int tokenAmount = switch (abilityType.getRarity()) { // TODO: placeholder amounts
-                case COMMON -> 16;
-                case UNCOMMON -> 8;
-                case RARE -> 4;
-                case EPIC -> 2;
-                case LEGENDARY -> 1;
-            };
-
-            buttons(new Button(startingIndex++, new ItemStackBuilder(abilityType.getUpgradeToken())
-                    .name(abilityType.getFormattedName())
-                    .lore(empty(),
-                            text(StringUtils.convertToSmallFont("requirements")),
-                            text(tokenAmount + "x [")
-                                    .append(abilityType.upgradeTokenName())
-                                    .append(text("]")))
-                    .build()) {
+            buttons(new Button(startingIndex++, abilityType.getMenuItem()) {
                 @Override
                 public void onClick(InventoryClickEvent event) {
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
-                        int tokenAmount = switch (abilityType.getRarity()) { // TODO: placeholder amounts
-                            case COMMON -> 16;
-                            case UNCOMMON -> 8;
-                            case RARE -> 4;
-                            case EPIC -> 2;
-                            case LEGENDARY -> 1;
-                        };
                         ItemStack upgradeToken = abilityType.getUpgradeToken();
-                        upgradeToken.setAmount(tokenAmount);
+                        upgradeToken.setAmount(abilityType.getTokenAmount());
                         player.getInventory().addItem(upgradeToken);
                         SoundUtils.playUIClickSound(player);
                         return;
@@ -104,18 +80,13 @@ public class AbilityMenu extends Menu {
         PlayerInventory playerInventory = player.getInventory();
 
         ItemStack upgradeToken = clickedAbilityType.getUpgradeToken();
-        int tokenAmount = switch (clickedAbilityType.getRarity()) { // TODO: placeholder amounts
-            case COMMON -> 16;
-            case UNCOMMON -> 8;
-            case RARE -> 4;
-            case EPIC -> 2;
-            case LEGENDARY -> 1;
-        };
+        int tokenAmount = clickedAbilityType.getTokenAmount();
+
         upgradeToken.setAmount(tokenAmount);
 
         if (!playerInventory.containsAtLeast(upgradeToken, tokenAmount)) {
             player.sendMessage(text("You need " + tokenAmount + "x [")
-                    .append(clickedAbilityType.upgradeTokenName())
+                    .append(clickedAbilityType.getUpgradeTokenName())
                     .append(text("] to upgrade this ability!"))
                     .color(RED));
             SoundUtils.playErrorSound(player);

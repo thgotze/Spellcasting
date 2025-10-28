@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
@@ -84,6 +85,8 @@ public abstract class Ability {
         private final int maxLevel;
         private final Material upgradeTokenType;
         private final String[] description;
+        private final ItemStack upgradeToken;
+        private final ItemStack menuItem;
 
         AbilityType(Class<? extends Ability> abilityClass, Rarity rarity, int maxLevel, Material upgradeTokenType, String... description) {
             this.abilityClass = abilityClass;
@@ -91,6 +94,41 @@ public abstract class Ability {
             this.maxLevel = maxLevel;
             this.upgradeTokenType = upgradeTokenType;
             this.description = description;
+
+            this.upgradeToken = buildUpgradeToken();
+            this.menuItem = buildMenuItem();
+        }
+
+        private ItemStack buildUpgradeToken() {
+            return new ItemStackBuilder(Material.PAPER)
+                    .name(getUpgradeTokenName())
+                    .itemModel(upgradeTokenType)
+                    .toggleEnchantmentGlint()
+                    .build();
+        }
+
+        public Component getUpgradeTokenName() {
+            return getFormattedName().append(text(" Token", getRarity().getColor()));
+        }
+
+        private ItemStack buildMenuItem() {
+            ItemStackBuilder menuItem = new ItemStackBuilder(upgradeTokenType)
+                    .name(getFormattedName())
+                    .toggleEnchantmentGlint()
+                    .hideAttributes()
+                    .hideAdditionalTooltip();
+
+            for (String line : description) {
+                menuItem.lore(text(line).color(GRAY));
+            }
+
+            menuItem.lore(text(""),
+                    text(StringUtils.convertToSmallFont("requirements")),
+                    text(getTokenAmount() + "x [").color(GRAY)
+                            .append(getUpgradeTokenName())
+                            .append(text("]")).color(GRAY));
+
+            return menuItem.build();
         }
 
         public Class<? extends Ability> getAbilityClass() {
@@ -109,21 +147,27 @@ public abstract class Ability {
             return upgradeTokenType;
         }
 
+        public ItemStack getUpgradeToken() {
+            return upgradeToken;
+        }
+
+        public ItemStack getMenuItem() {
+            return menuItem;
+        }
+
         public Component getFormattedName() {
             return textOfChildren(text("⚡ ", RED, BOLD),
                     text(this.toString(), this.rarity.getColor()));
         }
 
-        public ItemStack getUpgradeToken() {
-            return new ItemStackBuilder(Material.PAPER)
-                    .name(upgradeTokenName())
-                    .itemModel(upgradeTokenType)
-                    .build();
-        }
-
-        public Component upgradeTokenName() {
-            return getFormattedName()
-                    .append(text(" Token", this.getRarity().getColor()));
+        public int getTokenAmount() { // TODO: placeholder amounts
+            return switch (rarity) {
+                case COMMON -> 16;
+                case UNCOMMON -> 8;
+                case RARE -> 4;
+                case EPIC -> 2;
+                case LEGENDARY -> 1;
+            };
         }
 
         @Override
