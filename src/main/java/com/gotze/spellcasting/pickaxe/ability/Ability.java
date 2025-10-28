@@ -55,22 +55,42 @@ public abstract class Ability {
     }
 
     public enum AbilityType {
-        PEEK(PeekAbility.class, Rarity.COMMON, 5, Material.SPYGLASS),
-        HAMMER(HammerAbility.class, Rarity.EPIC, 1, Material.MACE),
-        SLICE(SliceAbility.class, Rarity.LEGENDARY, 1, Material.IRON_SWORD),
-        BAZOOKA(BazookaAbility.class, Rarity.LEGENDARY, 1, Material.FIREWORK_ROCKET),
+        PEEK(PeekAbility.class,
+                Rarity.COMMON,
+                5,
+                Material.SPYGLASS,
+                "Temporarily turn filler",
+                "blocks into glass"),
+        HAMMER(HammerAbility.
+                class, Rarity.EPIC,
+                1,
+                Material.MACE,
+                "Break all blocks within" +
+                        "a 3x3 area"),
+        SLICE(SliceAbility.class,
+                Rarity.LEGENDARY, 1,
+                Material.IRON_SWORD,
+                "Repeatedly slice up",
+                "nearby blocks"),
+        BAZOOKA(BazookaAbility.class,
+                Rarity.LEGENDARY, 1,
+                Material.FIREWORK_ROCKET,
+                "Shoot an extremely",
+                "destructive blast"),
         ;
 
         private final Class<? extends Ability> abilityClass;
         private final Rarity rarity;
         private final int maxLevel;
         private final Material upgradeTokenType;
+        private final String[] description;
 
-        AbilityType(Class<? extends Ability> abilityClass, Rarity rarity, int maxLevel, Material upgradeTokenType) {
+        AbilityType(Class<? extends Ability> abilityClass, Rarity rarity, int maxLevel, Material upgradeTokenType, String... description) {
             this.abilityClass = abilityClass;
             this.rarity = rarity;
             this.maxLevel = maxLevel;
             this.upgradeTokenType = upgradeTokenType;
+            this.description = description;
         }
 
         public Class<? extends Ability> getAbilityClass() {
