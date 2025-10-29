@@ -87,7 +87,20 @@ public abstract class Enchantment {
                 5,
                 Material.BONE_MEAL,
         "Chance to spawn more",
-        "ores around the mined ore")
+        "ores around the mined ore"),
+        ENRICHEN(EnrichenEnchantment.class,
+                Rarity.UNCOMMON,
+                5,
+                Material.GOLD_INGOT,
+                "Chance to increase",
+                        "ore block quality"),
+        MINERS_SENSE(MinersSenseEnchantment.class,
+                Rarity.RARE,
+                5,
+                Material.ENDER_EYE,
+                "Periodically mark an ore",
+                "block. Marked ores break",
+                "instantly")
         ;
 
         private final Class<? extends Enchantment> enchantmentClass;
