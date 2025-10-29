@@ -36,6 +36,7 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
 
         double random = ThreadLocalRandom.current().nextDouble();
         if (random < 0.99) return;
+        player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
 
         this.isActive = true;
         List<Block> blocksToFreeze = BlockUtils.getBlocksInSpherePattern(block, 5, 5, 5);
