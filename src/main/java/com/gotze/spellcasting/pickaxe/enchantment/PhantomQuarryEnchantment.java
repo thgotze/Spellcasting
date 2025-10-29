@@ -23,12 +23,17 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.joml.Matrix4f;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
     private static final BlockData TINTED_GLASS = Material.TINTED_GLASS.createBlockData();
-//    private static final long BASE_COOLDOWN = 15; // 15 seconds
-    private static final long BASE_COOLDOWN = 1 * 20; // 1 second
-    private static final long TIMEOUT_TASK_LENGTH = 15 * 20; // 15 seconds
+
+//    private static final long BASE_COOLDOWN = 300; // 15 seconds
+    private static final long BASE_COOLDOWN = 20; // 1 second
+    private static final long TIMEOUT_TASK_LENGTH = 300; // 15 seconds
 
     private boolean isProcessingQuarry;
     private Block centerBlock;
@@ -54,13 +59,15 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
         if (!this.isActive) {
             if (!isNaturalBreak) return;
             if (System.currentTimeMillis() < cooldown) return;
+            // 0.25% activation chance
+            if (ThreadLocalRandom.current().nextDouble() > 0.0025) return;
+            player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
 
             this.centerBlock = block;
             List<Block> cornerBlocks = new ArrayList<>();
             cornerBlocks.addAll(BlockUtils.getPositiveDiagonalBlocks(block, blockFace, 2));
             cornerBlocks.addAll(BlockUtils.getNegativeDiagonalBlocks(block, blockFace, 2));
-            cornerBlocks.removeIf(b -> b.getType().isAir() ||
-                    (!BlockCategories.ORE_BLOCKS.containsKey(b.getType()) && !BlockCategories.FILLER_BLOCKS.contains(b.getType())));
+            cornerBlocks.removeIf(b -> (!BlockCategories.ORE_BLOCKS.containsKey(b.getType()) && !BlockCategories.FILLER_BLOCKS.contains(b.getType())));
 
             // If less than 3 corners were found, then don't activate the enchantment
             if (cornerBlocks.size() < 3) {
@@ -90,7 +97,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
 
                 blockDisplay.setBlock(TINTED_GLASS);
                 blockDisplay.setGlowing(true);
-                blockDisplay.setGlowColorOverride(Color.YELLOW);
+                blockDisplay.setGlowColorOverride(Color.FUCHSIA);
 
                 blockDisplay.setVisibleByDefault(false);
                 player.showEntity(JavaPlugin.getPlugin(Spellcasting.class), blockDisplay);
@@ -104,7 +111,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 public void run() {
                     if (isActive) {
                         reset();
-                        player.sendMessage("Your Phantom Quarry expired");
+                        player.sendActionBar(text("Phantom Quarry expired").color(RED));
                     }
                 }
             };

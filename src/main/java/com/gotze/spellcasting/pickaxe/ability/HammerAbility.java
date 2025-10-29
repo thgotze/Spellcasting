@@ -14,6 +14,9 @@ import org.bukkit.event.block.BlockDamageEvent;
 
 import java.util.List;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+
 public class HammerAbility extends Ability implements BlockBreakListener, BlockDamageListener, BlockBreaker, ItemModelModifier {
 
     boolean isActive;
@@ -27,13 +30,13 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
-        player.sendMessage("Hammer ability activated!");
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated")));
 
         modifyItemModelTemporarily(player.getInventory().getItemInMainHand(),
                 Material.MACE,
                 20L * 15,
                 () -> {
-                    player.sendMessage("Hammer ability deactivated");
+                    player.sendActionBar(text("Hammer ability expired").color(RED));
                     this.isActive = false;
                 }
         );
@@ -43,6 +46,7 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
     public void onBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
         if (!this.isActive) return;
         if (!isNaturalBreak) return;
+        if (blockFace == null) return;
 
         List<Block> blocksToBreak = switch (blockFace) {
             case NORTH, SOUTH -> BlockUtils.getBlocksInSquarePattern(block, 3, 3, 1);

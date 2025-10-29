@@ -14,6 +14,8 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.kyori.adventure.text.Component.text;
+
 public class BazookaAbility extends Ability implements BlockBreaker {
 
     private static final long BASE_COOLDOWN = 5_000;
@@ -28,7 +30,7 @@ public class BazookaAbility extends Ability implements BlockBreaker {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (System.currentTimeMillis() < cooldown) return;
         this.cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
-        player.sendMessage("Bazooka ability activated!");
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated")));
 
         World world = player.getWorld();
         Location startLocation = player.getEyeLocation();

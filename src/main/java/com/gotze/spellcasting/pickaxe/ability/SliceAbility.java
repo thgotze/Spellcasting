@@ -19,6 +19,9 @@ import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+
 public class SliceAbility extends Ability implements BlockBreaker {
     private final int[] START_DELAYS = {0, 6, 38, 44, 76, 82};
     private final float[] DISPLAY_ROTATIONS = {-75f, 75f, -45f, 45f, -15f, 15f};
@@ -43,7 +46,7 @@ public class SliceAbility extends Ability implements BlockBreaker {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
-        player.sendMessage("Slice ability activated!");
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated")));
 
         Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
         World world = player.getWorld();
@@ -98,7 +101,7 @@ public class SliceAbility extends Ability implements BlockBreaker {
                     this.cancel();
                     for (ItemDisplay display : itemDisplays) display.remove();
                     isActive = false;
-                    player.sendMessage("Slice ability deactivated");
+                    player.sendActionBar(text("Slice ability expired").color(RED));
                 }
             }
         }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0, 1);

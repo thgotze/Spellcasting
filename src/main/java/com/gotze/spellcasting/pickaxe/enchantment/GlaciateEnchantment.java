@@ -15,6 +15,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static net.kyori.adventure.text.Component.text;
+
 public class GlaciateEnchantment extends Enchantment implements BlockBreakListener {
 
     private final Map<Block, BlockData> frozenBlocks = new HashMap<>();
@@ -34,8 +36,8 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
         if (!isNaturalBreak) return;
         if (this.isActive) return;
 
-        double random = ThreadLocalRandom.current().nextDouble();
-        if (random < 0.99) return;
+        // 0.25% activation chance
+        if (ThreadLocalRandom.current().nextDouble() > 0.0025) return;
         player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
 
         this.isActive = true;

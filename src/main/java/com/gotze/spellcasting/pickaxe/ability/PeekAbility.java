@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+
 public class PeekAbility extends Ability {
 
     private boolean isActive;
@@ -33,7 +36,7 @@ public class PeekAbility extends Ability {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
-        player.sendMessage("Peek ability activated!");
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated")));
 
         Block centerBlock = player.getLocation().getBlock().getRelative(BlockFace.UP);
 
@@ -77,7 +80,7 @@ public class PeekAbility extends Ability {
                     block.setBlockData(entry.getValue());
                 }
                 isActive = false;
-                player.sendMessage("Peek ability deactivated");
+            player.sendActionBar(text("Peek ability expired").color(RED));
                 affectedBlocks.clear();
             }
         }.runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), 20L * 10);
