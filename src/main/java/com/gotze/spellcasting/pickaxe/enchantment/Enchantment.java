@@ -82,7 +82,7 @@ public abstract class Enchantment {
 //                "the broken block. Breaking all",
 //                "the marked corners quarries",
 //                "all blocks within the 5x5 square"),
-        ORE_MITOSIS(OreMitosisEnchantment.class,
+        MITOSIS(MitosisEnchantment.class,
                 Rarity.UNCOMMON,
                 5,
                 Material.BONE_MEAL,
