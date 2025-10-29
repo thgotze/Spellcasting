@@ -68,6 +68,7 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
             public void run() {
                 if (blocksToFreezeClone.isEmpty()) {
                     cancel();
+                    return;
                 }
 
 //                for (int i = 0; i < 3 && !blocksToFreezeClone.isEmpty(); i++) {

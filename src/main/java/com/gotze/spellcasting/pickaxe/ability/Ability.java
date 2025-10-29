@@ -60,19 +60,19 @@ public abstract class Ability {
                 Rarity.COMMON,
                 5,
                 Material.SPYGLASS,
-                "Temporarily turn filler",
-                "blocks into glass"),
+                "Temporarily transform",
+                "filler blocks into glass"),
         HAMMER(HammerAbility.
                 class, Rarity.EPIC,
                 1,
                 Material.MACE,
-                "Break all blocks within" +
-                        "a 3x3 area"),
+                "Break all blocks",
+                        "within a 3x3 area"),
         SLICE(SliceAbility.class,
                 Rarity.LEGENDARY, 1,
                 Material.IRON_SWORD,
-                "Repeatedly slice up",
-                "nearby blocks"),
+                "Repeatedly slice blocks",
+                "in front of you"),
         BAZOOKA(BazookaAbility.class,
                 Rarity.LEGENDARY, 1,
                 Material.FIREWORK_ROCKET,
@@ -112,11 +112,8 @@ public abstract class Ability {
         }
 
         private ItemStack buildMenuItem() {
-            ItemStackBuilder menuItem = new ItemStackBuilder(upgradeTokenType)
-                    .name(getFormattedName())
-                    .toggleEnchantmentGlint()
-                    .hideAttributes()
-                    .hideAdditionalTooltip();
+            ItemStackBuilder menuItem = new ItemStackBuilder(upgradeToken)
+                    .name(getFormattedName());
 
             for (String line : description) {
                 menuItem.lore(text(line).color(GRAY));

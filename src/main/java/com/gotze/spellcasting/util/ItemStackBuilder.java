@@ -29,11 +29,11 @@ public class ItemStackBuilder {
     private Component name;
     private List<Component> lore;
     private Key itemModel;
-    private boolean hideAdditionalTooltip = false;
-    private boolean hideAttributes = false;
-    private boolean hideTooltipBox = false;
-    private boolean hideEnchantTooltip = false;
-    private boolean enchantmentGlint = false;
+    private boolean hideAdditionalTooltip;
+    private boolean hideAttributes;
+    private boolean hideTooltipBox;
+    private boolean hideEnchantTooltip;
+    private boolean enchantmentGlint;
     private Map<Enchantment, Integer> enchantments;
     private Map<String, String> persistentDataContainer;
     private int durabilityDamage;
@@ -179,8 +179,6 @@ public class ItemStackBuilder {
         if (hideAttributes || hideEnchantTooltip || hideTooltipBox) {
             TooltipDisplay.Builder tooltipBuilder = TooltipDisplay.tooltipDisplay();
 
-            TooltipDisplay toolTipDisplay = TooltipDisplay.tooltipDisplay().addHiddenComponents(DataComponentTypes.ATTRIBUTE_MODIFIERS).build();
-            itemStack.setData(DataComponentTypes.TOOLTIP_DISPLAY, toolTipDisplay);
             if (hideAttributes) {
                 tooltipBuilder.addHiddenComponents(DataComponentTypes.ATTRIBUTE_MODIFIERS);
             }

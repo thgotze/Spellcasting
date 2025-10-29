@@ -123,9 +123,8 @@ public abstract class Enchantment {
         }
 
         private ItemStack buildMenuItem() {
-            ItemStackBuilder menuItem = new ItemStackBuilder(upgradeTokenType)
-                    .name(getFormattedName())
-                    .toggleEnchantmentGlint();
+            ItemStackBuilder menuItem = new ItemStackBuilder(upgradeToken)
+                    .name(getFormattedName());
 
             for (String line : description) {
                 menuItem.lore(text(line).color(GRAY));

@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.lootpot;
+package com.gotze.spellcasting;
 
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;

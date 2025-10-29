@@ -51,10 +51,10 @@ public class BlockUtils {
         return blocks;
     }
 
-    public static List<Block> getNegativeDiagonalBlocks(Block origin, BlockFace playerFacing, int distance) {
+    public static List<Block> getNegativeDiagonalBlocks(Block origin, BlockFace blockFace, int distance) {
         List<Block> blocks = new ArrayList<>();
 
-        switch (playerFacing) {
+        switch (blockFace) {
             case UP -> {
                 blocks.add(origin.getRelative(-distance, 0, -distance));
                 blocks.add(origin.getRelative(distance, 0, distance));

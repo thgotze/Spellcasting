@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class Loot {
+public class Loot {
     private final ItemStack itemStack;
     private final int min;
     private final int max;
