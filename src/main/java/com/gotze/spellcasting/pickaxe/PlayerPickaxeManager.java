@@ -1,8 +1,8 @@
 package com.gotze.spellcasting.pickaxe;
 
+import com.gotze.spellcasting.PlayerBalanceService;
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
-import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
@@ -12,8 +12,8 @@ import com.gotze.spellcasting.util.block.BlockCategories;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
@@ -22,22 +22,26 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-public class PlayerPickaxeManager implements Listener, BasicCommand {
+public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreaker {
 
     @EventHandler
     public void onBlockBreakWithPickaxe(BlockBreakEvent event) {
@@ -48,7 +52,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         if (pickaxe == null) return;
 
         // check if pickaxe is about to break, cancel event if so
-        PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
         if (pickaxeData.getDurabilityDamage() + 1 == pickaxeData.getPickaxeMaterial().getMaxDurability()) {
             event.setCancelled(true);
             player.sendMessage(text("Pickaxe durability too low to continue mining!", RED));
@@ -57,64 +61,27 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
             SoundUtils.playErrorSound(player);
             return;
         }
-
-        // ---------------
-        // at this point the block break event is allowed to go through i.e., NOT cancelled
-        // ---------------
+        if (event.getBlock().getType() == Material.COBBLESTONE) {
+            PlayerBalanceService.addBalance(player, 10);
+        }
+        // at this point the block break event is allowed to go through i.e., NOT canceled
         Block block = event.getBlock();
-        // notify all listeners about this natural block break
-        for (Enchantment enchantment : pickaxeData.getEnchantments()) {
-            if (enchantment instanceof BlockBreakListener blockBreakListener) {
-                blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
-            }
-        }
 
-        for (Ability ability : pickaxeData.getAbilities()) {
-            if (ability instanceof BlockBreakListener blockBreakListener) {
-                blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
-            }
-        }
+        // handles the block break itself (increment blocks broken and drop items)
+        // notifies all listeners about this natural block break
+        breakBlock(player, block, pickaxeData, true);
 
         // remove default ore drops
         if (BlockCategories.ORE_BLOCKS.containsKey(block.getType())) {
             event.setDropItems(false);
         }
 
-        // handle the block break itself (increment blocks broken and drop items)
-        BlockBreaker.handleBlockBreak(player, block, pickaxeData, true);
-
         // update pickaxe durability and lore a tick later
         Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), () -> {
             int durabilityDamage = pickaxe.getData(DataComponentTypes.DAMAGE);
-            PlayerPickaxeService.setDurabilityDamage(player, durabilityDamage);
-            pickaxe.lore(PlayerPickaxeService.pickaxeLore(pickaxeData));
+            pickaxeData.setDurabilityDamage(durabilityDamage);
+            pickaxe.lore(PlayerPickaxeService.getPickaxeLore(pickaxeData));
         }, 1L);
-    }
-
-    @EventHandler
-    public void onShiftRightClickHoldingPickaxeOpenMenu(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        if (!(event.getAction().isRightClick() && player.isSneaking())) return;
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
-        if (pickaxe == null) return;
-
-        event.setCancelled(true);
-
-        new PickaxeMenu(player);
-    }
-
-    @EventHandler
-    public void onShiftRightClickPickaxeInInventoryOpenMenu(InventoryClickEvent event) {
-        if (event.getClick() != ClickType.SHIFT_RIGHT) return;
-        if (!(event.getWhoClicked() instanceof Player player)) return;
-        if (event.getClickedInventory() != player.getInventory()) return;
-
-        ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null) return;
-
-        if (!PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) return;
-
-        new PickaxeMenu(player);
     }
 
     @EventHandler
@@ -123,7 +90,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
-        PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
 
         for (Enchantment enchantment : pickaxeData.getEnchantments()) {
             if (enchantment instanceof BlockDamageListener blockDamageListener) {
@@ -139,30 +106,106 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
     }
 
     @EventHandler
-    public void onPlayerJoinLoadPickaxeData(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        PlayerPickaxeService.loadPickaxeDataFromYAML(player);
-    }
-
-
-    @EventHandler
-    public void onHandSwapActivatePickaxeAbilities(PlayerSwapHandItemsEvent event) {
+    public void onHandSwapOpenPickaxeMenu(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
+
         event.setCancelled(true);
 
-        PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
-        if (pickaxeData.getDurabilityDamage() + 50 >= pickaxeData.getPickaxeMaterial().getMaxDurability()) {
-            player.sendMessage(Component.text("Pickaxe durability too low to activate ability", RED));
+        new PickaxeMenu(player);
+    }
+
+    private static final List<Ability> abilitiesCycle = new ArrayList<>();
+
+    @EventHandler
+    public void onShiftRightClickHoldingPickaxeActivateAbility(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+
+        if (!event.getAction().isRightClick()) return;
+        if (!player.isSneaking()) return;
+        if (event.getHand() == EquipmentSlot.HAND) return;
+
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
+        if (pickaxe == null) return;
+
+        event.setCancelled(true);
+
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+        if (pickaxeData.getDurabilityDamage() + 20 >= pickaxeData.getPickaxeMaterial().getMaxDurability()) {
+            player.sendMessage(text("Pickaxe durability too low to activate ability", RED));
             player.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.MASTER, 1.0f, 1.0f, 404);
             SoundUtils.playErrorSound(player);
             return;
         }
 
-        for (Ability ability : pickaxeData.getAbilities()) {
-            ability.activateAbility(player, pickaxeData);
+        if (abilitiesCycle.isEmpty()) return;
+        abilitiesCycle.getFirst().activateAbility(player, pickaxeData);
+    }
+
+    @EventHandler
+    public void onRightClickHoldingPickaxeCycleAbilities(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+
+        if (!event.getAction().isRightClick()) return;
+        if (player.isSneaking()) return;
+        if (event.getHand() != EquipmentSlot.HAND) return;
+
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
+        if (pickaxe == null) return;
+
+        event.setCancelled(true);
+
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+
+        if (abilitiesCycle.isEmpty()) {
+            Ability peek = pickaxeData.getAbility(Ability.AbilityType.PEEK);
+            if (peek != null) {
+                abilitiesCycle.add(peek);
+            }
+            Ability hammer = pickaxeData.getAbility(Ability.AbilityType.HAMMER);
+            if (hammer != null) {
+                abilitiesCycle.add(hammer);
+            }
+            return;
         }
+
+        Ability firstAbility = abilitiesCycle.get(0);
+        Ability secondAbility = abilitiesCycle.get(1);
+
+        abilitiesCycle.set(1, firstAbility);
+        abilitiesCycle.set(0, secondAbility);
+        player.sendActionBar(secondAbility.getAbilityType().getFormattedName());
+    }
+
+    @EventHandler
+    public void onRightClickPickaxeInInventoryOpenMenu(InventoryClickEvent event) {
+        if (!event.getClick().isRightClick()) return;
+        if (!(event.getInventory().getHolder() instanceof Player player)) return;
+        if (event.getClickedInventory() != player.getInventory()) return;
+        if (!event.getCursor().isEmpty()) return;
+
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null) return;
+
+        if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) {
+            event.setCancelled(true);
+            new PickaxeMenu(player);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJoinLoadPickaxeData(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        PlayerPickaxeService.loadPickaxeDataFromYAML(player);
+        PlayerBalanceService.loadBalanceFromYAML(player); // TODO: Temp location
+    }
+
+    @EventHandler
+    public void onPlayerLeaveSavePickaxeData(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        PlayerPickaxeService.savePickaxeDataToYAML(player);
+        PlayerBalanceService.saveBalanceDataToYAML(player); // TODO: Temp location
     }
 
     @Override
@@ -171,18 +214,15 @@ public class PlayerPickaxeManager implements Listener, BasicCommand {
 
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("get")) {
-                player.getInventory().addItem(PlayerPickaxeService.playerPickaxe(player));
+                player.getInventory().addItem(PlayerPickaxeService.getPlayerPickaxe(player));
                 player.sendMessage(text("You received your pickaxe!", GREEN));
-                return;
-            }
 
-            if (args[0].equalsIgnoreCase("reset")) {
+            } else if (args[0].equalsIgnoreCase("reset")) {
                 PlayerPickaxeService.resetPickaxeData(player);
-                player.sendMessage(Component.text("Pickaxe data reset!", GREEN));
-                return;
+                player.sendMessage(text("Pickaxe data reset!", GREEN));
             }
+        } else {
+            player.sendMessage(text("Usage: /pickaxe <get|reset>", RED));
         }
-
-        player.sendMessage(text("Usage: /pickaxe <get|reset>", RED));
     }
 }
