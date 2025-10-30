@@ -119,48 +119,6 @@ public class PlayerPickaxeService {
         }
     }
 
-    public static void setPickaxeMaterial(Player player, PickaxeMaterial material) {
-        PickaxeData pickaxeData = pickaxeData(player);
-        pickaxeData.setPickaxeMaterial(material);
-        savePickaxeDataToYAML(player);
-    }
-
-    public static void setDurabilityDamage(Player player, int amount) {
-        PickaxeData pickaxeData = pickaxeData(player);
-        pickaxeData.setDurabilityDamage(amount);
-//        savePickaxeDataToYAML(player);
-    }
-
-    public static void addBlocksBroken(Player player, int amount) {
-        PickaxeData pickaxeData = pickaxeData(player);
-        pickaxeData.addBlocksBroken(amount);
-//        savePickaxeDataToYAML(player);
-    }
-
-    public static void addEnchantment(Player player, Enchantment enchantment) {
-        PickaxeData pickaxeData = pickaxeData(player);
-        pickaxeData.addEnchantment(enchantment);
-        savePickaxeDataToYAML(player);
-    }
-
-    public static void removeEnchantments(Player player) {
-        PickaxeData pickaxeData = pickaxeData(player);
-        pickaxeData.removeEnchantments();
-        savePickaxeDataToYAML(player);
-    }
-
-    public static void addAbility(Player player, Ability ability) {
-        PickaxeData pickaxeData = pickaxeData(player);
-        pickaxeData.addAbility(ability);
-        savePickaxeDataToYAML(player);
-    }
-
-    public static void removeAbilities(Player player) {
-        PickaxeData pickaxeData = pickaxeData(player);
-        pickaxeData.removeAbilities();
-        savePickaxeDataToYAML(player);
-    }
-
     public static ItemStack playerPickaxe(Player player) {
         PickaxeData pickaxeData = pickaxeData(player);
 
