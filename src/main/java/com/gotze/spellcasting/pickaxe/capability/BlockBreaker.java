@@ -48,9 +48,6 @@ public interface BlockBreaker {
 
             if (!isNaturalBreak) {
                 world.playEffect(blockLocation, Effect.STEP_SOUND, block.getBlockData());
-
-                SoundGroup soundGroup = block.getBlockSoundGroup();
-                world.playSound(blockLocation, soundGroup.getBreakSound(), soundGroup.getVolume(), soundGroup.getPitch());
                 block.setType(Material.AIR, false);
             }
         } else if (!isNaturalBreak) {
