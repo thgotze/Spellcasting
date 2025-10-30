@@ -80,7 +80,7 @@ public class PeekAbility extends Ability {
                     block.setBlockData(entry.getValue());
                 }
                 isActive = false;
-            player.sendActionBar(text("Peek ability expired").color(RED));
+                player.sendActionBar(text("Peek ability expired").color(RED));
                 affectedBlocks.clear();
             }
         }.runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), 20L * 10);

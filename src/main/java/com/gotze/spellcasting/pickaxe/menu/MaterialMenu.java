@@ -74,7 +74,7 @@ public class MaterialMenu extends Menu {
 
                     PlayerInventory playerInventory = player.getInventory();
 
-                    PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
+                    PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
                     PickaxeMaterial currentPickaxeMaterial = pickaxeData.getPickaxeMaterial();
                     PickaxeMaterial nextTierPickaxe = currentPickaxeMaterial.getNextTier();
 
@@ -94,8 +94,10 @@ public class MaterialMenu extends Menu {
                     }
 
                     playerInventory.removeItem(upgradeToken);
-                    PlayerPickaxeService.setPickaxeMaterial(player, nextTierPickaxe);
-                    ItemStack updatedPickaxe = PlayerPickaxeService.playerPickaxe(player);
+                    pickaxeData.setPickaxeMaterial(nextTierPickaxe);
+                    PlayerPickaxeService.savePickaxeDataToYAML(player);
+
+                    ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
                     playerInventory.setItem(EquipmentSlot.HAND, updatedPickaxe);
 
                     getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));

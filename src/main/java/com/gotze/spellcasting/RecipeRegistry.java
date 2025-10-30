@@ -12,7 +12,7 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class RecipeRegistry {
+public class RecipeRegistry {
 
     public static void registerRecipes() {
         Plugin plugin = JavaPlugin.getPlugin(Spellcasting.class);

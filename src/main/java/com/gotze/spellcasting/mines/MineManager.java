@@ -13,8 +13,8 @@ import java.util.List;
 
 public class MineManager {
     private final JavaPlugin plugin;
-    private Location corner1;
-    private Location corner2;
+    private final Location corner1;
+    private final Location corner2;
     private WeightedBlockSelector blockSelector;
 
     public MineManager(JavaPlugin plugin, Location corner1, Location corner2) {

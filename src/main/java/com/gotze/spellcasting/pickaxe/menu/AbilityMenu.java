@@ -38,9 +38,11 @@ public class AbilityMenu extends Menu {
                 ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                 if (pickaxe == null) return;
 
-                PlayerPickaxeService.removeAbilities(player);
+                PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+                pickaxeData.removeAbilities();
+                PlayerPickaxeService.savePickaxeDataToYAML(player);
 
-                ItemStack updatedPickaxe = PlayerPickaxeService.playerPickaxe(player);
+                ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
                 player.getInventory().setItem(EquipmentSlot.HAND, updatedPickaxe);
 
                 getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));
@@ -48,14 +50,14 @@ public class AbilityMenu extends Menu {
             }
         });
 
-        int startingIndex = 19;
+        int startingIndex = 9;
         for (Ability.AbilityType abilityType : Ability.AbilityType.values()) {
             buttons(new Button(startingIndex++, abilityType.getMenuItem()) {
                 @Override
                 public void onClick(InventoryClickEvent event) {
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
                         ItemStack upgradeToken = abilityType.getUpgradeToken();
-                        upgradeToken.setAmount(abilityType.getTokenAmount());
+                        upgradeToken.setAmount(abilityType.getRequiredTokenAmount());
                         player.getInventory().addItem(upgradeToken);
                         SoundUtils.playUIClickSound(player);
                         return;
@@ -80,12 +82,12 @@ public class AbilityMenu extends Menu {
         PlayerInventory playerInventory = player.getInventory();
 
         ItemStack upgradeToken = clickedAbilityType.getUpgradeToken();
-        int tokenAmount = clickedAbilityType.getTokenAmount();
+        int requiredTokenAmount = clickedAbilityType.getRequiredTokenAmount();
 
-        upgradeToken.setAmount(tokenAmount);
+        upgradeToken.setAmount(requiredTokenAmount);
 
-        if (!playerInventory.containsAtLeast(upgradeToken, tokenAmount)) {
-            player.sendMessage(text("You need " + tokenAmount + "x [")
+        if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
+            player.sendMessage(text("You need " + requiredTokenAmount + "x [")
                     .append(clickedAbilityType.getUpgradeTokenName())
                     .append(text("] to upgrade this ability!"))
                     .color(RED));
@@ -93,13 +95,13 @@ public class AbilityMenu extends Menu {
             return;
         }
 
-        PickaxeData pickaxeData = PlayerPickaxeService.pickaxeData(player);
+        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
         Ability ability = pickaxeData.getAbility(clickedAbilityType);
 
         if (ability == null) {
             try {
                 Ability newAbility = clickedAbilityType.getAbilityClass().getDeclaredConstructor().newInstance();
-                PlayerPickaxeService.addAbility(player, newAbility);
+                pickaxeData.addAbility(newAbility);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -115,9 +117,10 @@ public class AbilityMenu extends Menu {
                 ability.increaseLevel();
             }
         }
+        PlayerPickaxeService.savePickaxeDataToYAML(player);
 
         playerInventory.removeItem(upgradeToken);
-        ItemStack updatedPickaxe = PlayerPickaxeService.playerPickaxe(player);
+        ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
         playerInventory.setItem(EquipmentSlot.HAND, updatedPickaxe);
 
         getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));

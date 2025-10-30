@@ -64,43 +64,44 @@ public abstract class Enchantment {
                 3,
                 Material.OBSIDIAN,
                 "Reduce durability loss"),
+        ENRICHEN(EnrichenEnchantment.class,
+                Rarity.UNCOMMON,
+                5,
+                Material.GOLD_INGOT,
+                "Chance to increase",
+                "nearby ore block quality"),
+        MITOSIS(MitosisEnchantment.class,
+                Rarity.UNCOMMON,
+                5,
+                Material.BONE_MEAL,
+                "Chance to spawn more",
+                "ores around the mined ore"),
         GLACIATE(GlaciateEnchantment.class,
                 Rarity.RARE,
                 1,
                 Material.PACKED_ICE,
                 "Freeze nearby blocks"),
-//        "Chance to freeze nearby blocks",
+        //        "Chance to freeze nearby blocks",
         //                "making them quicker to mine"),
+        MOMENTUM(MomentumEnchantment.class,
+                Rarity.EPIC,
+                5,
+                Material.BLAZE_POWDER,
+                "Periodically mark a nearby",
+                "ore block. Marked ores grant",
+                "temporary stacking haste",
+                "and marks a new ore"),
         PHANTOM_QUARRY(PhantomQuarryEnchantment.class,
                 Rarity.EPIC,
                 5,
                 Material.TINTED_GLASS,
                 "Quarry a 5x5 area after",
                 "breaking marked corner blocks"),
-//                "Chance to mark 3-4 corners of",
-//                "a 5x5 square centering from",
-//                "the broken block. Breaking all",
-//                "the marked corners quarries",
-//                "all blocks within the 5x5 square"),
-        MITOSIS(MitosisEnchantment.class,
-                Rarity.UNCOMMON,
-                5,
-                Material.BONE_MEAL,
-        "Chance to spawn more",
-        "ores around the mined ore"),
-        ENRICHEN(EnrichenEnchantment.class,
-                Rarity.UNCOMMON,
-                5,
-                Material.GOLD_INGOT,
-                "Chance to increase",
-                        "ore block quality"),
-        MINERS_SENSE(MinersSenseEnchantment.class,
-                Rarity.RARE,
-                5,
-                Material.ENDER_EYE,
-                "Periodically mark an ore",
-                "block. Marked ores break",
-                "instantly")
+        //                "Chance to mark 3-4 corners of",
+        //                "a 5x5 square centering from",
+        //                "the broken block. Breaking all",
+        //                "the marked corners quarries",
+        //                "all blocks within the 5x5 square")
         ;
 
         private final Class<? extends Enchantment> enchantmentClass;
@@ -145,7 +146,7 @@ public abstract class Enchantment {
 
             menuItem.lore(text(""),
                     text(StringUtils.convertToSmallFont("requirements")),
-                    text(getTokenAmount() + "x [").color(GRAY)
+                    text(getRequiredTokenAmount() + "x [").color(GRAY)
                             .append(getUpgradeTokenName())
                             .append(text("]")).color(GRAY));
 
@@ -184,7 +185,7 @@ public abstract class Enchantment {
             return text(this.toString(), this.getRarity().getColor());
         }
 
-        public int getTokenAmount() { // TODO: placeholder amounts
+        public int getRequiredTokenAmount() { // TODO: placeholder amounts
             return switch (rarity) {
                 case COMMON -> 16;
                 case UNCOMMON -> 8;

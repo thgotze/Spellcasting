@@ -121,7 +121,7 @@ public abstract class Ability {
 
             menuItem.lore(text(""),
                     text(StringUtils.convertToSmallFont("requirements")),
-                    text(getTokenAmount() + "x [").color(GRAY)
+                    text(getRequiredTokenAmount() + "x [").color(GRAY)
                             .append(getUpgradeTokenName())
                             .append(text("]")).color(GRAY));
 
@@ -157,7 +157,7 @@ public abstract class Ability {
                     text(this.toString(), this.rarity.getColor()));
         }
 
-        public int getTokenAmount() { // TODO: placeholder amounts
+        public int getRequiredTokenAmount() { // TODO: placeholder amounts
             return switch (rarity) {
                 case COMMON -> 16;
                 case UNCOMMON -> 8;

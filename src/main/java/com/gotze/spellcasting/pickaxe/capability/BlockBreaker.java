@@ -1,12 +1,14 @@
 package com.gotze.spellcasting.pickaxe.capability;
 
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
-import com.gotze.spellcasting.pickaxe.PickaxeData;
-import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.block.BlockCategories;
-import org.bukkit.*;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -20,9 +22,6 @@ public interface BlockBreaker {
     }
 
     default void breakBlock(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
-        Material blockType = block.getType();
-        if (blockType.isAir() || blockType == Material.BEDROCK) return;
-
         for (Enchantment enchantment : pickaxeData.getEnchantments()) {
             if (enchantment instanceof BlockBreakListener blockBreakListener) {
                 blockBreakListener.onBlockBreak(player, block, pickaxeData, isNaturalBreak);
@@ -39,10 +38,12 @@ public interface BlockBreaker {
     }
 
     static void handleBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
+        pickaxeData.addBlocksBroken(1);
+
         Loot oreLoot = BlockCategories.ORE_BLOCKS.get(block.getType());
 
         if (oreLoot != null) {
-            World world = player.getWorld();
+            World world = block.getWorld();
             Location blockLocation = block.getLocation().toCenterLocation();
             world.dropItemNaturally(blockLocation, oreLoot.drop());
 
@@ -53,6 +54,5 @@ public interface BlockBreaker {
         } else if (!isNaturalBreak) {
             block.breakNaturally(true);
         }
-        PlayerPickaxeService.addBlocksBroken(player, 1);
     }
 }

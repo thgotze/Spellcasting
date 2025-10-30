@@ -22,7 +22,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class MachineManager implements Listener {
+public class MachineManager implements Listener {
 
     private final Map<Location, Machine> machines = new ConcurrentHashMap<>();
 

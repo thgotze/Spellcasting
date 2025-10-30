@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
-public final class Crusher extends Machine {
+public class Crusher extends Machine {
 
     private static final String NEG_SPACE = "\uF001";
     private static final String NEG_SPACE_8 = NEG_SPACE.repeat(8);

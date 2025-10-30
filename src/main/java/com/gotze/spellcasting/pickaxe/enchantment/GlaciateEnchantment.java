@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -37,11 +36,12 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
         if (this.isActive) return;
 
         // 0.25% activation chance
-        if (ThreadLocalRandom.current().nextDouble() > 0.0025) return;
+//        if (ThreadLocalRandom.current().nextDouble() > 0.0025) return;
         player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
 
         this.isActive = true;
         List<Block> blocksToFreeze = BlockUtils.getBlocksInSpherePattern(block, 5, 5, 5);
+        blocksToFreeze.remove(block);
         blocksToFreeze.removeIf(candidate -> !BlockCategories.FILLER_BLOCKS.contains(candidate.getType()) &&
                 !BlockCategories.ORE_BLOCKS.containsKey(candidate.getType()));
         Collections.shuffle(blocksToFreeze);
@@ -65,7 +65,7 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
             }
         }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0L, 1L);
 
-        // Frozen block return to their previous block type after 15 seconds
+        // Frozen block return to their previous block type after 10 seconds
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -84,6 +84,6 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
                     }
 //                }
             }
-        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 15 * 20L, 5L);
+        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 10 * 20L, 5L);
     }
 }

@@ -23,9 +23,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.joml.Matrix4f;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
@@ -60,8 +60,8 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
             if (!isNaturalBreak) return;
             if (System.currentTimeMillis() < cooldown) return;
             // 0.25% activation chance
-            if (ThreadLocalRandom.current().nextDouble() > 0.0025) return;
-            player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
+//            if (ThreadLocalRandom.current().nextDouble() > 0.0025) return;
+            player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated").color(GREEN)));
 
             this.centerBlock = block;
             List<Block> cornerBlocks = new ArrayList<>();
@@ -111,7 +111,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 public void run() {
                     if (isActive) {
                         reset();
-                        player.sendActionBar(text("Phantom Quarry expired").color(RED));
+                        player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" expired").color(RED)));
                     }
                 }
             };
