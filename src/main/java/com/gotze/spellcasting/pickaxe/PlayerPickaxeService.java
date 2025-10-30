@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -30,7 +31,7 @@ import static net.kyori.adventure.text.format.TextDecoration.State.FALSE;
 public class PlayerPickaxeService {
     private static final Map<Player, PickaxeData> PLAYER_PICKAXE_DATA_MAP = new HashMap<>();
 
-    public static PickaxeData pickaxeData(Player player) {
+    public static PickaxeData getPickaxeData(Player player) {
         return PLAYER_PICKAXE_DATA_MAP.get(player);
     }
 
@@ -39,26 +40,25 @@ public class PlayerPickaxeService {
     }
 
     public static void loadPickaxeDataFromYAML(Player player) {
-        PickaxeData pickaxeData = pickaxeData(player);
-        if (pickaxeData != null) return;
+        if (PLAYER_PICKAXE_DATA_MAP.containsKey(player)) return;
 
-        pickaxeData = new PickaxeData();
-        PLAYER_PICKAXE_DATA_MAP.put(player, pickaxeData);
+        PLAYER_PICKAXE_DATA_MAP.put(player, new PickaxeData());
+        PickaxeData pickaxeData = PLAYER_PICKAXE_DATA_MAP.get(player);
 
         UUID uuid = player.getUniqueId();
         File playerFile = new File(JavaPlugin.getPlugin(Spellcasting.class).getDataFolder() + "/playerdata", uuid + ".yml");
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
 
-        if (!playerFile.exists()) {
+        if (!playerFile.exists() || !yamlConfiguration.contains("pickaxe-data")) {
             savePickaxeDataToYAML(player);
             return;
         }
 
-        pickaxeData.setPickaxeMaterial(PickaxeMaterial.valueOf(yamlConfiguration.getString("pickaxe-type")));
-        pickaxeData.setDurabilityDamage(yamlConfiguration.getInt("durability-damage"));
-        pickaxeData.addBlocksBroken(yamlConfiguration.getInt("blocks-broken"));
+        pickaxeData.setPickaxeMaterial(PickaxeMaterial.valueOf(yamlConfiguration.getString("pickaxe-data.pickaxe-type")));
+        pickaxeData.setDurabilityDamage(yamlConfiguration.getInt("pickaxe-data.durability-damage"));
+        pickaxeData.addBlocksBroken(yamlConfiguration.getInt("pickaxe-data.blocks-broken"));
 
-        for (String string : yamlConfiguration.getStringList("enchantments")) {
+        for (String string : yamlConfiguration.getStringList("pickaxe-data.enchantments")) {
             String[] split = string.split(" ");
 
             Enchantment.EnchantmentType enchantmentType = Enchantment.EnchantmentType.valueOf(split[0]);
@@ -74,7 +74,7 @@ public class PlayerPickaxeService {
             }
         }
 
-        for (String string : yamlConfiguration.getStringList("abilities")) {
+        for (String string : yamlConfiguration.getStringList("pickaxe-data.abilities")) {
             String[] split = string.split(" ");
 
             Ability.AbilityType abilityType = Ability.AbilityType.valueOf(split[0]);
@@ -96,21 +96,21 @@ public class PlayerPickaxeService {
         File playerFile = new File(JavaPlugin.getPlugin(Spellcasting.class).getDataFolder() + "/playerdata", uuid + ".yml");
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
 
-        PickaxeData pickaxeData = pickaxeData(player);
+        PickaxeData pickaxeData = getPickaxeData(player);
 
-        yamlConfiguration.set("pickaxe-type", pickaxeData.getPickaxeMaterial().name());
-        yamlConfiguration.set("durability-damage", pickaxeData.getDurabilityDamage());
-        yamlConfiguration.set("blocks-broken", pickaxeData.getBlocksBroken());
+        yamlConfiguration.set("pickaxe-data.pickaxe-type", pickaxeData.getPickaxeMaterial().name());
+        yamlConfiguration.set("pickaxe-data.durability-damage", pickaxeData.getDurabilityDamage());
+        yamlConfiguration.set("pickaxe-data.blocks-broken", pickaxeData.getBlocksBroken());
 
         List<String> enchantmentsSerialized = pickaxeData.getEnchantments().stream()
                 .map(enchantment -> enchantment.getEnchantmentType().name() + " " + enchantment.getLevel())
                 .toList();
-        yamlConfiguration.set("enchantments", enchantmentsSerialized);
+        yamlConfiguration.set("pickaxe-data.enchantments", enchantmentsSerialized);
 
         List<String> abilitiesSerialized = pickaxeData.getAbilities().stream()
                 .map(ability -> ability.getAbilityType().name() + " " + ability.getLevel())
                 .toList();
-        yamlConfiguration.set("abilities", abilitiesSerialized);
+        yamlConfiguration.set("pickaxe-data.abilities", abilitiesSerialized);
 
         try {
             yamlConfiguration.save(playerFile);
@@ -119,15 +119,15 @@ public class PlayerPickaxeService {
         }
     }
 
-    public static ItemStack playerPickaxe(Player player) {
-        PickaxeData pickaxeData = pickaxeData(player);
+    public static ItemStack getPlayerPickaxe(Player player) {
+        PickaxeData pickaxeData = getPickaxeData(player);
 
         PickaxeMaterial pickaxeMaterial = pickaxeData.getPickaxeMaterial();
 
         ItemStackBuilder builder = new ItemStackBuilder(pickaxeData.getPickaxeMaterial().getPickaxeType())
                 .name(pickaxeMaterial.getFormattedPickaxeTypeName().color(pickaxeMaterial.getRarity().getColor()))
                 .persistentDataContainer("owner", player.getUniqueId().toString())
-                .lore(pickaxeLore(pickaxeData))
+                .lore(getPickaxeLore(pickaxeData))
                 .hideAttributes()
                 .hideEnchantTooltip()
                 .durabilityDamage(pickaxeData.getDurabilityDamage());
@@ -212,7 +212,7 @@ public class PlayerPickaxeService {
 //        return builder.build();
     }
 
-    public static List<Component> pickaxeLore(PickaxeData pickaxeData) {
+    public static List<Component> getPickaxeLore(PickaxeData pickaxeData) {
         List<Component> lore = new ArrayList<>();
 
         Set<Enchantment> enchantments = pickaxeData.getEnchantments();
@@ -293,13 +293,13 @@ public class PlayerPickaxeService {
         return heldItem;
     }
 
-    public static boolean isItemStackPlayerOwnPickaxe(ItemStack itemStack, Player player) {
+    public static boolean isItemStackPlayerOwnPickaxe(@NotNull ItemStack itemStack, Player player) {
         NamespacedKey ownerKey = new NamespacedKey(JavaPlugin.getPlugin(Spellcasting.class), "owner");
         String owner = itemStack.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
         return player.getUniqueId().toString().equals(owner);
     }
 
     public static ItemStack pickaxeCloneWithoutDurability(Player player) {
-        return MenuUtils.cloneItemWithoutDamage(playerPickaxe(player));
+        return MenuUtils.cloneItemWithoutDamage(getPlayerPickaxe(player));
     }
 }
