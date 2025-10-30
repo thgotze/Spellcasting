@@ -70,7 +70,7 @@ public class PlayerPickaxeService {
                 pickaxeData.addEnchantment(enchantment);
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Failed to load enchantment " + enchantmentType.name() + " from " + playerFile.getPath(), e);
             }
         }
 
@@ -86,7 +86,7 @@ public class PlayerPickaxeService {
                 pickaxeData.addAbility(ability);
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Failed to load ability " + abilityType.name() + " from " + playerFile.getPath(), e);
             }
         }
     }
