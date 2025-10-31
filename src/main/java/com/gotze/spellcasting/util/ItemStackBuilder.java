@@ -29,7 +29,6 @@ public class ItemStackBuilder {
     private Component name;
     private List<Component> lore;
     private Key itemModel;
-    private boolean hideAdditionalTooltip;
     private boolean hideAttributes;
     private boolean hideTooltipBox;
     private boolean hideEnchantTooltip;
@@ -89,11 +88,6 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder itemModel(Key itemModel) {
         this.itemModel = itemModel;
-        return this;
-    }
-
-    public ItemStackBuilder hideAdditionalTooltip() {
-        this.hideAdditionalTooltip = true;
         return this;
     }
 
