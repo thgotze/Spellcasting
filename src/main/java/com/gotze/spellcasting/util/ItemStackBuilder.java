@@ -197,7 +197,7 @@ public class ItemStackBuilder {
         if (persistentDataContainer != null) {
             itemStack.editPersistentDataContainer(pdc -> {
                 for (Map.Entry<String, String> entry : persistentDataContainer.entrySet()) {
-                    NamespacedKey key = new NamespacedKey(JavaPlugin.getPlugin(Spellcasting.class), entry.getKey());
+                    NamespacedKey key = new NamespacedKey(Spellcasting.getPlugin(), entry.getKey());
                     pdc.set(key, PersistentDataType.STRING, entry.getValue());
                 }
             });

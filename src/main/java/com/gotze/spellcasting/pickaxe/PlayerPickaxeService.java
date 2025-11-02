@@ -14,7 +14,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +45,7 @@ public class PlayerPickaxeService {
         PickaxeData pickaxeData = PLAYER_PICKAXE_DATA_MAP.get(player);
 
         UUID uuid = player.getUniqueId();
-        File playerFile = new File(JavaPlugin.getPlugin(Spellcasting.class).getDataFolder() + "/playerdata", uuid + ".yml");
+        File playerFile = new File(Spellcasting.getPlugin().getDataFolder() + "/playerdata", uuid + ".yml");
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
 
         if (!playerFile.exists() || !yamlConfiguration.contains("pickaxe-data")) {
@@ -93,7 +92,7 @@ public class PlayerPickaxeService {
 
     public static void savePickaxeDataToYAML(Player player) {
         UUID uuid = player.getUniqueId();
-        File playerFile = new File(JavaPlugin.getPlugin(Spellcasting.class).getDataFolder() + "/playerdata", uuid + ".yml");
+        File playerFile = new File(Spellcasting.getPlugin().getDataFolder() + "/playerdata", uuid + ".yml");
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
 
         PickaxeData pickaxeData = getPickaxeData(player);
@@ -294,7 +293,7 @@ public class PlayerPickaxeService {
     }
 
     public static boolean isItemStackPlayerOwnPickaxe(@NotNull ItemStack itemStack, Player player) {
-        NamespacedKey ownerKey = new NamespacedKey(JavaPlugin.getPlugin(Spellcasting.class), "owner");
+        NamespacedKey ownerKey = new NamespacedKey(Spellcasting.getPlugin(), "owner");
         String owner = itemStack.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
         return player.getUniqueId().toString().equals(owner);
     }

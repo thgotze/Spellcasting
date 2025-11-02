@@ -4,10 +4,12 @@ import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.util.block.BlockUtils;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -65,6 +67,6 @@ public class BazookaAbility extends Ability implements BlockBreaker {
                 ticks++;
                 if (ticks >= 64) this.cancel();
             }
-        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0, 1);
+        }.runTaskTimer(Spellcasting.getPlugin(), 0, 1);
     }
 }

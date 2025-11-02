@@ -61,7 +61,7 @@ package com.gotze.spellcasting.pickaxe.ability.todo;
 //                }
 //            }
 //
-//        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0, 1);
+//        }.runTaskTimer(Spellcasting.getPlugin(), 0, 1);
 //
 //
 //

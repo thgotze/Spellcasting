@@ -9,17 +9,10 @@ import org.bukkit.inventory.BlastingRecipe;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class RecipeRegistry {
 
     public static void registerRecipes() {
-        Plugin plugin = JavaPlugin.getPlugin(Spellcasting.class);
-        registerCrushedOreSmeltingRecipes(plugin);
-    }
-
-    private static void registerCrushedOreSmeltingRecipes(Plugin plugin) {
         for (Crusher.CrushingRecipe crushingRecipe : Crusher.CrushingRecipe.values()) {
             ItemStack resultItem = crushingRecipe.getResultItem();
 
@@ -28,7 +21,7 @@ public class RecipeRegistry {
                     .replace(" ", "_");
 
             // Register Furnace recipe
-            NamespacedKey furnaceRecipeKey = new NamespacedKey(plugin, baseKey + "_smelt");
+            NamespacedKey furnaceRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_smelt");
             FurnaceRecipe furnaceRecipe = new FurnaceRecipe(
                     furnaceRecipeKey,
                     new ItemStack(getCorrespondingIngot(crushingRecipe)),
@@ -36,10 +29,10 @@ public class RecipeRegistry {
                     getExperienceAmount(crushingRecipe),
                     200 // 10 seconds
             );
-            plugin.getServer().addRecipe(furnaceRecipe);
+            Spellcasting.getPlugin().getServer().addRecipe(furnaceRecipe);
 
             // Register Blast Furnace recipe
-            NamespacedKey blastingRecipeKey = new NamespacedKey(plugin, baseKey + "_blast");
+            NamespacedKey blastingRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_blast");
             BlastingRecipe blastingRecipe = new BlastingRecipe(
                     blastingRecipeKey,
                     new ItemStack(getCorrespondingIngot(crushingRecipe)),
@@ -47,7 +40,7 @@ public class RecipeRegistry {
                     getExperienceAmount(crushingRecipe),
                     100 // 5 seconds
             );
-            plugin.getServer().addRecipe(blastingRecipe);
+            Spellcasting.getPlugin().getServer().addRecipe(blastingRecipe);
         }
     }
 

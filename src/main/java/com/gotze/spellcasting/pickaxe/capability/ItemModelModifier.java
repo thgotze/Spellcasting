@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public interface ItemModelModifier {
     default void modifyItemModelTemporarily(ItemStack itemStack, Material newType, long durationTicks, Runnable onComplete) {
@@ -14,7 +13,7 @@ public interface ItemModelModifier {
 
         itemStack.setData(DataComponentTypes.ITEM_MODEL, NamespacedKey.minecraft(newType.name().toLowerCase()));
         // Schedule automatic revert AND callback
-        Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), () -> {
+        Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
             itemStack.setData(DataComponentTypes.ITEM_MODEL, originalModel);
 
             if (onComplete != null) {

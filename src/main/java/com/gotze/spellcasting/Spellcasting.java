@@ -3,16 +3,23 @@ package com.gotze.spellcasting;
 import com.gotze.spellcasting.machine.MachineManager;
 import com.gotze.spellcasting.mines.MineManager;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
+import com.gotze.spellcasting.util.LifecycleManager;
 import com.gotze.spellcasting.util.menu.MenuListener;
-import org.bukkit.Location;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Spellcasting extends JavaPlugin {
 
+    private static Spellcasting plugin;
+    public static Spellcasting getPlugin() {
+        return plugin;
     @Override
     public void onEnable() {
-        PluginManager pluginManager = getServer().getPluginManager();
+        plugin = this;
 
         pluginManager.registerEvents(new MenuListener(), this);
         pluginManager.registerEvents(new MachineManager(), this);

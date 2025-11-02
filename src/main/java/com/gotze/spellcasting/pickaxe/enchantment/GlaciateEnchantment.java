@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -63,7 +62,7 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
                     blockToFreeze.setType(Material.PACKED_ICE);
                 }
             }
-        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0L, 1L);
+        }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);
 
         // Frozen block return to their previous block type after 10 seconds
         new BukkitRunnable() {
@@ -84,6 +83,6 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
                     }
 //                }
             }
-        }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 10 * 20L, 5L);
+        }.runTaskTimer(Spellcasting.getPlugin(), 10 * 20L, 5L);
     }
 }

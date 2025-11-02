@@ -70,7 +70,7 @@ public class MachineManager implements Listener {
         ItemStack itemInHand = event.getItemInHand();
         if (itemInHand.getType() != Material.STONECUTTER) return;
 
-        NamespacedKey crusherKey = new NamespacedKey(JavaPlugin.getPlugin(Spellcasting.class), "machine");
+        NamespacedKey crusherKey = new NamespacedKey(Spellcasting.getPlugin(), "machine");
         String crusherValue = itemInHand.getPersistentDataContainer().get(crusherKey, PersistentDataType.STRING);
         if (crusherValue != null) {
             Player player = event.getPlayer();

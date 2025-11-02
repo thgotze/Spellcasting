@@ -13,7 +13,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.joml.Matrix4f;
@@ -72,11 +71,11 @@ public class MomentumEnchantment extends Enchantment implements BlockBreakListen
 
         if (candidateBlocks.isEmpty()) {
             markedBlock = null;
-            player.hideEntity(JavaPlugin.getPlugin(Spellcasting.class), markedBlockDisplay);
+            player.hideEntity(Spellcasting.getPlugin(), markedBlockDisplay);
         } else {
             markedBlock = candidateBlocks.remove(ThreadLocalRandom.current().nextInt(candidateBlocks.size()));
             markedBlockDisplay.teleport(markedBlock.getLocation().add(0.001953125f, 0.001953125f, 0.001953125f));
-            player.showEntity(JavaPlugin.getPlugin(Spellcasting.class), markedBlockDisplay);
+            player.showEntity(Spellcasting.getPlugin(), markedBlockDisplay);
 
             player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
         }

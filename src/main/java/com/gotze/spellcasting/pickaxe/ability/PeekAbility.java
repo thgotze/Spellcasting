@@ -1,9 +1,9 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.enchantment.PhantomQuarryEnchantment;
-import com.gotze.spellcasting.pickaxe.PickaxeData;
 import com.gotze.spellcasting.util.block.BlockCategories;
 import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Material;
@@ -13,7 +13,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -83,6 +82,6 @@ public class PeekAbility extends Ability {
                 player.sendActionBar(text("Peek ability expired").color(RED));
                 affectedBlocks.clear();
             }
-        }.runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), 20L * 10);
+        }.runTaskLater(Spellcasting.getPlugin(), 20L * 10);
     }
 }

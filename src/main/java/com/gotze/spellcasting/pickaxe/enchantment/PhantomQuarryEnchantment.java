@@ -18,7 +18,6 @@ import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.joml.Matrix4f;
 
@@ -100,7 +99,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 blockDisplay.setGlowColorOverride(Color.FUCHSIA);
 
                 blockDisplay.setVisibleByDefault(false);
-                player.showEntity(JavaPlugin.getPlugin(Spellcasting.class), blockDisplay);
+                player.showEntity(Spellcasting.getPlugin(), blockDisplay);
 
                 markedCornerBlocks.put(cornerBlock, blockDisplay);
             }
@@ -115,7 +114,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                     }
                 }
             };
-            timeoutTask.runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), TIMEOUT_TASK_LENGTH);
+            timeoutTask.runTaskLater(Spellcasting.getPlugin(), TIMEOUT_TASK_LENGTH);
             return;
         }
 
@@ -156,7 +155,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                         breakBlock(player, blocksToBreak.removeFirst(), pickaxeData, false);
                     }
                 }
-            }.runTaskTimer(JavaPlugin.getPlugin(Spellcasting.class), 0L, 1L);
+            }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);
         }
     }
 

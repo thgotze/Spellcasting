@@ -9,7 +9,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Optional;
 
@@ -51,7 +50,7 @@ public class MenuListener implements Listener {
                 }
             }
 
-            Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(Spellcasting.class), () -> {
+            Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
                 if (button != null) {
                     button.onClick(event);
                 }
