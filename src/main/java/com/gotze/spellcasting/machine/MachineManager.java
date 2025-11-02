@@ -2,6 +2,7 @@ package com.gotze.spellcasting.machine;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.machine.crusher.Crusher;
+import com.gotze.spellcasting.util.LifecycleManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -16,24 +17,30 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MachineManager implements Listener {
 
+public class MachineManager implements Listener, LifecycleManager {
     private final Map<Location, Machine> machines = new ConcurrentHashMap<>();
+    private BukkitTask tickTask;
 
-    public MachineManager() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(
-                JavaPlugin.getPlugin(Spellcasting.class),
-                () -> {
-                    for (Machine machine : machines.values()) {
-                        machine.tick();
-                    }
-                }, 0L, 1L);
+    @Override
+    public void start() {
+        tickTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                Spellcasting.getPlugin(),
+                () -> machines.values().forEach(Machine::tick),
+                0L, 1L);
+    }
+
+    @Override
+    public void stop() {
+        if (tickTask != null) {
+            tickTask.cancel();
+        }
     }
 
     public Machine getMachine(Location location) {

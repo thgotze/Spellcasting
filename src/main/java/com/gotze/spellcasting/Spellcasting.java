@@ -14,27 +14,52 @@ import java.util.List;
 
 public class Spellcasting extends JavaPlugin {
 
+    private final List<LifecycleManager> lifecycleManagers = new ArrayList<>();
+
     private static Spellcasting plugin;
+
     public static Spellcasting getPlugin() {
         return plugin;
+    }
+
     @Override
     public void onEnable() {
         plugin = this;
 
-        pluginManager.registerEvents(new MenuListener(), this);
-        pluginManager.registerEvents(new MachineManager(), this);
-        pluginManager.registerEvents(new LootPotManager(), this);
-//        pluginManager.registerEvents(new ResourcePackManager(), this);
+        // Simple listeners (no lifecycle)
+        register(new MenuListener());
+        register(new LootPotManager());
+        register(new ResourcePackManager());
 
-        PlayerPickaxeManager playerPickaxeManager = new PlayerPickaxeManager();
-        pluginManager.registerEvents(playerPickaxeManager, this);
-        registerCommand("pickaxe", playerPickaxeManager);
+        // Lifecycle managers
+        register(new MachineManager());
+        register(new MineManager());
 
+        // Special cases with commands
+        PlayerPickaxeManager pickaxeManager = new PlayerPickaxeManager();
+        register(pickaxeManager);
+        registerCommand("pickaxe", pickaxeManager);
+
+        // Non-listener, non-lifecycle
         RecipeRegistry.registerRecipes();
 
-        MineManager mineManager = new MineManager(this,
-                new Location(getServer().getWorld("world"), 602, 244, 641),
-                new Location(getServer().getWorld("world"), 650, 184, 589));
-        mineManager.startAutoRefill();
+        lifecycleManagers.forEach(LifecycleManager::start);
+    }
+
+    private void register(Object object) {
+        PluginManager pluginManager = getServer().getPluginManager();
+
+        if (object instanceof Listener listener) {
+            pluginManager.registerEvents(listener, this);
+        }
+
+        if (object instanceof LifecycleManager lifecycleManager) {
+            lifecycleManagers.add(lifecycleManager);
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        lifecycleManagers.forEach(LifecycleManager::stop);
     }
 }
