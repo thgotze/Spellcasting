@@ -19,6 +19,8 @@ public class PickaxeData {
         this.durabilityDamage = 0;
         this.enchantments = new HashSet<>();
         this.abilities = new HashSet<>();
+    public static PickaxeData fromPlayer(Player player) {
+        return PlayerProfileManager.getPlayerProfile(player).getPickaxeData();
     }
 
     public PickaxeMaterial getPickaxeMaterial() {
