@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.pickaxe.capability;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.Loot;

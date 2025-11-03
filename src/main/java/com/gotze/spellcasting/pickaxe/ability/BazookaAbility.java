@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Location;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class BazookaAbility extends Ability implements BlockBreaker {
 
@@ -32,7 +33,7 @@ public class BazookaAbility extends Ability implements BlockBreaker {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (System.currentTimeMillis() < cooldown) return;
         this.cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
-        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated")));
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!").color(YELLOW)));
 
         World world = player.getWorld();
         Location startLocation = player.getEyeLocation();

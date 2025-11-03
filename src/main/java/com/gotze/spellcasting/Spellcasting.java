@@ -45,7 +45,7 @@ public class Spellcasting extends JavaPlugin {
 
         // Machine manager
         MachineManager machineManager = new MachineManager();
-        pluginManager.registerEvents(resourcePackManager, this);
+        pluginManager.registerEvents(machineManager, this);
         lifecycleManagers.add(machineManager);
 
         // Mine manager

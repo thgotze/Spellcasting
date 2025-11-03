@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.pickaxe.menu;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.ItemStackBuilder;
@@ -74,7 +74,7 @@ public class MaterialMenu extends Menu {
 
                     PlayerInventory playerInventory = player.getInventory();
 
-                    PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+                    PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
                     PickaxeMaterial currentPickaxeMaterial = pickaxeData.getPickaxeMaterial();
                     PickaxeMaterial nextTierPickaxe = currentPickaxeMaterial.getNextTier();
 
@@ -95,7 +95,6 @@ public class MaterialMenu extends Menu {
 
                     playerInventory.removeItem(upgradeToken);
                     pickaxeData.setPickaxeMaterial(nextTierPickaxe);
-                    PlayerPickaxeService.savePickaxeDataToYAML(player);
 
                     ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
                     playerInventory.setItem(EquipmentSlot.HAND, updatedPickaxe);

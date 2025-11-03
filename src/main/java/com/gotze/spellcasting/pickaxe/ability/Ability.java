@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Rarity;
 import com.gotze.spellcasting.util.StringUtils;

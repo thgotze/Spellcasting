@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.ItemModelModifier;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
@@ -16,6 +16,7 @@ import java.util.List;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class HammerAbility extends Ability implements BlockBreakListener, BlockDamageListener, BlockBreaker, ItemModelModifier {
 
@@ -30,13 +31,14 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
-        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated")));
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!").color(YELLOW)));
 
         modifyItemModelTemporarily(player.getInventory().getItemInMainHand(),
                 Material.MACE,
                 20L * 15,
                 () -> {
                     player.sendActionBar(text("Hammer ability expired").color(RED));
+                    player.updateInventory();
                     this.isActive = false;
                 }
         );

@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Material;
@@ -25,7 +25,6 @@ public class EnrichenEnchantment extends Enchantment implements BlockBreakListen
         applicableOreTypes.put(Material.DEEPSLATE_GOLD_ORE, Material.RAW_GOLD_BLOCK);
         applicableOreTypes.put(Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE);
     }
-
 
     public EnrichenEnchantment() {
         super(EnchantmentType.ENRICHEN);

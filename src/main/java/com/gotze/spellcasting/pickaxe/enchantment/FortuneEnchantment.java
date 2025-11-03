@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.block.BlockCategories;

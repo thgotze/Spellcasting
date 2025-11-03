@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.*;
@@ -20,6 +20,7 @@ import java.util.List;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class SliceAbility extends Ability implements BlockBreaker {
     private final int[] START_DELAYS = {0, 6, 38, 44, 76, 82};
@@ -45,7 +46,7 @@ public class SliceAbility extends Ability implements BlockBreaker {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
-        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated")));
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!").color(YELLOW)));
 
         Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
         World world = player.getWorld();
