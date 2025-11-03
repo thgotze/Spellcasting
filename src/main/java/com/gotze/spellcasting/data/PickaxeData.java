@@ -1,24 +1,28 @@
-package com.gotze.spellcasting.pickaxe;
+package com.gotze.spellcasting.data;
 
+import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
+import org.bukkit.entity.Player;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PickaxeData {
     private PickaxeMaterial pickaxeMaterial;
     private int durabilityDamage;
     private int blocksBroken;
-    private final Set<Enchantment> enchantments;
-    private final Set<Ability> abilities;
+    private final List<Enchantment> enchantments;
+    private final List<Ability> abilities;
 
     public PickaxeData() {
         this.pickaxeMaterial = PickaxeMaterial.WOOD;
         this.blocksBroken = 0;
         this.durabilityDamage = 0;
-        this.enchantments = new HashSet<>();
-        this.abilities = new HashSet<>();
+        this.enchantments = new ArrayList<>();
+        this.abilities = new ArrayList<>();
+    }
+
     public static PickaxeData fromPlayer(Player player) {
         return PlayerProfileManager.getPlayerProfile(player).getPickaxeData();
     }
@@ -47,7 +51,7 @@ public class PickaxeData {
         this.blocksBroken += amount;
     }
 
-    public Set<Enchantment> getEnchantments() {
+    public List<Enchantment> getEnchantments() {
         return enchantments;
     }
 
@@ -89,7 +93,7 @@ public class PickaxeData {
         enchantments.clear();
     }
 
-    public Set<Ability> getAbilities() {
+    public List<Ability> getAbilities() {
         return abilities;
     }
 
