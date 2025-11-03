@@ -1,7 +1,8 @@
 package com.gotze.spellcasting.pickaxe;
 
-import com.gotze.spellcasting.PlayerBalanceService;
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.data.PickaxeData;
+import com.gotze.spellcasting.data.PlayerProfileManager;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
@@ -23,8 +24,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -32,11 +31,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreaker {
     private final Map<Player, Integer> selectedAbilityIndex = new HashMap<>();
@@ -50,7 +50,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
         if (pickaxe == null) return;
 
         // check if pickaxe is about to break, cancel event if so
-        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
         if (pickaxeData.getDurabilityDamage() + 1 == pickaxeData.getPickaxeMaterial().getMaxDurability()) {
             event.setCancelled(true);
             player.sendMessage(text("Pickaxe durability too low to continue mining!", RED));
@@ -86,7 +86,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
-        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
 
         for (Enchantment enchantment : pickaxeData.getEnchantments()) {
             if (enchantment instanceof BlockDamageListener blockDamageListener) {
@@ -109,7 +109,6 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
 
         event.setCancelled(true);
 
-        new PickaxeMenu(player);
         PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
 
         List<Ability> abilities = pickaxeData.getAbilities();
@@ -129,14 +128,13 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
 
         if (!event.getAction().isRightClick()) return;
         if (!player.isSneaking()) return;
-        if (event.getHand() == EquipmentSlot.HAND) return;
+        if (event.getHand() != EquipmentSlot.HAND) return;
 
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
         event.setCancelled(true);
 
-        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
         PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
         List<Ability> abilities = pickaxeData.getAbilities();
         if (abilities.isEmpty()) return;
@@ -170,20 +168,6 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
         }
     }
 
-    @EventHandler
-    public void onPlayerJoinLoadPickaxeData(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        PlayerPickaxeService.loadPickaxeDataFromYAML(player);
-        PlayerBalanceService.loadBalanceFromYAML(player); // TODO: Temp location for this method call
-    }
-
-    @EventHandler
-    public void onPlayerLeaveSavePickaxeData(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        PlayerPickaxeService.savePickaxeDataToYAML(player);
-        PlayerBalanceService.saveBalanceDataToYAML(player); // TODO: Temp location for this method call
-    }
-
     @Override
     public void execute(@NotNull CommandSourceStack commandSourceStack, @NotNull String @NotNull [] args) {
         if (!(commandSourceStack.getSender() instanceof Player player)) return;
@@ -200,7 +184,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
                 player.sendMessage(text("You received your pickaxe!", GREEN));
 
             } else if (args[0].equalsIgnoreCase("reset")) {
-                PlayerPickaxeService.resetPickaxeData(player);
+                PlayerProfileManager.resetPickaxeData(player);
                 player.sendMessage(text("Pickaxe data reset!", GREEN));
             }
         } else {

@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.enchantment.PhantomQuarryEnchantment;
 import com.gotze.spellcasting.util.block.BlockCategories;
@@ -21,6 +21,7 @@ import java.util.Map;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class PeekAbility extends Ability {
 
@@ -35,7 +36,7 @@ public class PeekAbility extends Ability {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
-        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated")));
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!").color(YELLOW)));
 
         Block centerBlock = player.getLocation().getBlock().getRelative(BlockFace.UP);
 

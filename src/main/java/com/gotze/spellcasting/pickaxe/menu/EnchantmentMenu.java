@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.pickaxe.menu;
 
-import com.gotze.spellcasting.pickaxe.PickaxeData;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.SoundUtils;
@@ -37,9 +37,8 @@ public class EnchantmentMenu extends Menu {
                 ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                 if (pickaxe == null) return;
 
-                PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+                PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
                 pickaxeData.removeEnchantments();
-                PlayerPickaxeService.savePickaxeDataToYAML(player);
 
                 ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
                 player.getInventory().setItem(EquipmentSlot.HAND, updatedPickaxe);
@@ -95,7 +94,7 @@ public class EnchantmentMenu extends Menu {
             return;
         }
 
-        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
         Enchantment enchantment = pickaxeData.getEnchantment(clickedEnchantmentType);
 
         if (enchantment == null) {
@@ -117,7 +116,6 @@ public class EnchantmentMenu extends Menu {
                 enchantment.increaseLevel();
             }
         }
-        PlayerPickaxeService.savePickaxeDataToYAML(player);
 
         playerInventory.removeItem(upgradeToken);
         ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
