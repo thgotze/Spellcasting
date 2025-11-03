@@ -39,6 +39,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreaker {
+    private final Map<Player, Integer> selectedAbilityIndex = new HashMap<>();
 
     @EventHandler
     public void onBlockBreakWithPickaxe(BlockBreakEvent event) {
@@ -101,7 +102,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
     }
 
     @EventHandler
-    public void onHandSwapOpenPickaxeMenu(PlayerSwapHandItemsEvent event) {
+    public void onHandSwapCycleAbility(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
@@ -109,10 +110,21 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
         event.setCancelled(true);
 
         new PickaxeMenu(player);
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
+
+        List<Ability> abilities = pickaxeData.getAbilities();
+        if (abilities.isEmpty()) return;
+
+        int current = selectedAbilityIndex.getOrDefault(player, 0);
+        int next = (current + 1) % abilities.size();
+        selectedAbilityIndex.put(player, next);
+
+        Ability selectedAbility = abilities.get(next);
+        player.sendActionBar(text("Selected ability: ").color(YELLOW).append(selectedAbility.getAbilityType().getFormattedName()));
     }
 
     @EventHandler
-    public void onShiftRightClickHoldingPickaxeActivateAbility(PlayerInteractEvent event) {
+    public void onShiftRightClickActivateAbility(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
         if (!event.getAction().isRightClick()) return;
@@ -125,6 +137,10 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
         event.setCancelled(true);
 
         PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
+        List<Ability> abilities = pickaxeData.getAbilities();
+        if (abilities.isEmpty()) return;
+
         if (pickaxeData.getDurabilityDamage() + 20 >= pickaxeData.getPickaxeMaterial().getMaxDurability()) {
             player.sendMessage(text("Pickaxe durability too low to activate ability", RED));
             player.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.MASTER, 1.0f, 1.0f, 404);
@@ -132,49 +148,11 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
             return;
         }
 
-        Set<Ability> abilities = pickaxeData.getAbilities();
+        int index = selectedAbilityIndex.getOrDefault(player, 0);
 
-        for (Ability ability : abilities) {
-            ability.activateAbility(player, pickaxeData);
-        }
+        Ability selectedAbility = abilities.get(index);
+        selectedAbility.activateAbility(player, pickaxeData);
     }
-
-//    private static final List<Ability> abilitiesCycle = new ArrayList<>();
-
-//    @EventHandler
-//    public void onRightClickHoldingPickaxeCycleAbilities(PlayerInteractEvent event) {
-//        Player player = event.getPlayer();
-//
-//        if (!event.getAction().isRightClick()) return;
-//        if (player.isSneaking()) return;
-//        if (event.getHand() != EquipmentSlot.HAND) return;
-//
-//        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
-//        if (pickaxe == null) return;
-//
-//        event.setCancelled(true);
-//
-//        PickaxeData pickaxeData = PlayerPickaxeService.getPickaxeData(player);
-//
-//        if (abilitiesCycle.isEmpty()) {
-//            Ability peek = pickaxeData.getAbility(Ability.AbilityType.PEEK);
-//            if (peek != null) {
-//                abilitiesCycle.add(peek);
-//            }
-//            Ability hammer = pickaxeData.getAbility(Ability.AbilityType.HAMMER);
-//            if (hammer != null) {
-//                abilitiesCycle.add(hammer);
-//            }
-//            return;
-//        }
-//
-//        Ability firstAbility = abilitiesCycle.get(0);
-//        Ability secondAbility = abilitiesCycle.get(1);
-//
-//        abilitiesCycle.set(1, firstAbility);
-//        abilitiesCycle.set(0, secondAbility);
-//        player.sendActionBar(secondAbility.getAbilityType().getFormattedName());
-//    }
 
     @EventHandler
     public void onRightClickPickaxeInInventoryOpenMenu(InventoryClickEvent event) {
