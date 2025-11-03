@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.pickaxe;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.ItemStackBuilder;
@@ -10,16 +11,14 @@ import com.gotze.spellcasting.util.menu.MenuUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
@@ -28,98 +27,8 @@ import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 import static net.kyori.adventure.text.format.TextDecoration.State.FALSE;
 
 public class PlayerPickaxeService {
-    private static final Map<Player, PickaxeData> PLAYER_PICKAXE_DATA_MAP = new HashMap<>();
-
-    public static PickaxeData getPickaxeData(Player player) {
-        return PLAYER_PICKAXE_DATA_MAP.get(player);
-    }
-
-    public static void resetPickaxeData(Player player) {
-        PLAYER_PICKAXE_DATA_MAP.put(player, new PickaxeData());
-    }
-
-    public static void loadPickaxeDataFromYAML(Player player) {
-        if (PLAYER_PICKAXE_DATA_MAP.containsKey(player)) return;
-
-        PLAYER_PICKAXE_DATA_MAP.put(player, new PickaxeData());
-        PickaxeData pickaxeData = PLAYER_PICKAXE_DATA_MAP.get(player);
-
-        UUID uuid = player.getUniqueId();
-        File playerFile = new File(Spellcasting.getPlugin().getDataFolder() + "/playerdata", uuid + ".yml");
-        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
-
-        if (!playerFile.exists() || !yamlConfiguration.contains("pickaxe-data")) {
-            savePickaxeDataToYAML(player);
-            return;
-        }
-
-        pickaxeData.setPickaxeMaterial(PickaxeMaterial.valueOf(yamlConfiguration.getString("pickaxe-data.pickaxe-type")));
-        pickaxeData.setDurabilityDamage(yamlConfiguration.getInt("pickaxe-data.durability-damage"));
-        pickaxeData.addBlocksBroken(yamlConfiguration.getInt("pickaxe-data.blocks-broken"));
-
-        for (String string : yamlConfiguration.getStringList("pickaxe-data.enchantments")) {
-            String[] split = string.split(" ");
-
-            Enchantment.EnchantmentType enchantmentType = Enchantment.EnchantmentType.valueOf(split[0]);
-            int level = Integer.parseInt(split[1]);
-
-            try {
-                Enchantment enchantment = enchantmentType.getEnchantmentClass().getDeclaredConstructor().newInstance();
-                enchantment.setLevel(level);
-                pickaxeData.addEnchantment(enchantment);
-
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to load enchantment " + enchantmentType.name() + " from " + playerFile.getPath(), e);
-            }
-        }
-
-        for (String string : yamlConfiguration.getStringList("pickaxe-data.abilities")) {
-            String[] split = string.split(" ");
-
-            Ability.AbilityType abilityType = Ability.AbilityType.valueOf(split[0]);
-            int level = Integer.parseInt(split[1]);
-
-            try {
-                Ability ability = abilityType.getAbilityClass().getDeclaredConstructor().newInstance();
-                ability.setLevel(level);
-                pickaxeData.addAbility(ability);
-
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to load ability " + abilityType.name() + " from " + playerFile.getPath(), e);
-            }
-        }
-    }
-
-    public static void savePickaxeDataToYAML(Player player) {
-        UUID uuid = player.getUniqueId();
-        File playerFile = new File(Spellcasting.getPlugin().getDataFolder() + "/playerdata", uuid + ".yml");
-        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
-
-        PickaxeData pickaxeData = getPickaxeData(player);
-
-        yamlConfiguration.set("pickaxe-data.pickaxe-type", pickaxeData.getPickaxeMaterial().name());
-        yamlConfiguration.set("pickaxe-data.durability-damage", pickaxeData.getDurabilityDamage());
-        yamlConfiguration.set("pickaxe-data.blocks-broken", pickaxeData.getBlocksBroken());
-
-        List<String> enchantmentsSerialized = pickaxeData.getEnchantments().stream()
-                .map(enchantment -> enchantment.getEnchantmentType().name() + " " + enchantment.getLevel())
-                .toList();
-        yamlConfiguration.set("pickaxe-data.enchantments", enchantmentsSerialized);
-
-        List<String> abilitiesSerialized = pickaxeData.getAbilities().stream()
-                .map(ability -> ability.getAbilityType().name() + " " + ability.getLevel())
-                .toList();
-        yamlConfiguration.set("pickaxe-data.abilities", abilitiesSerialized);
-
-        try {
-            yamlConfiguration.save(playerFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static ItemStack getPlayerPickaxe(Player player) {
-        PickaxeData pickaxeData = getPickaxeData(player);
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
 
         PickaxeMaterial pickaxeMaterial = pickaxeData.getPickaxeMaterial();
 
@@ -214,7 +123,7 @@ public class PlayerPickaxeService {
     public static List<Component> getPickaxeLore(PickaxeData pickaxeData) {
         List<Component> lore = new ArrayList<>();
 
-        Set<Enchantment> enchantments = pickaxeData.getEnchantments();
+        List<Enchantment> enchantments = pickaxeData.getEnchantments();
         if (!enchantments.isEmpty()) {
             // Sort enchantments by rarity in descending order (Legendary -> Common)
             List<Enchantment> sortedEnchantments = enchantments.stream()
@@ -232,7 +141,7 @@ public class PlayerPickaxeService {
             lore.add(empty());
         }
 
-        Set<Ability> abilities = pickaxeData.getAbilities();
+        List<Ability> abilities = pickaxeData.getAbilities();
         if (!abilities.isEmpty()) {
             // Sort abilities by rarity in descending order (Legendary -> Common)
             List<Ability> sortedAbilities = abilities.stream()
