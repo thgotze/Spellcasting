@@ -3,6 +3,7 @@ package com.gotze.spellcasting.merchants;
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PlayerProfileManager;
 import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -59,7 +60,12 @@ public class OreMerchantMenu extends Menu {
 
     private void populate(Player player) {
         for (int acceptTradeSlot : acceptTradeSlots) {
-            setItem(acceptTradeSlot, BLACK_PANE);
+            setButton(new Button(acceptTradeSlot,BLACK_PANE) {
+                @Override
+                public void onButtonClick(InventoryClickEvent event) {
+
+                }
+            });
         }
     }
 
@@ -95,9 +101,14 @@ public class OreMerchantMenu extends Menu {
                 Material glassType = getInventory().getItem(slot).getType();
                 if (glassType == Material.YELLOW_STAINED_GLASS_PANE) {
                     for (int slot2 : acceptTradeSlots) {
-                        setItem(slot2, new ItemStackBuilder(LIME_PANE)
+                        setButton(new Button(slot2,new ItemStackBuilder(LIME_PANE)
                                 .name(text("Click again to accept").color(GREEN))
-                                .build());
+                                .build()) {
+                            @Override
+                            public void onButtonClick(InventoryClickEvent event) {
+
+                            }
+                        });
                     }
 
                 } else if (glassType == Material.LIME_STAINED_GLASS_PANE) {
@@ -111,7 +122,12 @@ public class OreMerchantMenu extends Menu {
                     }
 
                     for (int acceptTradeSlot : acceptTradeSlots) {
-                        setItem( acceptTradeSlot, BLACK_PANE);
+                        setButton(new Button(acceptTradeSlot, BLACK_PANE) {
+                            @Override
+                            public void onButtonClick(InventoryClickEvent event) {
+
+                            }
+                        });
                     }
                     Player player = (Player) event.getWhoClicked();
                     PlayerProfileManager.getPlayerProfile(player).addBalance(totalSellValue);
@@ -123,14 +139,24 @@ public class OreMerchantMenu extends Menu {
 
         if (totalSellValue > 0.00) {
             for (int slot : acceptTradeSlots) {
-                setItem( slot, new ItemStackBuilder(YELLOW_PANE)
+                setButton(new Button(slot, new ItemStackBuilder(YELLOW_PANE)
                         .name(text("Total sell value: " + totalSellValue).color(YELLOW))
-                        .build());
+                        .build()) {
+                    @Override
+                    public void onButtonClick(InventoryClickEvent event) {
+
+                    }
+                });
             }
 
         } else {
             for (int slot : acceptTradeSlots) {
-                setItem(slot, BLACK_PANE);
+                setButton(new Button(slot, BLACK_PANE) {
+                    @Override
+                    public void onButtonClick(InventoryClickEvent event) {
+
+                    }
+                });
             }
         }
     }
@@ -141,9 +167,14 @@ public class OreMerchantMenu extends Menu {
 
         if (totalSellValue > 0.00) {
             for (int acceptTradeSlot : acceptTradeSlots) {
-                setItem(acceptTradeSlot, new ItemStackBuilder(YELLOW_PANE)
+                setButton(new Button(acceptTradeSlot, new ItemStackBuilder(YELLOW_PANE)
                         .name(text("Total sell value: " + totalSellValue).color(YELLOW))
-                        .build());
+                        .build()) {
+                    @Override
+                    public void onButtonClick(InventoryClickEvent event) {
+
+                    }
+                });
             }
         }
     }
