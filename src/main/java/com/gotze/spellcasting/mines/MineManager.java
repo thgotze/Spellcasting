@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.mines;
 
-import com.gotze.spellcasting.util.LifecycleManager;
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.util.LifecycleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,8 +34,8 @@ public class MineManager implements LifecycleManager {
         weightedBlockSelector1.addBlock(Material.STONE, 89.25);
 
         mines.add(new Mine(world, weightedBlockSelector1,
-                new Location(world, 602, 244, 641),
-                new Location(world, 650, 184, 589)
+                new Location(world, -24, 96, 25),
+                new Location(world, 24, 36, 77)
         ));
 
         tickTask = Bukkit.getScheduler().runTaskTimerAsynchronously(

@@ -27,12 +27,12 @@ public class Merchant implements Listener {
         World world = Bukkit.getWorld("world");
         if (world == null) return;
 
-        registerVillager(world, new Location(world, 630.5, 245, 586.5),
-                Villager.Type.TAIGA, Villager.Profession.ARMORER, "Machine Seller");
-        registerVillager(world, new Location(world, 626.5, 245, 586.5),
-                Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, "Ore Merchant");
-        registerVillager(world, new Location(world, 622.5, 245, 586.5),
+        registerVillager(world, new Location(world, -3.5, 97, 21.5),
                 Villager.Type.SAVANNA, Villager.Profession.LIBRARIAN, "Token Seller");
+        registerVillager(world, new Location(world, 0.5, 97, 21.5),
+                Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, "Ore Merchant");
+        registerVillager(world, new Location(world, 4.5, 97, 21.5),
+                Villager.Type.TAIGA, Villager.Profession.ARMORER, "Machine Seller");
     }
 
     private void registerVillager(World world, Location loc, Villager.Type type, Villager.Profession prof, String name) {
