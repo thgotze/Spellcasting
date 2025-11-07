@@ -64,7 +64,7 @@ public abstract class Menu implements InventoryHolder {
         inventory.setItem(slot, item);
     }
 
-    public void remove(int slot) {
+    public void removeItem(int slot) {
         inventory.setItem(slot, null);
     }
 

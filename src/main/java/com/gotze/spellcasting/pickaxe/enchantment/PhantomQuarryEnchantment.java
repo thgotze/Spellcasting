@@ -9,10 +9,10 @@ import com.gotze.spellcasting.util.block.BlockCategories;
 import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockType;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.EntityType;
@@ -28,7 +28,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
-    private static final BlockData TINTED_GLASS = Material.TINTED_GLASS.createBlockData();
+    private static final BlockData TINTED_GLASS = BlockType.TINTED_GLASS.createBlockData();
 
 //    private static final long BASE_COOLDOWN = 300; // 15 seconds
     private static final long BASE_COOLDOWN = 20; // 1 second
@@ -66,7 +66,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
             List<Block> cornerBlocks = new ArrayList<>();
             cornerBlocks.addAll(BlockUtils.getPositiveDiagonalBlocks(block, blockFace, 2));
             cornerBlocks.addAll(BlockUtils.getNegativeDiagonalBlocks(block, blockFace, 2));
-            cornerBlocks.removeIf(b -> (!BlockCategories.ORE_BLOCKS.containsKey(b.getType()) && !BlockCategories.FILLER_BLOCKS.contains(b.getType())));
+            cornerBlocks.removeIf(cornerBlock -> !BlockCategories.ORE_BLOCKS.containsKey(cornerBlock.getType()) && !BlockCategories.FILLER_BLOCKS.contains(cornerBlock.getType()));
 
             // If less than 3 corners were found, then don't activate the enchantment
             if (cornerBlocks.size() < 3) {
@@ -139,7 +139,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 default -> null;
             };
             if (blocksToBreak == null) return;
-            blocksToBreak.removeIf(b -> b.getType().isAir());
+            blocksToBreak.removeIf(blockToBreak -> blockToBreak.getType().isAir());
             Collections.shuffle(blocksToBreak);
 
             new BukkitRunnable() {

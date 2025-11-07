@@ -25,8 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MachineManager implements Listener, LifecycleManager {
-    private final Map<Location, Machine> machines = new ConcurrentHashMap<>();
-    private BukkitTask tickTask;
+    private static final Map<Location, Machine> machines = new ConcurrentHashMap<>();
+    private static BukkitTask tickTask;
 
     @Override
     public void start() {

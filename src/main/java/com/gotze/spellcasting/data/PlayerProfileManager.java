@@ -26,14 +26,6 @@ public class PlayerProfileManager implements Listener {
         return PLAYER_PROFILE_MAP.get(player);
     }
 
-    public static double getBalance(Player player) {
-        return PLAYER_PROFILE_MAP.get(player).getBalance();
-    }
-
-    public static PickaxeData getPickaxeData(Player player) {
-        return PLAYER_PROFILE_MAP.get(player).getPickaxeData();
-    }
-
     public static void resetPickaxeData(Player player) {
         PLAYER_PROFILE_MAP.get(player).setPickaxeData(new PickaxeData());
     }

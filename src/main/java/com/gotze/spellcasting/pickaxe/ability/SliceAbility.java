@@ -55,6 +55,7 @@ public class SliceAbility extends Ability implements BlockBreaker {
         for (int i = 0; i < 6; i++) {
             itemDisplays[i] = (ItemDisplay) world.spawnEntity(spawnLocation, EntityType.ITEM_DISPLAY);
             itemDisplays[i].setBrightness(new Display.Brightness(15, 15));
+            itemDisplays[i].setPersistent(false);
             itemDisplays[i].setTransformationMatrix(new Matrix4f()
                     .rotateZ((float) Math.toRadians(DISPLAY_ROTATIONS[i]))
                     .rotateX((float) Math.toRadians(90f))

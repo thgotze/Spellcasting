@@ -18,10 +18,10 @@ public class MenuUtils {
 
     public static void setFrames(Inventory inventory) {
         for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, MenuUtils.FRAME_ITEM);
+            inventory.setItem(i, FRAME_ITEM);
         }
         for (int i = 36; i < 45; i++) {
-            inventory.setItem(i, MenuUtils.FRAME_ITEM);
+            inventory.setItem(i, FRAME_ITEM);
         }
     }
 

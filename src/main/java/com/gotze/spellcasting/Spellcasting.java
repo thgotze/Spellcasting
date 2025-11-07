@@ -4,6 +4,7 @@ import com.gotze.spellcasting.data.PlayerProfileManager;
 import com.gotze.spellcasting.machine.MachineManager;
 import com.gotze.spellcasting.mines.MineManager;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
+import com.gotze.spellcasting.merchants.Merchant;
 import com.gotze.spellcasting.util.LifecycleManager;
 import com.gotze.spellcasting.util.menu.MenuListener;
 import org.bukkit.plugin.PluginManager;
@@ -57,8 +58,10 @@ public class Spellcasting extends JavaPlugin {
         pluginManager.registerEvents(pickaxeManager, this);
         registerCommand("pickaxe", pickaxeManager);
 
-        // Recipe registry
+        // Other
         RecipeRegistry.registerRecipes();
+        Merchant shop = new Merchant();
+        pluginManager.registerEvents(shop, this);
 
         // Life cycle managers
         lifecycleManagers.forEach(LifecycleManager::start);

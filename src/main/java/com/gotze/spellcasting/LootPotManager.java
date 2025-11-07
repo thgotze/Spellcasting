@@ -93,8 +93,8 @@ public class LootPotManager implements Listener {
             // Pot sherds
             // ---------------
             List.of(new Loot(new ItemStackBuilder(Material.MINER_POTTERY_SHERD)
-                            .lore(text("Collect 4 to craft a lootpot!",YELLOW))
-                            .build(), 0.50)
+                    .lore(text("Collect 4 to craft a lootpot!", YELLOW))
+                    .build(), 0.50)
             ),
             // Enchantment tokens again? // TODO: figure out which one to use, this or the one above
             Stream.of(Enchantment.EnchantmentType.values())
@@ -130,7 +130,7 @@ public class LootPotManager implements Listener {
             }
         }
 
-        player.sendMessage(text("You uncovered a lootpot!",GREEN));
+        player.sendMessage(text("You uncovered a lootpot!", GREEN));
 
         Location blockCenterLocation = block.getLocation().toCenterLocation();
         World world = block.getWorld();
