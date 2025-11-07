@@ -30,7 +30,6 @@ public class MomentumEnchantment extends Enchantment implements BlockBreakListen
 
     public MomentumEnchantment() {
         super(EnchantmentType.MOMENTUM);
-
     }
 
     @Override
@@ -66,8 +65,8 @@ public class MomentumEnchantment extends Enchantment implements BlockBreakListen
 
     private void markNewNearbyOreBlock(Player player, Block origin) {
         List<Block> candidateBlocks = BlockUtils.getBlocksInSquarePattern(origin, 3, 3, 3);
-        candidateBlocks.removeIf(candidate -> !BlockCategories.ORE_BLOCKS.containsKey(candidate.getType()) ||
-                candidate.equals(origin));
+        candidateBlocks.remove(origin);
+        candidateBlocks.removeIf(candidate -> !BlockCategories.ORE_BLOCKS.containsKey(candidate.getType()));
 
         if (candidateBlocks.isEmpty()) {
             markedBlock = null;
