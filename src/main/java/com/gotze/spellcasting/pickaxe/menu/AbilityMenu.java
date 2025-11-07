@@ -31,9 +31,9 @@ public class AbilityMenu extends Menu {
     private void populate(Player player) {
         MenuUtils.setFrames(getInventory());
 
-        button(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) { // TODO: debug
+        setButton(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) { // TODO: debug
             @Override
-            public void onClick(InventoryClickEvent event) {
+            public void onButtonClick(InventoryClickEvent event) {
                 if (event.getClick() != ClickType.DROP) return;
                 ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                 if (pickaxe == null) return;
@@ -51,9 +51,9 @@ public class AbilityMenu extends Menu {
 
         int startingIndex = 9;
         for (Ability.AbilityType abilityType : Ability.AbilityType.values()) {
-            buttons(new Button(startingIndex++, abilityType.getMenuItem()) {
+            this.setButton(new Button(startingIndex++, abilityType.getMenuItem()) {
                 @Override
-                public void onClick(InventoryClickEvent event) {
+                public void onButtonClick(InventoryClickEvent event) {
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
                         ItemStack upgradeToken = abilityType.getUpgradeToken();
                         upgradeToken.setAmount(abilityType.getRequiredTokenAmount());
@@ -66,9 +66,9 @@ public class AbilityMenu extends Menu {
             });
         }
 
-        button(new Button(36, MenuUtils.RETURN_ITEM) {
+        setButton(new Button(36, MenuUtils.RETURN_ITEM) {
             @Override
-            public void onClick(InventoryClickEvent event) {
+            public void onButtonClick(InventoryClickEvent event) {
                 new PickaxeMenu(player);
                 SoundUtils.playUIClickSound(player);
             }
@@ -126,17 +126,22 @@ public class AbilityMenu extends Menu {
     }
 
     @Override
-    protected void onOpen(InventoryOpenEvent event) {
+    protected void onInventoryOpen(InventoryOpenEvent event) {
 
     }
 
     @Override
-    protected void onClose(InventoryCloseEvent event) {
+    protected void onInventoryClose(InventoryCloseEvent event) {
 
     }
 
     @Override
-    protected void onClick(InventoryClickEvent event) {
+    protected void onTopInventoryClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    protected void onBottomInventoryClick(InventoryClickEvent event) {
 
     }
 }

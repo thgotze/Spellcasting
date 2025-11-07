@@ -8,7 +8,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 
 import java.util.Optional;
 
@@ -16,53 +15,72 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent event) {
-        asMenu(event.getInventory()).ifPresent(menu -> menu.onOpen(event));
+        asMenu(event.getInventory()).ifPresent(menu -> menu.onInventoryOpen(event));
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        asMenu(event.getInventory()).ifPresent(menu -> menu.onClose(event));
+        asMenu(event.getInventory()).ifPresent(menu -> menu.onInventoryClose(event));
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() == null) return;
+        Inventory clickedInventory = event.getClickedInventory();
+        if (clickedInventory == null) return;
 
-        asMenu(event.getView().getTopInventory()).ifPresent(menu -> {
-            // Cancel event if player clicks their own inventory in a non-interactable menu
-            if (event.getClickedInventory() != menu.getInventory()) {
-                if (!menu.isInteractable()) {
+        asMenu(event.getInventory()).ifPresent(menu -> {
+            // ---------------
+            // Clicked top inventory
+            // ---------------
+            if (clickedInventory.equals(event.getView().getTopInventory())) {
+                // ===============
+                // Clicked slot is a button
+                // ===============
+                Button button = menu.getButtons().get(event.getSlot());
+                if (button != null) {
+                    // Prevent item movement
                     event.setCancelled(true);
+
+                    Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+                        button.onButtonClick(event);
+                        menu.onTopInventoryClick(event);
+                    }, 1L);
+                }
+                // ===============
+                // Clicked slot is not a button
+                // ===============
+                else {
+                    // Prevent item movement if menu is non-interactable
+                    if (!menu.isInteractable()) {
+                        event.setCancelled(true);
+                    }
+                    Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+                        menu.onTopInventoryClick(event);
+                    }, 1L);
                 }
                 return;
             }
-
-            // Cancel event if button is not interactable
-            Button button = menu.buttons().get(event.getSlot());
-            if (button != null) {
-                if (!button.isInteractable()) {
-                    event.setCancelled(true);
-                }
-            } else {
-                // Cancel event if clicked slot is not a button but a regular item and the menu is not interactable
+            // ---------------
+            // Clicked bottom inventory
+            // ---------------
+            if (clickedInventory.equals(event.getView().getBottomInventory())) {
+                // Prevent item movement if menu is non-interactable
                 if (!menu.isInteractable()) {
                     event.setCancelled(true);
                 }
-            }
 
-            Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
-                if (button != null) {
-                    button.onClick(event);
-                }
-                menu.onClick(event);
-            }, 1L);
+                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+                    menu.onBottomInventoryClick(event);
+                }, 1L);
+            }
         });
     }
 
     private Optional<Menu> asMenu(Inventory inventory) {
-        InventoryHolder inventoryHolder = inventory.getHolder();
-        if (inventoryHolder == null) return Optional.empty();
-        if (inventoryHolder instanceof Menu menu) return Optional.of(menu);
-        return Optional.empty();
+        if (inventory.getHolder() instanceof Menu menu) {
+            return Optional.of(menu);
+        } else {
+            return Optional.empty();
+        }
     }
 }

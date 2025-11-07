@@ -27,36 +27,36 @@ public class PickaxeMenu extends Menu {
     private void populate(Player player) {
         MenuUtils.setFrames(getInventory());
 
-        item(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player));
+        setItem(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player));
 
-        button(new Button(21, new ItemStackBuilder(Material.ENCHANTED_BOOK)
+        setButton(new Button(21, new ItemStackBuilder(Material.ENCHANTED_BOOK)
                 .name(text("Enchantments", LIGHT_PURPLE))
                 .lore(text(StringUtils.convertToSmallFont("View pickaxe enchantments"), GRAY))
                 .build()) {
             @Override
-            public void onClick(InventoryClickEvent event) {
+            public void onButtonClick(InventoryClickEvent event) {
                 new EnchantmentMenu(player);
                 SoundUtils.playUIClickSound(player);
             }
         });
 
-        button(new Button(22, new ItemStackBuilder(Material.ANVIL)
+        setButton(new Button(22, new ItemStackBuilder(Material.ANVIL)
                 .name(text("Materials", AQUA))
                 .lore(text(StringUtils.convertToSmallFont("View pickaxe materials"), GRAY))
                 .build()) {
             @Override
-            public void onClick(InventoryClickEvent event) {
+            public void onButtonClick(InventoryClickEvent event) {
                 new MaterialMenu(player);
                 SoundUtils.playUIClickSound(player);
             }
         });
 
-        button(new Button(23, new ItemStackBuilder(Material.END_CRYSTAL)
+        setButton(new Button(23, new ItemStackBuilder(Material.END_CRYSTAL)
                 .name(text("Abilities",RED))
                 .lore(text(StringUtils.convertToSmallFont("View pickaxe abilities"), GRAY))
                 .build()) {
             @Override
-            public void onClick(InventoryClickEvent event) {
+            public void onButtonClick(InventoryClickEvent event) {
                 new AbilityMenu(player);
                 SoundUtils.playUIClickSound(player);
             }
@@ -64,17 +64,22 @@ public class PickaxeMenu extends Menu {
     }
 
     @Override
-    protected void onOpen(InventoryOpenEvent event) {
+    protected void onInventoryOpen(InventoryOpenEvent event) {
 
     }
 
     @Override
-    protected void onClose(InventoryCloseEvent event) {
+    protected void onInventoryClose(InventoryCloseEvent event) {
 
     }
 
     @Override
-    protected void onClick(InventoryClickEvent event) {
+    protected void onTopInventoryClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    protected void onBottomInventoryClick(InventoryClickEvent event) {
 
     }
 }

@@ -31,9 +31,9 @@ public class EnchantmentMenu extends Menu {
     private void populate(Player player) {
         MenuUtils.setFrames(getInventory());
 
-        button(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) {
+        setButton(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) {
             @Override
-            public void onClick(InventoryClickEvent event) {
+            public void onButtonClick(InventoryClickEvent event) {
                 ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                 if (pickaxe == null) return;
 
@@ -50,9 +50,9 @@ public class EnchantmentMenu extends Menu {
 
         int startingIndex = 9;
         for (Enchantment.EnchantmentType enchantmentType : Enchantment.EnchantmentType.values()) {
-            button(new Button(startingIndex++, enchantmentType.getMenuItem()) {
+            setButton(new Button(startingIndex++, enchantmentType.getMenuItem()) {
                 @Override
-                public void onClick(InventoryClickEvent event) {
+                public void onButtonClick(InventoryClickEvent event) {
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
                         ItemStack upgradeToken = enchantmentType.getUpgradeToken();
                         upgradeToken.setAmount(enchantmentType.getRequiredTokenAmount());
@@ -65,9 +65,9 @@ public class EnchantmentMenu extends Menu {
             });
         }
 
-        button(new Button(36, MenuUtils.RETURN_ITEM) {
+        setButton(new Button(36, MenuUtils.RETURN_ITEM) {
             @Override
-            public void onClick(InventoryClickEvent event) {
+            public void onButtonClick(InventoryClickEvent event) {
                 new PickaxeMenu(player);
                 SoundUtils.playUIClickSound(player);
             }
@@ -126,17 +126,22 @@ public class EnchantmentMenu extends Menu {
     }
 
     @Override
-    protected void onOpen(InventoryOpenEvent event) {
+    protected void onInventoryOpen(InventoryOpenEvent event) {
 
     }
 
     @Override
-    protected void onClose(InventoryCloseEvent event) {
+    protected void onInventoryClose(InventoryCloseEvent event) {
 
     }
 
     @Override
-    protected void onClick(InventoryClickEvent event) {
+    protected void onTopInventoryClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    protected void onBottomInventoryClick(InventoryClickEvent event) {
 
     }
 }
