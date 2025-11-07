@@ -46,25 +46,16 @@ tasks {
             "-XX:InitiatingHeapOccupancyPercent=15",
             "-XX:MaxGCPauseMillis=200",
             "-XX:MaxTenuringThreshold=1",
-            "-XX:SurvivorRatio=32")
+            "-XX:SurvivorRatio=32",
 
-//            "-XX:+AllowEnhancedClassRedefinition",
+            "-XX:ReservedCodeCacheSize=512M",
+            "-XX:NonProfiledCodeHeapSize=250M",
+            "-XX:ProfiledCodeHeapSize=250M",
 
-//            "-XX:ReservedCodeCacheSize=1G",
-//            "-XX:NonProfiledCodeHeapSize=256M",
-//            "-XX:ProfiledCodeHeapSize=256M"
-
-//            "-XX:ReservedCodeCacheSize=2G",
-//            "-XX:NonProfiledCodeHeapSize=1G",
-//            "-XX:ProfiledCodeHeapSize=1000M",
-
-//            "-XX:+UseCodeCacheFlushing",
-//            "-XX:+SegmentedCodeCache",
-//            "-XX:+UseStringDeduplication",
-//            "-XX:+UseFastUnorderedTimeStamps",
-//            "-XX:+OptimizeStringConcat",
-//            "-Dusing.aikars.flags=https://mcflags.emc.gs",
-//            "-Daikars.new.flags=true"
-//        )
+            "-XX:+UseCodeCacheFlushing",
+            "-XX:+SegmentedCodeCache",
+            "-XX:+UseStringDeduplication",
+            "-XX:+UseFastUnorderedTimeStamps"
+        )
     }
 }
