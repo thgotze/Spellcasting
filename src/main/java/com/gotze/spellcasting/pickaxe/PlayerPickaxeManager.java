@@ -164,7 +164,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
 
         if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) {
             event.setCancelled(true);
-            new PickaxeMenu(player);
+            Bukkit.getScheduler().runTask(Spellcasting.getPlugin(), () -> new PickaxeMenu(player));
         }
     }
 
