@@ -4,42 +4,21 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class Button {
-    private int slot;
-    private ItemStack item;
-    private boolean interactable = false; // Default to non-interactable
+    private final int slot;
+    private final ItemStack item;
 
     public Button(int slot, ItemStack item) {
         this.slot = slot;
         this.item = item;
     }
 
-    public Button(int slot, ItemStack item, boolean interactable) {
-        this.slot = slot;
-        this.item = item;
-        this.interactable = interactable;
-    }
-
-    public abstract void onClick(InventoryClickEvent event);
-
-    public int slot() {
+    public int getSlot() {
         return slot;
     }
 
-    public ItemStack item() {
+    public ItemStack getItem() {
         return item;
     }
 
-    public Button item(ItemStack item) {
-        this.item = item;
-        return this;
-    }
-
-    public boolean isInteractable() {
-        return interactable;
-    }
-
-    public Button interactable(boolean interactable) {
-        this.interactable = interactable;
-        return this;
-    }
+    public abstract void onButtonClick(InventoryClickEvent event);
 }
