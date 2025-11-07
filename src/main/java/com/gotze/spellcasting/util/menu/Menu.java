@@ -39,11 +39,13 @@ public abstract class Menu implements InventoryHolder {
         this.interactable = interactable;
     }
 
-    protected abstract void onOpen(InventoryOpenEvent event);
+    protected abstract void onInventoryOpen(InventoryOpenEvent event);
 
-    protected abstract void onClose(InventoryCloseEvent event);
+    protected abstract void onInventoryClose(InventoryCloseEvent event);
 
-    protected abstract void onClick(InventoryClickEvent event);
+    protected abstract void onTopInventoryClick(InventoryClickEvent event);
+
+    protected abstract void onBottomInventoryClick(InventoryClickEvent event);
 
     public boolean isInteractable() {
         return interactable;
@@ -54,11 +56,11 @@ public abstract class Menu implements InventoryHolder {
         player.openInventory(inventory);
     }
 
-    public void items(@NotNull ItemStack... items) {
+    public void setItems(ItemStack... items) {
         inventory.addItem(items);
     }
 
-    public void item(int slot, ItemStack item) {
+    public void setItem(int slot, ItemStack item) {
         inventory.setItem(slot, item);
     }
 
@@ -66,19 +68,19 @@ public abstract class Menu implements InventoryHolder {
         inventory.setItem(slot, null);
     }
 
-    public void buttons(Button... buttons) {
+    public void setButtons(Button... buttons) {
         for (Button button : buttons) {
-            this.buttons.put(button.slot(), button);
-            inventory.setItem(button.slot(), button.item());
+            this.buttons.put(button.getSlot(), button);
+            inventory.setItem(button.getSlot(), button.getItem());
         }
     }
 
-    public void button(Button button) {
-        this.buttons.put(button.slot(), button);
-        inventory.setItem(button.slot(), button.item());
+    public void setButton(Button button) {
+        this.buttons.put(button.getSlot(), button);
+        inventory.setItem(button.getSlot(), button.getItem());
     }
 
-    public Map<Integer, Button> buttons() {
+    public Map<Integer, Button> getButtons() {
         return Collections.unmodifiableMap(buttons);
     }
 
