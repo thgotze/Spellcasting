@@ -39,40 +39,40 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreaker {
-    private final Map<Player, Integer> selectedAbilityIndex = new HashMap<>();
+    private static final Map<Player, Integer> selectedAbilityIndex = new HashMap<>();
 
     @EventHandler
     public void onBlockBreakWithPickaxe(BlockBreakEvent event) {
         Player player = event.getPlayer();
 
-        // check player is holding their pickaxe
+        // Check player is holding their pickaxe
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
-        // check if pickaxe is about to break, cancel event if so
+        // Check if pickaxe is about to break, cancel event if so
         PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
         if (pickaxeData.getDurabilityDamage() + 1 == pickaxeData.getPickaxeMaterial().getMaxDurability()) {
             event.setCancelled(true);
             player.sendMessage(text("Pickaxe durability too low to continue mining!", RED));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20 * 3 /*3 seconds*/, 2));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 60, 2));
             player.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.MASTER, 1.0f, 1.0f, 404);
             SoundUtils.playErrorSound(player);
             return;
         }
 
-        // at this point the block break event is allowed to go through i.e., NOT canceled
+        // At this point the block break event is allowed to go through i.e., NOT canceled
         Block block = event.getBlock();
 
-        // handles the block break itself (increment blocks broken and drop items)
-        // notifies all listeners about this natural block break
+        // Handles the block break itself (increment blocks broken and drop items)
+        // Notifies all listeners about this natural block break
         breakBlock(player, block, pickaxeData, true);
 
-        // remove default ore drops
+        // Remove default ore drops
         if (BlockCategories.ORE_BLOCKS.containsKey(block.getType())) {
             event.setDropItems(false);
         }
 
-        // update pickaxe durability and lore a tick later
+        // Update pickaxe durability and lore a tick later
         Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
             int durabilityDamage = pickaxe.getData(DataComponentTypes.DAMAGE);
             pickaxeData.setDurabilityDamage(durabilityDamage);
