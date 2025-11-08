@@ -4,7 +4,6 @@ import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.block.BlockCategories;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,34 +18,22 @@ public class FortuneEnchantment extends Enchantment implements BlockBreakListene
 
     @Override
     public void onBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
-        Loot loot = BlockCategories.ORE_BLOCKS.get(block.getType());
-        if (loot == null) return;
-
-        ItemStack itemStack = loot.drop();
-        Location blockLocation = block.getLocation().toCenterLocation();
+        Loot lootEntry = BlockCategories.ORE_BLOCKS.get(block.getType());
+        if (lootEntry == null) return;
 
         double random = ThreadLocalRandom.current().nextDouble();
         int multiplier = switch (getLevel()) {
-            case 1 -> {
-                if (random < 0.33) yield 2;
-                else yield 1;
-            }
-            case 2 -> {
-                if (random < 0.25) yield 3;
-                else if (random < 0.50) yield 2;
-                else yield 1;
-            }
-            case 3 -> {
-                if (random < 0.20) yield 4;
-                else if (random < 0.40) yield 3;
-                else if (random < 0.60) yield 2;
-                else yield 1;
-            }
+            case 1 -> random < 0.33 ? 2 : 1;
+            case 2 -> random < 0.25 ? 3 : random < 0.50 ? 2 : 1;
+            case 3 -> random < 0.20 ? 4 : random < 0.40 ? 3 : random < 0.60 ? 2 : 1;
             default -> throw new IllegalStateException("Unexpected fortune level: " + getLevel());
         };
         if (multiplier == 1) return;
 
-        itemStack.setAmount((itemStack.getAmount() * multiplier) - itemStack.getAmount());
-        block.getWorld().dropItemNaturally(blockLocation, itemStack);
+        ItemStack oreDrops = lootEntry.drop();
+        oreDrops.setAmount((oreDrops.getAmount() * multiplier) - oreDrops.getAmount());
+        // Subtract the base drop because the normal block break already drops it
+
+        block.getWorld().dropItemNaturally(block.getLocation().toCenterLocation(), oreDrops);
     }
 }
