@@ -174,21 +174,34 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
 
         if (args.length == 0) {
             new PickaxeMenu(player);
+            return;
+        }
 
-        } else if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("menu")) {
-                new PickaxeMenu(player);
-
-            } else if (args[0].equalsIgnoreCase("get")) {
+        switch (args[0].toLowerCase()) {
+            case "menu", "m" -> new PickaxeMenu(player);
+            case "get" -> {
                 player.getInventory().addItem(PlayerPickaxeService.getPlayerPickaxe(player));
                 player.sendMessage(text("You received your pickaxe!", GREEN));
-
-            } else if (args[0].equalsIgnoreCase("reset")) {
-                PlayerProfileManager.resetPickaxeData(player);
+            }
+            case "reset" -> {
+                PlayerProfileManager.getPlayerProfile(player).setPickaxeData(new PickaxeData());
                 player.sendMessage(text("Pickaxe data reset!", GREEN));
             }
-        } else {
-            player.sendMessage(text("Usage: /pickaxe <get|reset>", RED));
+            case "repair" -> {
+                ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
+                if (pickaxe == null) return;
+
+                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+                    pickaxe.setData(DataComponentTypes.DAMAGE, 0);
+
+                    PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
+                    pickaxeData.setDurabilityDamage(0);
+                    pickaxe.lore(PlayerPickaxeService.getPickaxeLore(pickaxeData));
+                }, 1L);
+                player.sendMessage(text("Successfully repaired your pickaxe!", GREEN));
+            }
+            case "debug" -> player.sendMessage(text("Debug mode: enabled", GREEN));
+            default -> player.sendMessage(text("Usage: /pickaxe <get|reset|repair|debug>", RED));
         }
     }
 }
