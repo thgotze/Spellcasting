@@ -26,10 +26,6 @@ public class PlayerProfileManager implements Listener {
         return PLAYER_PROFILE_MAP.get(player);
     }
 
-    public static void resetPickaxeData(Player player) {
-        PLAYER_PROFILE_MAP.get(player).setPickaxeData(new PickaxeData());
-    }
-
     @EventHandler
     public void onPlayerJoinLoadProfile(PlayerJoinEvent event) {
         Player player = event.getPlayer();

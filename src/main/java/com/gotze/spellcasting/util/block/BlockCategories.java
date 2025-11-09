@@ -39,6 +39,7 @@ public class BlockCategories {
             Map.entry(Material.GOLD_ORE, new Loot(ItemStack.of(Material.RAW_GOLD), 1)),
             Map.entry(Material.DEEPSLATE_GOLD_ORE, new Loot(ItemStack.of(Material.RAW_GOLD), 2)),
             Map.entry(Material.RAW_GOLD_BLOCK, new Loot(ItemStack.of(Material.RAW_GOLD), 3)),
+
             Map.entry(Material.NETHER_GOLD_ORE, new Loot(ItemStack.of(Material.GOLD_NUGGET), 2, 6)),
 
             Map.entry(Material.LAPIS_ORE, new Loot(ItemStack.of(Material.LAPIS_LAZULI), 4, 9)),
