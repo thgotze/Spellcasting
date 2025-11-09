@@ -1,6 +1,8 @@
 package com.gotze.spellcasting.util.block;
 
+import com.google.common.collect.Lists;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
@@ -291,5 +293,31 @@ public class BlockUtils {
             blocksInLine.add(blockLocation.getBlock());
         }
         return blocksInLine;
+    }
+
+    public static List<Location> getBlockOutlineForParticles(Location location, double particleDistance) {
+        List<Location> result = Lists.newArrayList();
+        World world = location.getWorld();
+        double minX = location.getBlockX();
+        double minY = location.getBlockY();
+        double minZ = location.getBlockZ();
+        double maxX = location.getBlockX() + 1;
+        double maxY = location.getBlockY() + 1;
+        double maxZ = location.getBlockZ() + 1;
+
+        for (double x = minX; x <= maxX; x = Math.round((x + particleDistance) * 1e2) / 1e2) {
+            for (double y = minY; y <= maxY; y = Math.round((y + particleDistance) * 1e2) / 1e2) {
+                for (double z = minZ; z <= maxZ; z = Math.round((z + particleDistance) * 1e2) / 1e2) {
+                    int components = 0;
+                    if (x == minX || x == maxX) components++;
+                    if (y == minY || y == maxY) components++;
+                    if (z == minZ || z == maxZ) components++;
+                    if (components >= 2) {
+                        result.add(new Location(world, x, y, z));
+                    }
+                }
+            }
+        }
+        return result;
     }
 }
