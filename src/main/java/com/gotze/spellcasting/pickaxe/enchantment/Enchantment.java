@@ -64,7 +64,7 @@ public abstract class Enchantment {
                 3,
                 Material.OBSIDIAN,
                 "Reduce durability loss"),
-        INQUISITIVE(InquisitiveEnchantment.class,
+        EXPERIENCE(ExperienceEnchantment.class,
                 Rarity.COMMON,
                 3,
                 Material.EXPERIENCE_BOTTLE,

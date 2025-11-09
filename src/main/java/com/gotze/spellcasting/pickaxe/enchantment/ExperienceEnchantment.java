@@ -12,10 +12,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class InquisitiveEnchantment extends Enchantment implements BlockBreakListener {
+public class ExperienceEnchantment extends Enchantment implements BlockBreakListener {
 
-    public InquisitiveEnchantment() {
-        super(EnchantmentType.INQUISITIVE);
+    public ExperienceEnchantment() {
+        super(EnchantmentType.EXPERIENCE);
     }
 
     @Override
