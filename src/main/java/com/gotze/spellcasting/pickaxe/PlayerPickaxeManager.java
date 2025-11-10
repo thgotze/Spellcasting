@@ -2,7 +2,7 @@ package com.gotze.spellcasting.pickaxe;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
-import com.gotze.spellcasting.data.PlayerProfileManager;
+import com.gotze.spellcasting.data.PlayerProfile;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
@@ -184,7 +184,7 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
                 player.sendMessage(text("You received your pickaxe!", GREEN));
             }
             case "reset" -> {
-                PlayerProfileManager.getPlayerProfile(player).setPickaxeData(new PickaxeData());
+                PlayerProfile.fromPlayer(player).setPickaxeData(new PickaxeData());
                 player.sendMessage(text("Pickaxe data reset!", GREEN));
             }
             case "repair" -> {

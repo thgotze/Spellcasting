@@ -1,5 +1,7 @@
 package com.gotze.spellcasting.data;
 
+import org.bukkit.entity.Player;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -24,6 +26,10 @@ public class PlayerProfile {
         this.playTime = playTime;
         this.balance = balance;
         this.pickaxeData = pickaxeData;
+    }
+
+    public static PlayerProfile fromPlayer(Player player) {
+        return PlayerProfileManager.getPlayerProfile(player);
     }
 
     public double getBalance() {

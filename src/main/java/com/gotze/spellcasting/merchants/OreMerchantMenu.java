@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.merchants;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.data.PlayerProfileManager;
+import com.gotze.spellcasting.data.PlayerProfile;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
@@ -130,7 +130,7 @@ public class OreMerchantMenu extends Menu {
                         });
                     }
                     Player player = (Player) event.getWhoClicked();
-                    PlayerProfileManager.getPlayerProfile(player).addBalance(totalSellValue);
+                    PlayerProfile.fromPlayer(player).addBalance(totalSellValue);
                     player.sendMessage("You sold ores and received " + totalSellValue + " coins!");
                 }
                 return;
