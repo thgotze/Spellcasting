@@ -23,12 +23,13 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 public class EnchantmentMenu extends Menu {
 
     public EnchantmentMenu(Player player) {
-        super(5, text("Enchantments"));
+        super(5, text("Enchantments"), false);
         populate(player);
         open(player);
     }
 
-    private void populate(Player player) {
+    @Override
+    protected void populate(Player player) {
         MenuUtils.setFrames(getInventory());
 
         setButton(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) {

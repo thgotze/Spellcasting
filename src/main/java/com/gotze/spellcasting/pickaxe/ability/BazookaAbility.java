@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static net.kyori.adventure.text.Component.text;
@@ -56,7 +55,7 @@ public class BazookaAbility extends Ability implements BlockBreaker {
                 world.spawnParticle(Particle.POOF, laserLocation, 3, 0, 0, 0, 0);
                 Block targetBlock = laserLocation.getBlock();
                 if (!targetBlock.getType().isAir()) {
-                    List<Block> blocksToBreak = new ArrayList<>(BlockUtils.getBlocksInSpherePattern(targetBlock, 9, 7, 9));
+                    List<Block> blocksToBreak = BlockUtils.getBlocksInSpherePattern(targetBlock, 9, 7, 9);
                     breakBlocks(player, blocksToBreak, pickaxeData, false);
 
                     world.playSound(targetBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);

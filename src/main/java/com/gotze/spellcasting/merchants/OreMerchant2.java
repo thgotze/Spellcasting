@@ -1,0 +1,150 @@
+package com.gotze.spellcasting.merchants;
+
+import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.util.menu.Button;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
+
+public class OreMerchant2 extends Merchant2 {
+
+    private static final int[] TRADE_SLOTS = {
+            0, 1, 2, 3, 4, 5, 6, 7, 8,
+            9, 10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23, 24, 25, 26,
+            27, 28, 29, 30, 31, 32, 33, 34, 35
+    };
+
+    private static final int[] ACCEPT_TRADE_SLOTS = {
+            36, 37, 38, 39, 40, 41, 42, 43, 44
+    };
+
+    private static final EnumMap<Material, Double> SELLABLE_ITEMS = new EnumMap<>(Material.class);
+
+    static {
+        SELLABLE_ITEMS.put(Material.COBBLESTONE, 1.00);
+        SELLABLE_ITEMS.put(Material.RAW_COPPER, 2.50);
+        SELLABLE_ITEMS.put(Material.COPPER_INGOT, 10.00);
+        SELLABLE_ITEMS.put(Material.RAW_IRON, 12.50);
+        SELLABLE_ITEMS.put(Material.IRON_INGOT, 50.00);
+        SELLABLE_ITEMS.put(Material.RAW_GOLD, 20.00);
+        SELLABLE_ITEMS.put(Material.GOLD_INGOT, 80.00);
+        SELLABLE_ITEMS.put(Material.DIAMOND, 100.00);
+    }
+
+    private static final Button BLACK_PANE_BUTTON = new Button(-1, new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE)
+            .name(text("Add items to sell them")
+                    .color(GRAY))
+            .build()) {
+        @Override
+        public void onButtonClick(InventoryClickEvent event) {
+        }
+    };
+
+    private static final Button YELLOW_PANE_BUTTON = new Button(-1, ItemStack.of(Material.YELLOW_STAINED_GLASS_PANE)) {
+        @Override
+        public void onButtonClick(InventoryClickEvent event) {
+        }
+    };
+
+    private static final Button LIME_PANE_BUTTON = new Button(-1, ItemStack.of(Material.LIME_STAINED_GLASS_PANE)) {
+        @Override
+        public void onButtonClick(InventoryClickEvent event) {
+        }
+    };
+
+    public OreMerchant2() {
+        super(5, text("Ore Merchant"), "Ore Merchant",
+                new Location(Bukkit.getWorld("world"), 0.5, 97, 21.5),
+                Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER);
+    }
+
+    @Override
+    protected void onPlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
+
+    }
+
+    @Override
+    protected void populate(Player player) {
+        for (int slot : ACCEPT_TRADE_SLOTS) {
+            setButton(BLACK_PANE_BUTTON, slot);
+        }
+    }
+
+    @Override
+    protected void onInventoryOpen(InventoryOpenEvent event) {
+
+    }
+
+    @Override
+    protected void onInventoryClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+
+        List<ItemStack> itemsToReturn = new ArrayList<>();
+        for (int slot : TRADE_SLOTS) {
+            ItemStack itemStack = getInventory().getItem(slot);
+            if (itemStack != null) {
+                itemsToReturn.add(itemStack);
+            }
+        }
+
+        if (!itemsToReturn.isEmpty()) {
+            Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> player.give(itemsToReturn), 1L);
+        }
+    }
+
+    @Override
+    protected void onTopInventoryClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    protected void onBottomInventoryClick(InventoryClickEvent event) {
+        double totalSellValue = calculateTotalSellValue();
+
+        if (totalSellValue > 0.00) {
+            for (int slot: ACCEPT_TRADE_SLOTS) {
+                YELLOW_PANE_BUTTON.clone()
+                setButton(YELLOW_PANE_BUTTON, slot);
+
+                setButton(new Button(acceptTradeSlot, new ItemStackBuilder(YELLOW_PANE)
+                        .name(text("Total sell value: " + totalSellValue).color(YELLOW))
+                        .build()) {
+                    @Override
+                    public void onButtonClick(InventoryClickEvent event) {
+
+                    }
+                });
+            }
+        }
+    }
+
+    private double calculateTotalSellValue() {
+        double totalSellValue = 0.00;
+        for (int slot : TRADE_SLOTS) {
+            ItemStack itemStack = getInventory().getItem(slot);
+            if (itemStack == null) continue;
+
+            if (SELLABLE_ITEMS.containsKey(itemStack.getType())) {
+                totalSellValue += SELLABLE_ITEMS.get(itemStack.getType()) * itemStack.getAmount();
+            }
+        }
+        return totalSellValue;
+    }
+}

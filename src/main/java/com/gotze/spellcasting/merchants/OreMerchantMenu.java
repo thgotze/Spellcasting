@@ -58,7 +58,8 @@ public class OreMerchantMenu extends Menu {
         open(player);
     }
 
-    private void populate(Player player) {
+    @Override
+    protected void populate(Player player) {
         for (int acceptTradeSlot : acceptTradeSlots) {
             setButton(new Button(acceptTradeSlot,BLACK_PANE) {
                 @Override

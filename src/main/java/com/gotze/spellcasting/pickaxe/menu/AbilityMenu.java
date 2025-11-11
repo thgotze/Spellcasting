@@ -23,12 +23,13 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 public class AbilityMenu extends Menu {
 
     public AbilityMenu(Player player) {
-        super(5, text("Abilities"));
+        super(5, text("Abilities"), false);
         populate(player);
         open(player);
     }
 
-    private void populate(Player player) {
+    @Override
+    protected void populate(Player player) {
         MenuUtils.setFrames(getInventory());
 
         setButton(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) { // TODO: debug

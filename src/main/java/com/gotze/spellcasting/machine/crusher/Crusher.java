@@ -2,17 +2,23 @@ package com.gotze.spellcasting.machine.crusher;
 
 import com.gotze.spellcasting.machine.Machine;
 import com.gotze.spellcasting.util.ItemStackBuilder;
-import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.kyori.adventure.text.format.TextColor.color;
 
 public class Crusher extends Machine {
 
@@ -40,49 +46,46 @@ public class Crusher extends Machine {
             "crusher_right_arrow12", "crusher_right_arrow13", "crusher_right_arrow14"
     };
 
+    private static final Component MENU_TITLE = text(NEG_SPACE_8 + "\uD027")
+            .color(WHITE)
+            .append(text(NEG_SPACE_169 + "Crusher")
+                    .color(color(64, 64, 64))); // TODO: figure out if this color makes a difference
+
     public Crusher(@NotNull Location location, @NotNull Player player) {
-        super(location, player);
-        populate();
+        super(3, MENU_TITLE, location, player);
+        populate(player);
     }
 
     @Override
-    protected Inventory populate() {
-        Inventory inventory = Bukkit.createInventory(this, 27,
-                text(NEG_SPACE_8 + "\uD027")
-                        .color(WHITE)
-                        .append(text(NEG_SPACE_169 + "Crusher")
-                                .color(TextColor.color(64, 64, 64))));
-
+    protected void populate(Player player) {
         for (int i = 0; i <= 10; i++) {
-            inventory.setItem(i, new ItemStackBuilder(Material.PAPER)
+            getInventory().setItem(i, new ItemStackBuilder(Material.PAPER)
                     .itemModel(NamespacedKey.minecraft("air"))
                     .hideTooltipBox()
                     .build());
         }
 
         for (int i = 16; i <= 26; i++) {
-            inventory.setItem(i, new ItemStackBuilder(Material.PAPER)
+            getInventory().setItem(i, new ItemStackBuilder(Material.PAPER)
                     .itemModel(NamespacedKey.minecraft("air"))
                     .hideTooltipBox()
                     .build());
         }
 
-        inventory.setItem(12, new ItemStackBuilder(Material.PAPER)
+        getInventory().setItem(12, new ItemStackBuilder(Material.PAPER)
                 .itemModel(NamespacedKey.minecraft("crusher_left_arrow00"))
                 .hideTooltipBox()
                 .build());
 
-        inventory.setItem(13, new ItemStackBuilder(Material.PAPER)
+        getInventory().setItem(13, new ItemStackBuilder(Material.PAPER)
                 .itemModel(NamespacedKey.minecraft("crusher_saws0"))
                 .hideTooltipBox()
                 .build());
 
-        inventory.setItem(14, new ItemStackBuilder(Material.PAPER)
+        getInventory().setItem(14, new ItemStackBuilder(Material.PAPER)
                 .itemModel(NamespacedKey.minecraft("crusher_right_arrow00"))
                 .hideTooltipBox()
                 .build());
-
-        return inventory;
     }
 
     @Override
@@ -132,8 +135,8 @@ public class Crusher extends Machine {
             }
             if (outputItem.getAmount() + resultItem.getAmount() > outputItem.getMaxStackSize()) {
                 progress = 0;
-                return; // Would overflow
             }
+            return; // Would overflow
         }
 
         // ---------------
@@ -185,6 +188,26 @@ public class Crusher extends Machine {
 
     public void setOutputItem(@Nullable ItemStack outputItem) {
         getInventory().setItem(OUTPUT_SLOT, outputItem);
+    }
+
+    @Override
+    protected void onInventoryOpen(InventoryOpenEvent event) {
+
+    }
+
+    @Override
+    protected void onInventoryClose(InventoryCloseEvent event) {
+
+    }
+
+    @Override
+    protected void onTopInventoryClick(InventoryClickEvent event) {
+
+    }
+
+    @Override
+    protected void onBottomInventoryClick(InventoryClickEvent event) {
+
     }
 
     public enum CrushingRecipe {

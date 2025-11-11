@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -21,23 +20,12 @@ public abstract class Menu implements InventoryHolder {
     private final boolean interactable;
     private final Map<Integer, Button> buttons = new HashMap<>();
 
-    public Menu(int rows, Component title) {
-        this(rows, title, false);
-    }
-
     public Menu(int rows, Component title, boolean interactable) {
         this.inventory = Bukkit.createInventory(this, rows * 9, title);
         this.interactable = interactable;
     }
 
-    public Menu(InventoryType type, Component title) {
-        this(type, title, false);
-    }
-
-    public Menu(InventoryType type, Component title, boolean interactable) {
-        this.inventory = Bukkit.createInventory(this, type, title);
-        this.interactable = interactable;
-    }
+    protected abstract void populate(Player player);
 
     protected abstract void onInventoryOpen(InventoryOpenEvent event);
 
@@ -78,6 +66,11 @@ public abstract class Menu implements InventoryHolder {
     public void setButton(Button button) {
         this.buttons.put(button.getSlot(), button);
         inventory.setItem(button.getSlot(), button.getItem());
+    }
+
+    public void setButton(Button button, int slot) {
+        this.buttons.put(slot, button);
+        inventory.setItem(slot, button.getItem());
     }
 
     public Map<Integer, Button> getButtons() {
