@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.mines;
+package com.gotze.spellcasting.mine;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.LifecycleManager;
@@ -38,7 +38,7 @@ public class MineManager implements LifecycleManager {
                 new Location(world, 24, 36, 77)
         ));
 
-        tickTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+        tickTask = Bukkit.getScheduler().runTaskTimer(
                 Spellcasting.getPlugin(),
                 () -> mines.forEach(Mine::refillMine),
                 2400L, 2400L

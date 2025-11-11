@@ -24,7 +24,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class MaterialMenu extends Menu {
     public MaterialMenu(Player player) {
-        super(5, text("Materials"));
+        super(5, text("Materials"), false);
         populate(player);
         open(player);
     }

@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.mines;
+package com.gotze.spellcasting.mine;
 
 import com.gotze.spellcasting.Spellcasting;
 import org.bukkit.Location;

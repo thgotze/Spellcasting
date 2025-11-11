@@ -20,17 +20,17 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MachineManager implements Listener, LifecycleManager {
-    private static final Map<Location, Machine> machines = new ConcurrentHashMap<>();
+    private static final Map<Location, Machine> machines = new HashMap<>();
     private static BukkitTask tickTask;
 
     @Override
     public void start() {
-        tickTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+        tickTask = Bukkit.getScheduler().runTaskTimer(
                 Spellcasting.getPlugin(),
                 () -> machines.values().forEach(Machine::tick),
                 0L, 1L);

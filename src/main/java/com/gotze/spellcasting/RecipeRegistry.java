@@ -60,4 +60,6 @@ public class RecipeRegistry {
             case CRUSHED_GOLD -> 0.5f;
         };
     }
+
+    private RecipeRegistry() {}
 }

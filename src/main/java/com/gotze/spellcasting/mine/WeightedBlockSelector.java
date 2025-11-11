@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.mines;
+package com.gotze.spellcasting.mine;
 
 import org.bukkit.Material;
 
