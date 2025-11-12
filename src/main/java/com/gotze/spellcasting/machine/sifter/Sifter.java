@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -45,6 +46,11 @@ public class Sifter extends Machine {
 
     @Override
     protected void onInventoryClose(InventoryCloseEvent event) {
+
+    }
+
+    @Override
+    protected void onInventoryDrag(InventoryDragEvent event) {
 
     }
 

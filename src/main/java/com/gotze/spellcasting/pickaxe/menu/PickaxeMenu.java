@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 
 import static net.kyori.adventure.text.Component.text;
@@ -71,6 +72,11 @@ public class PickaxeMenu extends Menu {
 
     @Override
     protected void onInventoryClose(InventoryCloseEvent event) {
+
+    }
+
+    @Override
+    protected void onInventoryDrag(InventoryDragEvent event) {
 
     }
 

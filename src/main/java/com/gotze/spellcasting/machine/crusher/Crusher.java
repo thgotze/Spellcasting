@@ -11,6 +11,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -197,6 +198,11 @@ public class Crusher extends Machine {
 
     @Override
     protected void onInventoryClose(InventoryCloseEvent event) {
+
+    }
+
+    @Override
+    protected void onInventoryDrag(InventoryDragEvent event) {
 
     }
 

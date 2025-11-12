@@ -9,10 +9,7 @@ import com.gotze.spellcasting.util.menu.Menu;
 import com.gotze.spellcasting.util.menu.MenuUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -133,6 +130,11 @@ public class AbilityMenu extends Menu {
 
     @Override
     protected void onInventoryClose(InventoryCloseEvent event) {
+
+    }
+
+    @Override
+    protected void onInventoryDrag(InventoryDragEvent event) {
 
     }
 

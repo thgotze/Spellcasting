@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -30,6 +31,8 @@ public abstract class Menu implements InventoryHolder {
     protected abstract void onInventoryOpen(InventoryOpenEvent event);
 
     protected abstract void onInventoryClose(InventoryCloseEvent event);
+
+    protected abstract void onInventoryDrag(InventoryDragEvent event);
 
     protected abstract void onTopInventoryClick(InventoryClickEvent event);
 

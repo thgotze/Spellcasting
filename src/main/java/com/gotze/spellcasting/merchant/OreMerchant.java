@@ -98,6 +98,18 @@ public class OreMerchant extends Merchant {
     }
 
     @Override
+    protected void onInventoryDrag(InventoryDragEvent event) {
+        Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+            double totalSellValue = calculateTotalSellValue();
+            if (totalSellValue > 0.00) {
+                setYellowPanes(totalSellValue);
+            } else {
+                setBlackPanes();
+            }
+        }, 1L);
+    }
+
+    @Override
     protected void onTopInventoryClick(InventoryClickEvent event) {
         for (int slot : BOTTOM_SLOTS) {
             if (event.getSlot() == slot) return;
