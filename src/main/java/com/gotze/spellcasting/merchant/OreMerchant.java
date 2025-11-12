@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.merchant;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.data.PlayerProfile;
+import com.gotze.spellcasting.data.PlayerProfileManager;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.menu.Button;
 import org.bukkit.Bukkit;
@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -52,35 +52,18 @@ public class OreMerchant extends Merchant {
         super(5, text("Ore Merchant"), "Ore Merchant",
                 new Location(Bukkit.getWorld("world"), 0.5, 97, 21.5),
                 Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER);
-    }
-
-    @Override
-    protected void onRightClickMerchant(PlayerInteractEntityEvent event) {
-
+        populate(null);
     }
 
     @Override
     protected void populate(Player player) {
-        for (int slot : BOTTOM_SLOTS) {
-            setButton(new Button(slot, new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE)
-                    .name(text("Add items to sell them")
-                            .color(GRAY))
-                    .build()) {
-                @Override
-                public void onButtonClick(InventoryClickEvent event) {
-
-                }
-            });
-        }
-    }
-
-    @Override
-    protected void onInventoryOpen(InventoryOpenEvent event) {
-
+        setBlackPanes();
     }
 
     @Override
     protected void onInventoryClose(InventoryCloseEvent event) {
+        setBlackPanes();
+
         Player player = (Player) event.getPlayer();
 
         List<ItemStack> itemsToReturn = new ArrayList<>();
@@ -112,82 +95,78 @@ public class OreMerchant extends Merchant {
     @Override
     protected void onTopInventoryClick(InventoryClickEvent event) {
         for (int slot : BOTTOM_SLOTS) {
-            if (event.getSlot() == slot) return;
+            if (slot == event.getSlot()) return;
         }
 
         double totalSellValue = calculateTotalSellValue();
-
         if (totalSellValue > 0.00) {
-            for (int slot : BOTTOM_SLOTS) {
-                setButton(new Button(slot, new ItemStackBuilder(Material.YELLOW_STAINED_GLASS_PANE)
-                        .name(text("Total sell value: " + totalSellValue)
-                                .color(YELLOW))
-                        .build()) {
-                    @Override
-                    public void onButtonClick(InventoryClickEvent event) {
-                        for (int s : BOTTOM_SLOTS) {
-                            setButton(new Button(s, new ItemStackBuilder(Material.LIME_STAINED_GLASS_PANE)
-                                    .name(text("Click again to accept").color(GREEN))
-                                    .build()) {
-                                @Override
-                                public void onButtonClick(InventoryClickEvent event) {
-                                    Player player = (Player) event.getWhoClicked();
-                                    PlayerProfile.fromPlayer(player).addBalance(totalSellValue);
-                                    player.sendMessage(text("You sold ores and received " + totalSellValue + " coins!").color(GREEN));
-
-                                    for (int tradeSlots : TRADE_SLOTS) {
-                                        ItemStack itemStack = getInventory().getItem(tradeSlots);
-                                        if (itemStack == null) continue;
-
-                                        if (SELLABLE_ITEMS.containsKey(itemStack.getType())) {
-                                            getInventory().clear(tradeSlots);
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-            }
+            setYellowPanes(totalSellValue);
+        } else {
+            setBlackPanes();
         }
     }
 
     @Override
     protected void onBottomInventoryClick(InventoryClickEvent event) {
         double totalSellValue = calculateTotalSellValue();
-
         if (totalSellValue > 0.00) {
-            for (int slot : BOTTOM_SLOTS) {
-                setButton(new Button(slot, new ItemStackBuilder(Material.YELLOW_STAINED_GLASS_PANE)
-                        .name(text("Total sell value: " + totalSellValue)
-                                .color(YELLOW))
-                        .build()) {
-                    @Override
-                    public void onButtonClick(InventoryClickEvent event) {
-                        for (int s : BOTTOM_SLOTS) {
-                            setButton(new Button(s, new ItemStackBuilder(Material.LIME_STAINED_GLASS_PANE)
-                                    .name(text("Click again to accept").color(GREEN))
-                                    .build()) {
-                                @Override
-                                public void onButtonClick(InventoryClickEvent event) {
-                                    Player player = (Player) event.getWhoClicked();
-                                    PlayerProfile.fromPlayer(player).addBalance(totalSellValue);
-                                    player.sendMessage(text("You sold ores and received " + totalSellValue + " coins!").color(GREEN));
+            setYellowPanes(totalSellValue);
+        } else {
+            setBlackPanes();
+        }
+    }
 
-                                    for (int tradeSlots : TRADE_SLOTS) {
-                                        ItemStack itemStack = getInventory().getItem(tradeSlots);
-                                        if (itemStack == null) continue;
+    private void setBlackPanes() {
+        for (int slot : BOTTOM_SLOTS) {
+            setButton(new Button(slot, new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE)
+                    .name(text("Add items to sell them")
+                            .color(GRAY))
+                    .build()) {
+                @Override
+                public void onButtonClick(InventoryClickEvent event) {
+                    // Do nothing
+                }
+            });
+        }
+    }
 
-                                        if (SELLABLE_ITEMS.containsKey(itemStack.getType())) {
-                                            getInventory().clear(tradeSlots);
-                                        }
-                                    }
-                                }
-                            });
+    private void setYellowPanes(double totalSellValue) {
+        for (int slot : BOTTOM_SLOTS) {
+            setButton(new Button(slot, new ItemStackBuilder(Material.YELLOW_STAINED_GLASS_PANE)
+                    .name(text("Total sell value: " + totalSellValue)
+                            .color(YELLOW))
+                    .build()) {
+                @Override
+                public void onButtonClick(InventoryClickEvent event) {
+                    setLimePanes(totalSellValue);
+                }
+            });
+        }
+    }
+
+    private void setLimePanes(double totalSellValue) {
+        for (int slot : BOTTOM_SLOTS) {
+            setButton(new Button(slot, new ItemStackBuilder(Material.LIME_STAINED_GLASS_PANE)
+                    .name(text("Click again to confirm sale")
+                            .color(GREEN))
+                    .build()) {
+                @Override
+                public void onButtonClick(InventoryClickEvent event) {
+                    for (int slot : TRADE_SLOTS) {
+                        ItemStack itemStack = getInventory().getItem(slot);
+                        if (itemStack == null) continue;
+
+                        if (SELLABLE_ITEMS.containsKey(itemStack.getType())) {
+                            getInventory().clear(slot);
                         }
                     }
-                });
-            }
+
+                    Player player = (Player) event.getWhoClicked();
+                    player.sendMessage(text("You sold items worth " + totalSellValue + "!").color(GREEN));
+                    PlayerProfileManager.getPlayerProfile(player).addBalance(totalSellValue);
+                    setBlackPanes();
+                }
+            });
         }
     }
 
@@ -202,5 +181,10 @@ public class OreMerchant extends Merchant {
             }
         }
         return totalSellValue;
+    }
+
+    @Override
+    protected void onInventoryOpen(InventoryOpenEvent event) {
+
     }
 }
