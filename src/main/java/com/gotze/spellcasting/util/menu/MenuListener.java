@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -15,12 +16,18 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent event) {
-        asMenu(event.getInventory()).ifPresent(menu -> menu.onInventoryOpen(event));
+        asMenu(event.getInventory()).ifPresent(menu ->
+                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () ->
+                        menu.onInventoryOpen(event), 1L));
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        asMenu(event.getInventory()).ifPresent(menu -> menu.onInventoryClose(event));
+        asMenu(event.getInventory()).ifPresent(menu ->
+                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () ->
+                        menu.onInventoryClose(event), 1L));
+    }
+
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         asMenu(event.getInventory()).ifPresent(menu ->
@@ -63,12 +70,11 @@ public class MenuListener implements Listener {
                         menu.onTopInventoryClick(event);
                     }, 1L);
                 }
-                return;
             }
             // ---------------
             // Clicked bottom inventory
             // ---------------
-            if (clickedInventory.equals(event.getView().getBottomInventory())) {
+            else if (clickedInventory.equals(event.getView().getBottomInventory())) {
                 // Prevent item movement if menu is non-interactable
                 if (!menu.isInteractable()) {
                     event.setCancelled(true);

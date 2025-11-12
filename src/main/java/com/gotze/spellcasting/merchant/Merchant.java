@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -24,29 +23,24 @@ public abstract class Merchant extends Menu {
         this.villagerType = villagerType;
         this.villagerProfession = villagerProfession;
         this.merchantLocation = merchantLocation;
-        spawnVillager();
+        this.villager = spawnVillager();
     }
 
-    private void spawnVillager() {
+    private Villager spawnVillager() {
         World world = merchantLocation.getWorld();
-        if (world == null) return;
+        if (world == null) return null;
 
         if (!world.isChunkLoaded(merchantLocation.getChunk())) {
             world.loadChunk(merchantLocation.getChunk());
         }
 
-//        // Check if the villager is already present in the world
-//        for (Villager existing : world.getEntitiesByClass(Villager.class)) {
-//            if (existing.getLocation().distanceSquared(merchantLocation) < 1 && existing.customName() != null &&
-//                    PlainTextComponentSerializer.plainText().serialize(existing.customName()).equals(merchantName)) {
-//
-//                Inventory villagerInventory = fillVillagerInventory(existing, name);
-//                VILLAGER_INVENTORY_MAP.put(existing.getUniqueId(), villagerInventory);
-//                return;
-//            }
-//        }
-
-        this.villager = (Villager) world.spawnEntity(merchantLocation, EntityType.VILLAGER);
+        // Check if the villager is already present in the world
+        for (Villager existing : world.getEntitiesByClass(Villager.class)) {
+            if (existing.getLocation().distanceSquared(merchantLocation) < 1) {
+                return existing;
+            }
+        }
+        villager = (Villager) world.spawnEntity(merchantLocation, EntityType.VILLAGER);
         villager.customName(text(merchantName));
         villager.setVillagerType(villagerType);
         villager.setProfession(villagerProfession);
@@ -56,10 +50,8 @@ public abstract class Merchant extends Menu {
         villager.setPersistent(true);
         villager.setSilent(true);
         villager.setCustomNameVisible(true);
-//        villager.setAware(true);
+        return villager;
     }
-
-    protected abstract void onRightClickMerchant(PlayerInteractEntityEvent event);
 
     public String getMerchantName() {
         return merchantName;

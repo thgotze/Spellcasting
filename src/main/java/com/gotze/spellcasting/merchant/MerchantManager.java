@@ -31,7 +31,7 @@ public class MerchantManager implements Listener {
     }
 
     @EventHandler
-    public void onRightClickVillager(PlayerInteractEntityEvent event) {
+    public void onRightClickMerchant(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof Villager villager)) return;
 
         Merchant merchant = merchants.get(villager.getUniqueId());

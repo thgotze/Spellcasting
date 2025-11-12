@@ -28,44 +28,24 @@ public class Spellcasting extends JavaPlugin {
         plugin = this;
         PluginManager pluginManager = getServer().getPluginManager();
 
-        // Player profile manager
-        PlayerProfileManager playerProfileManager = new PlayerProfileManager();
-        pluginManager.registerEvents(playerProfileManager, this);
+        pluginManager.registerEvents(new PlayerProfileManager(), this);
+        pluginManager.registerEvents(new MenuListener(), this);
+        pluginManager.registerEvents(new LootPotManager(), this);
+        pluginManager.registerEvents(new ResourcePackManager(), this);
+        pluginManager.registerEvents(new MerchantManager(), this);
 
-        // Menu listener
-        MenuListener menuListener = new MenuListener();
-        pluginManager.registerEvents(menuListener, this);
-
-        // Loot pot manager
-        LootPotManager lootPotManager = new LootPotManager();
-        pluginManager.registerEvents(lootPotManager, this);
-
-        // Resource pack manager
-        ResourcePackManager resourcePackManager = new ResourcePackManager();
-        pluginManager.registerEvents(resourcePackManager, this);
-
-        // Machine manager
-        MachineManager machineManager = new MachineManager();
-        pluginManager.registerEvents(machineManager, this);
-        lifecycleManagers.add(machineManager);
-
-        // Mine manager
-        MineManager mineManager = new MineManager();
-        lifecycleManagers.add(mineManager);
-
-        // Player pickaxe manager
         PlayerPickaxeManager pickaxeManager = new PlayerPickaxeManager();
         pluginManager.registerEvents(pickaxeManager, this);
         registerCommand("pickaxe", pickaxeManager);
 
-        // Merchant manager
-        MerchantManager merchantManager = new MerchantManager();
-        pluginManager.registerEvents(merchantManager, this);
+        MachineManager machineManager = new MachineManager();
+        pluginManager.registerEvents(machineManager, this);
+        lifecycleManagers.add(machineManager);
 
-        // Other
+        lifecycleManagers.add(new MineManager());
+
         RecipeRegistry.registerRecipes();
 
-        // Life cycle managers
         lifecycleManagers.forEach(LifecycleManager::start);
     }
 

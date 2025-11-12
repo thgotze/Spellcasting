@@ -4,15 +4,10 @@ import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.util.block.BlockUtils;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.joml.Matrix4f;
 
 import java.util.List;
 
@@ -35,19 +30,19 @@ public class DrillDashAbility extends Ability implements BlockBreaker {
         this.isActive = true;
         player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!").color(YELLOW)));
 
-        ItemDisplay blockDisplay = player.getWorld().spawn(
-                player.getEyeLocation().subtract(0, 0.5, 0),
-                ItemDisplay.class);
-        blockDisplay.setItemStack(ItemStack.of(Material.NETHERITE_PICKAXE));
-        blockDisplay.setBrightness(new Display.Brightness(15, 15));
-        blockDisplay.setPersistent(false);
-        blockDisplay.setTransformationMatrix(new Matrix4f()
-                .rotateZ((float) Math.toRadians(90f))
-                .rotateX((float) Math.toRadians(90f))
-                .translate(-1.5f, 1, -1)
-                .scale(2f, 5f, 2f)
-        );
-        player.addPassenger(blockDisplay);
+//        ItemDisplay blockDisplay = player.getWorld().spawn(
+//                player.getEyeLocation().subtract(0, 0.5, 0),
+//                ItemDisplay.class);
+//        blockDisplay.setItemStack(ItemStack.of(Material.NETHERITE_PICKAXE));
+//        blockDisplay.setBrightness(new Display.Brightness(15, 15));
+//        blockDisplay.setPersistent(false);
+//        blockDisplay.setTransformationMatrix(new Matrix4f()
+//                .rotateZ((float) Math.toRadians(90f))
+//                .rotateX((float) Math.toRadians(90f))
+//                .translate(-1.5f, 1, -1)
+//                .scale(2f, 5f, 2f)
+//        );
+//        player.addPassenger(blockDisplay);
         player.setGravity(false);
         player.setRiptiding(true);
 
@@ -65,7 +60,7 @@ public class DrillDashAbility extends Ability implements BlockBreaker {
 
                 ticks++;
                 if (ticks >= DASH_LENGTH_TICKS) {
-                    blockDisplay.remove();
+//                    blockDisplay.remove();
                     player.setGravity(true);
                     player.setRiptiding(false);
                     isActive = false;
