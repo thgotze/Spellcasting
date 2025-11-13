@@ -1,5 +1,6 @@
 package com.gotze.spellcasting;
 
+import com.gotze.spellcasting.command.PickaxeCommand;
 import com.gotze.spellcasting.data.PlayerProfileManager;
 import com.gotze.spellcasting.machine.MachineManager;
 import com.gotze.spellcasting.merchant.MerchantManager;
@@ -28,23 +29,24 @@ public class Spellcasting extends JavaPlugin {
         plugin = this;
         PluginManager pluginManager = getServer().getPluginManager();
 
+        MachineManager machineManager = new MachineManager();
+
+        // Event listeners
         pluginManager.registerEvents(new PlayerProfileManager(), this);
         pluginManager.registerEvents(new MenuListener(), this);
         pluginManager.registerEvents(new LootPotManager(), this);
         pluginManager.registerEvents(new ResourcePackManager(), this);
         pluginManager.registerEvents(new MerchantManager(), this);
-
-        PlayerPickaxeManager pickaxeManager = new PlayerPickaxeManager();
-        pluginManager.registerEvents(pickaxeManager, this);
-        registerCommand("pickaxe", pickaxeManager);
-
-        MachineManager machineManager = new MachineManager();
+        pluginManager.registerEvents(new PlayerPickaxeManager(), this);
         pluginManager.registerEvents(machineManager, this);
-        lifecycleManagers.add(machineManager);
 
-        lifecycleManagers.add(new MineManager());
+        // Commands
+        registerCommand("pickaxe", new PickaxeCommand());
 
+        // Other
         RecipeRegistry.registerRecipes();
+        lifecycleManagers.add(new MineManager());
+        lifecycleManagers.add(machineManager);
 
         lifecycleManagers.forEach(LifecycleManager::start);
     }

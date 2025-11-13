@@ -2,7 +2,6 @@ package com.gotze.spellcasting.pickaxe;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
-import com.gotze.spellcasting.data.PlayerProfile;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
@@ -10,8 +9,6 @@ import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.menu.PickaxeMenu;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.block.BlockCategories;
-import io.papermc.paper.command.brigadier.BasicCommand;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -29,16 +26,16 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
-public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreaker {
+public class PlayerPickaxeManager implements Listener, BlockBreaker {
     private static final Map<Player, Integer> selectedAbilityIndex = new HashMap<>();
 
     @EventHandler
@@ -165,43 +162,6 @@ public class PlayerPickaxeManager implements Listener, BasicCommand, BlockBreake
         if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) {
             event.setCancelled(true);
             Bukkit.getScheduler().runTask(Spellcasting.getPlugin(), () -> new PickaxeMenu(player));
-        }
-    }
-
-    @Override
-    public void execute(@NotNull CommandSourceStack commandSourceStack, @NotNull String @NotNull [] args) {
-        if (!(commandSourceStack.getSender() instanceof Player player)) return;
-
-        if (args.length == 0) {
-            new PickaxeMenu(player);
-            return;
-        }
-
-        switch (args[0].toLowerCase()) {
-            case "menu", "m" -> new PickaxeMenu(player);
-            case "get" -> {
-                player.getInventory().addItem(PlayerPickaxeService.getPlayerPickaxe(player));
-                player.sendMessage(text("You received your pickaxe!", GREEN));
-            }
-            case "reset" -> {
-                PlayerProfile.fromPlayer(player).setPickaxeData(new PickaxeData());
-                player.sendMessage(text("Pickaxe data reset!", GREEN));
-            }
-            case "repair" -> {
-                ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
-                if (pickaxe == null) return;
-
-                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
-                    pickaxe.setData(DataComponentTypes.DAMAGE, 0);
-
-                    PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
-                    pickaxeData.setDurabilityDamage(0);
-                    pickaxe.lore(PlayerPickaxeService.getPickaxeLore(pickaxeData));
-                }, 1L);
-                player.sendMessage(text("Successfully repaired your pickaxe!", GREEN));
-            }
-            case "debug" -> player.sendMessage(text("Debug mode: enabled", GREEN));
-            default -> player.sendMessage(text("Usage: /pickaxe <get|reset|repair|debug>", RED));
         }
     }
 }
