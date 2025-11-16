@@ -86,7 +86,7 @@ public abstract class Ability {
                 "blocks in a large radius"),
         DRILL_DASH(DrillDashAbility.class,
                 Rarity.LEGENDARY,
-                1,
+                3,
                 Material.POINTED_DRIPSTONE,
                 "Dash forwards and break",
                 "blocks in the direction",
