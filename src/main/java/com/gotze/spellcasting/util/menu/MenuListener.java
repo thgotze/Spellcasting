@@ -30,9 +30,10 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        asMenu(event.getInventory()).ifPresent(menu ->
-                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () ->
-                        menu.onInventoryDrag(event), 1L));
+//        asMenu(event.getInventory()).ifPresent(menu ->
+//                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () ->
+//                        menu.onInventoryDrag(event), 1L));
+        asMenu(event.getInventory()).ifPresent(menu -> menu.onInventoryDrag(event));
     }
 
     @EventHandler
