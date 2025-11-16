@@ -50,6 +50,30 @@ public class PlayerPickaxeService {
             builder.enchant(org.bukkit.enchantments.Enchantment.UNBREAKING, unbreaking.getLevel());
         }
 
+        ItemStack pickaxe = builder.build();
+
+        Enchantment reach = pickaxeData.getEnchantment(Enchantment.EnchantmentType.REACH);
+        if (reach != null) {
+            ItemAttributeModifiers defaultData = pickaxe.getData(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+            if (defaultData != null) {
+                ItemAttributeModifiers.Builder itemAttributesBuilder = ItemAttributeModifiers.itemAttributes();
+
+                for (ItemAttributeModifiers.Entry entry : defaultData.modifiers()) {
+                    itemAttributesBuilder.addModifier(entry.attribute(), entry.modifier());
+                }
+
+                AttributeModifier reachModifier = new AttributeModifier(
+                        new NamespacedKey(Spellcasting.getPlugin(), "extended-reach-modifier"),
+                        reach.getLevel(),
+                        AttributeModifier.Operation.ADD_NUMBER,
+                        EquipmentSlotGroup.MAINHAND
+                );
+                itemAttributesBuilder.addModifier(Attribute.BLOCK_INTERACTION_RANGE, reachModifier);
+
+                pickaxe.setData(DataComponentTypes.ATTRIBUTE_MODIFIERS, itemAttributesBuilder.build());
+            }
+        }
+
         // ---------------
         // Tool rule shenanigans
         // ---------------

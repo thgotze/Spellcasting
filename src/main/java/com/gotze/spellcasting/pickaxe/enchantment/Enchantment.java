@@ -104,6 +104,11 @@ public abstract class Enchantment {
                         "the broken block. Breaking all",
                         "the marked corners quarries",
                         "all blocks within the 5x5 square")
+        REACH(ReachEnchantment.class,
+                Rarity.LEGENDARY,
+                3,
+                Material.PISTON,
+                "Gives you extended reach"),
         ;
 
         private final Class<? extends Enchantment> enchantmentClass;
