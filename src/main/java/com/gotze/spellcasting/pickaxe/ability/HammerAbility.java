@@ -49,6 +49,7 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
         if (!this.isActive) return;
         if (!isNaturalBreak) return;
         if (blockFace == null) return;
+        if (player.isSneaking()) return;
 
         List<Block> blocksToBreak = switch (blockFace) {
             case NORTH, SOUTH -> BlockUtils.getBlocksInSquarePattern(block, 3, 3, 1);
