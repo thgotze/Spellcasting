@@ -35,11 +35,11 @@ public abstract class Enchantment {
     }
 
     public boolean isMaxLevel() {
-        return level == enchantmentType.getMaxLevel();
+        return level == getMaxLevel();
     }
 
     public void increaseLevel() {
-        if (level < getMaxLevel()) {
+        if (!isMaxLevel()) {
             this.level++;
         }
     }
@@ -73,21 +73,21 @@ public abstract class Enchantment {
                 Rarity.UNCOMMON,
                 5,
                 Material.GOLD_INGOT,
-                "Chance to increase",
-                "nearby ore block quality"),
+                "Chance to increase the",
+                "quality of nearby ore blocks"),
         MITOSIS(MitosisEnchantment.class,
                 Rarity.UNCOMMON,
                 5,
                 Material.BONE_MEAL,
-                "Chance to spawn more",
-                "ores around the mined ore"),
+                "Chance to spawn more ores",
+                "around the mined ore"),
         GLACIATE(GlaciateEnchantment.class,
                 Rarity.RARE,
                 1,
                 Material.PACKED_ICE,
                 "Chance to freeze nearby blocks",
                 "making them quicker to mine"),
-//        MOMENTUM(MomentumEnchantment.class,
+        //        MOMENTUM(MomentumEnchantment.class,
 //                Rarity.EPIC,
 //                5,
 //                Material.BLAZE_POWDER,
@@ -99,11 +99,11 @@ public abstract class Enchantment {
                 Rarity.EPIC,
                 5,
                 Material.TINTED_GLASS,
-                        "Chance to mark 3-4 corners of",
-                        "a 5x5 square centering from",
-                        "the broken block. Breaking all",
-                        "the marked corners quarries",
-                        "all blocks within the 5x5 square")
+                "Chance to mark 3-4 corners of",
+                "a 5x5 square centering from",
+                "the broken block. Breaking all",
+                "the marked corners quarries",
+                "all blocks within the 5x5 square"),
         REACH(ReachEnchantment.class,
                 Rarity.LEGENDARY,
                 3,

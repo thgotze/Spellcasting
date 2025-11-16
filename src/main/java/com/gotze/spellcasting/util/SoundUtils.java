@@ -10,7 +10,7 @@ public class SoundUtils {
     }
 
     public static void playSuccessSound(Player player) {
-        player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 1.0f);
+        player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 0.25f, 2.0f);
     }
 
     public static void playErrorSound(Player player) {

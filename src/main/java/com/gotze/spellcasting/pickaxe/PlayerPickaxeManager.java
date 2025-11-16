@@ -16,6 +16,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -38,7 +39,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 public class PlayerPickaxeManager implements Listener, BlockBreaker {
     private static final Map<Player, Integer> selectedAbilityIndex = new HashMap<>();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreakWithPickaxe(BlockBreakEvent event) {
         Player player = event.getPlayer();
 
@@ -60,8 +61,7 @@ public class PlayerPickaxeManager implements Listener, BlockBreaker {
         // At this point the block break event is allowed to go through i.e., NOT canceled
         Block block = event.getBlock();
 
-        // Handles the block break itself (increment blocks broken and drop items)
-        // Notifies all listeners about this natural block break
+        // Handles the block break itself: increments blocks broken, drops items and notifies all block break listeners
         breakBlock(player, block, pickaxeData, true);
 
         // Remove default ore drops
@@ -146,7 +146,9 @@ public class PlayerPickaxeManager implements Listener, BlockBreaker {
         int index = selectedAbilityIndex.getOrDefault(player, 0);
 
         Ability selectedAbility = abilities.get(index);
-        selectedAbility.activateAbility(player, pickaxeData);
+        if (selectedAbility != null) {
+            selectedAbility.activateAbility(player, pickaxeData);
+        }
     }
 
     @EventHandler

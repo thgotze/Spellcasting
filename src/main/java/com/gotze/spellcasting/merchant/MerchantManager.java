@@ -22,6 +22,9 @@ public class MerchantManager implements Listener {
         Merchant oreMerchant = new OreMerchant();
         merchants.put(oreMerchant.getVillager().getUniqueId(), oreMerchant);
 
+        Merchant tokenMerchant = new TokenMerchant();
+        merchants.put(tokenMerchant.getVillager().getUniqueId(), tokenMerchant);
+
 //        registerVillager(world, new Location(world, -3.5, 97, 21.5),
 //                Villager.Type.SAVANNA, Villager.Profession.LIBRARIAN, "Token Seller");
 //        registerVillager(world, new Location(world, 0.5, 97, 21.5),
@@ -39,6 +42,6 @@ public class MerchantManager implements Listener {
 
         event.setCancelled(true);
 
-        event.getPlayer().openInventory(merchant.getInventory());
+        merchant.open(event.getPlayer());
     }
 }

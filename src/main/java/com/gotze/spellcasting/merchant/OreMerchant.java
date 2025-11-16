@@ -49,8 +49,8 @@ public class OreMerchant extends Merchant {
     }
 
     public OreMerchant() {
-        super(5, text("Ore Merchant"), "Ore Merchant",
-                new Location(Bukkit.getWorld("world"), 0.5, 97, 21.5),
+        super(5, text("Ore Merchant"), true,
+                "Ore Merchant", new Location(Bukkit.getWorld("world"), 0.5, 97, 21.5),
                 Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER);
         populate(null);
     }

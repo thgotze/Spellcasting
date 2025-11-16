@@ -16,9 +16,10 @@ public abstract class Merchant extends Menu {
     private final Villager.Profession villagerProfession;
     private Villager villager;
 
-    public Merchant(int rows, Component menuTitle, String merchantName, Location merchantLocation,
+    public Merchant(int rows, Component menuTitle, boolean interactable,
+                    String merchantName, Location merchantLocation,
                     Villager.Type villagerType, Villager.Profession villagerProfession) {
-        super(rows, menuTitle, true);
+        super(rows, menuTitle, interactable);
         this.merchantName = merchantName;
         this.villagerType = villagerType;
         this.villagerProfession = villagerProfession;

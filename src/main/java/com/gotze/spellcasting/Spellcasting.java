@@ -19,25 +19,33 @@ public class Spellcasting extends JavaPlugin {
     private final List<LifecycleManager> lifecycleManagers = new ArrayList<>();
 
     private static Spellcasting plugin;
+    private static MineManager mineManager;
 
     public static Spellcasting getPlugin() {
         return plugin;
     }
 
+    public static MineManager getMineManager() {
+        return mineManager;
+    }
+
     @Override
     public void onEnable() {
         plugin = this;
+        mineManager = new MineManager();
+
         PluginManager pluginManager = getServer().getPluginManager();
 
         MachineManager machineManager = new MachineManager();
 
         // Event listeners
+        pluginManager.registerEvents(new GlobalListener(mineManager), this);
+        pluginManager.registerEvents(new PlayerPickaxeManager(), this);
         pluginManager.registerEvents(new PlayerProfileManager(), this);
         pluginManager.registerEvents(new MenuListener(), this);
         pluginManager.registerEvents(new LootPotManager(), this);
         pluginManager.registerEvents(new ResourcePackManager(), this);
         pluginManager.registerEvents(new MerchantManager(), this);
-        pluginManager.registerEvents(new PlayerPickaxeManager(), this);
         pluginManager.registerEvents(machineManager, this);
 
         // Commands
@@ -45,7 +53,8 @@ public class Spellcasting extends JavaPlugin {
 
         // Other
         RecipeRegistry.registerRecipes();
-        lifecycleManagers.add(new MineManager());
+
+        lifecycleManagers.add(mineManager);
         lifecycleManagers.add(machineManager);
 
         lifecycleManagers.forEach(LifecycleManager::start);

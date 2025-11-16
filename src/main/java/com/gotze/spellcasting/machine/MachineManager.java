@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class MachineManager implements Listener, LifecycleManager {
     private static final Map<Location, Machine> machines = new HashMap<>();
     private static BukkitTask tickTask;

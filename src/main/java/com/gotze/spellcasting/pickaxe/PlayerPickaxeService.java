@@ -8,10 +8,15 @@ import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
 import com.gotze.spellcasting.util.menu.MenuUtils;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -78,8 +83,6 @@ public class PlayerPickaxeService {
         // ---------------
         // Tool rule shenanigans
         // ---------------
-        ItemStack pickaxe = builder.build();
-
 //        Tool
 //        defaultPickaxeToolData = pickaxe.getType().getDefaultData(DataComponentTypes.TOOL);
 //        List<Tool.Rule> defaultRules = defaultPickaxeToolData.rules();

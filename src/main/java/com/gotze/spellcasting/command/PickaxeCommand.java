@@ -51,8 +51,11 @@ public class PickaxeCommand implements BasicCommand {
                 }, 1L);
                 player.sendMessage(text("Successfully repaired your pickaxe!", GREEN));
             }
-            case "debug" -> player.sendMessage(text("Debug mode: enabled", GREEN));
-            default -> player.sendMessage(text("Usage: /pickaxe <get|reset|repair|debug>", RED));
+            case "debug" -> {
+                player.sendMessage(text("Debug mode: enabled", GREEN));
+                // TODO
+            }
+            default -> player.sendMessage(text("Usage: /pickaxe <menu|get|reset|repair|debug>", RED));
         }
     }
 }
