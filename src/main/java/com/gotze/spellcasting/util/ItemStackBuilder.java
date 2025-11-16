@@ -32,7 +32,7 @@ public class ItemStackBuilder {
     private boolean hideTooltipBox;
     private boolean hideEnchantTooltip;
     private Map<Enchantment, Integer> enchantments;
-    private boolean enchantmentGlint;
+    private Boolean enchantmentGlint;
     private Map<String, String> persistentDataContainer;
     private int durabilityDamage;
     private int maxDurability;
@@ -189,7 +189,9 @@ public class ItemStackBuilder {
             itemStack.addEnchantments(enchantments);
         }
 
-        itemStack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, enchantmentGlint);
+        if (enchantmentGlint != null) {
+            itemStack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, enchantmentGlint);
+        }
 
         if (persistentDataContainer != null) {
             itemStack.editPersistentDataContainer(pdc -> {
