@@ -154,11 +154,11 @@ public abstract class Ability {
         }
 
         public ItemStack getUpgradeToken() {
-            return upgradeToken;
+            return upgradeToken.clone();
         }
 
         public ItemStack getMenuItem() {
-            return menuItem;
+            return menuItem.clone();
         }
 
         public Component getFormattedName() {
