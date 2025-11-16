@@ -22,6 +22,7 @@ public class Sifter extends Machine {
 
     public Sifter(Location location, Player player) {
         super(3, SIFTER_TITLE, location, player);
+        populate();
     }
 
     @Override

@@ -52,11 +52,11 @@ public class OreMerchant extends Merchant {
         super(5, text("Ore Merchant"), true,
                 "Ore Merchant", new Location(Bukkit.getWorld("world"), 0.5, 97, 21.5),
                 Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER);
-        populate(null);
+        populate();
     }
 
     @Override
-    protected void populate(Player player) {
+    protected void populate() {
         setBlackPanes();
     }
 

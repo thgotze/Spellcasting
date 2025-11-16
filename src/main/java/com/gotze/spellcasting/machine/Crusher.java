@@ -55,10 +55,11 @@ public class Crusher extends Machine {
     public Crusher(@NotNull Location location, @NotNull Player player) {
         super(3, MENU_TITLE, location, player);
         populate(player);
+        populate();
     }
 
     @Override
-    protected void populate(Player player) {
+    protected void populate() {
         for (int i = 0; i <= 10; i++) {
             getInventory().setItem(i, new ItemStackBuilder(Material.PAPER)
                     .itemModel(NamespacedKey.minecraft("air"))

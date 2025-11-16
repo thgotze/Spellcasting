@@ -26,7 +26,7 @@ public abstract class Menu implements InventoryHolder {
         this.interactable = interactable;
     }
 
-    protected abstract void populate(Player player);
+    protected abstract void populate();
 
     protected abstract void onInventoryOpen(InventoryOpenEvent event);
 

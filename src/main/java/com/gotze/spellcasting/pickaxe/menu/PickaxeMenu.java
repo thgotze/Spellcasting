@@ -19,14 +19,17 @@ import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public class PickaxeMenu extends Menu {
 
+    private final Player player;
+
     public PickaxeMenu(Player player) {
         super(5, text("Pickaxe"), false);
-        populate(player);
+        this.player = player;
+        populate();
         open(player);
     }
 
     @Override
-    protected void populate(Player player) {
+    protected void populate() {
         MenuUtils.setFrames(getInventory());
 
         setItem(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player));

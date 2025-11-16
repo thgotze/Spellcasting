@@ -20,14 +20,18 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class MaterialMenu extends Menu {
+
+    private final Player player;
+
     public MaterialMenu(Player player) {
         super(5, text("Materials"), false);
-        populate(player);
+        this.player = player;
+        populate();
         open(player);
     }
 
     @Override
-    protected void populate(Player player) {
+    protected void populate() {
         MenuUtils.setFrames(getInventory());
 
         setItem(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player));

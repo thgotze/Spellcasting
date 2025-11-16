@@ -27,11 +27,11 @@ public class TokenMerchant extends Merchant {
         super(5, text("Token Merchant"), false,
                 "Token Merchant", new Location(Bukkit.getWorld("world"), -3.5, 97, 21.5),
                 Villager.Type.SAVANNA, Villager.Profession.LIBRARIAN);
-        populate(null);
+        populate();
     }
 
     @Override
-    protected void populate(Player player) {
+    protected void populate() {
 
         int startingEnchantmentIndex = 0;
         for (Enchantment.EnchantmentType enchantmentType : Enchantment.EnchantmentType.values()) {
