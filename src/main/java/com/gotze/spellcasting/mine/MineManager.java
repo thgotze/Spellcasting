@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -15,6 +16,15 @@ public class MineManager implements LifecycleManager {
 
     private final List<Mine> mines = new ArrayList<>();
     private BukkitTask tickTask;
+
+    public boolean isInMine(Block block) {
+        for (Mine mine : mines) {
+            if (mine.contains(block)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void start() {

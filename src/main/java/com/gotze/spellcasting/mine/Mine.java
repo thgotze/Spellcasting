@@ -65,4 +65,23 @@ public class Mine {
         }
         return blocks;
     }
+
+    public boolean contains(Block block) {
+        if (!block.getWorld().equals(world)) return false;
+
+        int x = block.getX();
+        int y = block.getY();
+        int z = block.getZ();
+
+        int minX = Math.min(corner1.getBlockX(), corner2.getBlockX());
+        int maxX = Math.max(corner1.getBlockX(), corner2.getBlockX());
+        int minY = Math.min(corner1.getBlockY(), corner2.getBlockY());
+        int maxY = Math.max(corner1.getBlockY(), corner2.getBlockY());
+        int minZ = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
+        int maxZ = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
+
+        return x >= minX && x <= maxX
+                && y >= minY && y <= maxY
+                && z >= minZ && z <= maxZ;
+    }
 }
