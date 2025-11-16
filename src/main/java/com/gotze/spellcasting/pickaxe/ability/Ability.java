@@ -116,7 +116,7 @@ public abstract class Ability {
             return new ItemStackBuilder(Material.PAPER)
                     .name(getUpgradeTokenName())
                     .itemModel(upgradeTokenType)
-                    .toggleEnchantmentGlint()
+                    .enchantmentGlint(true)
                     .build();
         }
 

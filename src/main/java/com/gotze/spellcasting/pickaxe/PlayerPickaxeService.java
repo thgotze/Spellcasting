@@ -38,6 +38,7 @@ public class PlayerPickaxeService {
                 .lore(getPickaxeLore(pickaxeData))
                 .hideAttributes()
                 .hideEnchantTooltip()
+                .enchantmentGlint(true)
                 .durabilityDamage(pickaxeData.getDurabilityDamage());
 
         Enchantment efficiency = pickaxeData.getEnchantment(Enchantment.EnchantmentType.EFFICIENCY);

@@ -135,7 +135,7 @@ public abstract class Enchantment {
             return new ItemStackBuilder(Material.PAPER)
                     .name(getUpgradeTokenName())
                     .itemModel(upgradeTokenType)
-                    .toggleEnchantmentGlint()
+                    .enchantmentGlint(true)
                     .build();
         }
 

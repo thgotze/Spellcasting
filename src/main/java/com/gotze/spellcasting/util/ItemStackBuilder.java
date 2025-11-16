@@ -31,8 +31,8 @@ public class ItemStackBuilder {
     private boolean hideAttributes;
     private boolean hideTooltipBox;
     private boolean hideEnchantTooltip;
-    private boolean enchantmentGlint;
     private Map<Enchantment, Integer> enchantments;
+    private boolean enchantmentGlint;
     private Map<String, String> persistentDataContainer;
     private int durabilityDamage;
     private int maxDurability;
@@ -105,16 +105,16 @@ public class ItemStackBuilder {
         return this;
     }
 
-    public ItemStackBuilder toggleEnchantmentGlint() {
-        this.enchantmentGlint = true;
-        return this;
-    }
-
     public ItemStackBuilder enchant(Enchantment enchantment, int level) {
         if (this.enchantments == null) {
             this.enchantments = new HashMap<>();
         }
         this.enchantments.put(enchantment, level);
+        return this;
+    }
+
+    public ItemStackBuilder enchantmentGlint(boolean enabled) {
+        this.enchantmentGlint = enabled;
         return this;
     }
 
@@ -185,13 +185,11 @@ public class ItemStackBuilder {
             itemStack.setData(DataComponentTypes.TOOLTIP_DISPLAY, tooltipBuilder.build());
         }
 
-        if (enchantmentGlint) {
-            itemStack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true);
-        }
-
         if (enchantments != null) {
             itemStack.addEnchantments(enchantments);
         }
+
+        itemStack.setData(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, enchantmentGlint);
 
         if (persistentDataContainer != null) {
             itemStack.editPersistentDataContainer(pdc -> {
