@@ -56,12 +56,12 @@ public abstract class Ability {
     }
 
     public enum AbilityType {
-        PEEK(PeekAbility.class,
-                Rarity.COMMON,
-                5,
-                Material.SPYGLASS,
-                "Temporarily transform",
-                "filler blocks into glass"),
+//        PEEK(PeekAbility.class,
+//                Rarity.COMMON,
+//                5,
+//                Material.SPYGLASS,
+//                "Temporarily transform nearby",
+//                "filler blocks into glass"),
         HAMMER(HammerAbility.class,
                 Rarity.EPIC,
                 1,
