@@ -1,8 +1,6 @@
-package com.gotze.spellcasting.machine.crusher;
+package com.gotze.spellcasting.machine;
 
-import com.gotze.spellcasting.machine.Machine;
 import com.gotze.spellcasting.util.ItemStackBuilder;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,47 +12,34 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
-import static net.kyori.adventure.text.format.TextColor.color;
 
 public class Crusher extends Machine {
 
-    private static final String NEG_SPACE = "\uF001";
-    private static final String NEG_SPACE_8 = NEG_SPACE.repeat(8);
-    private static final String NEG_SPACE_169 = NEG_SPACE.repeat(169);
-
     private static final int INPUT_SLOT = 11;
     private static final int OUTPUT_SLOT = 15;
-    private static final int DEFAULT_PROCESSING_TIME_IN_TICKS = 200 /*10 seconds*/;
+    private static final int DEFAULT_PROCESSING_TIME_IN_TICKS = 200;
 
-    private static final String[] LEFT_ARROW_SPRITES = {
-            "crusher_left_arrow00", "crusher_left_arrow01", "crusher_left_arrow02",
-            "crusher_left_arrow03", "crusher_left_arrow04", "crusher_left_arrow05",
-            "crusher_left_arrow06", "crusher_left_arrow07", "crusher_left_arrow08",
-            "crusher_left_arrow09", "crusher_left_arrow10", "crusher_left_arrow11",
-            "crusher_left_arrow12", "crusher_left_arrow13", "crusher_left_arrow14"
-    };
+//    private static final String[] LEFT_ARROW_SPRITES = {
+//            "crusher_left_arrow00", "crusher_left_arrow01", "crusher_left_arrow02",
+//            "crusher_left_arrow03", "crusher_left_arrow04", "crusher_left_arrow05",
+//            "crusher_left_arrow06", "crusher_left_arrow07", "crusher_left_arrow08",
+//            "crusher_left_arrow09", "crusher_left_arrow10", "crusher_left_arrow11",
+//            "crusher_left_arrow12", "crusher_left_arrow13", "crusher_left_arrow14"
+//    };
+//
+//    private static final String[] RIGHT_ARROW_SPRITES = {
+//            "crusher_right_arrow00", "crusher_right_arrow01", "crusher_right_arrow02",
+//            "crusher_right_arrow03", "crusher_right_arrow04", "crusher_right_arrow05",
+//            "crusher_right_arrow06", "crusher_right_arrow07", "crusher_right_arrow08",
+//            "crusher_right_arrow09", "crusher_right_arrow10", "crusher_right_arrow11",
+//            "crusher_right_arrow12", "crusher_right_arrow13", "crusher_right_arrow14"
+//    };
 
-    private static final String[] RIGHT_ARROW_SPRITES = {
-            "crusher_right_arrow00", "crusher_right_arrow01", "crusher_right_arrow02",
-            "crusher_right_arrow03", "crusher_right_arrow04", "crusher_right_arrow05",
-            "crusher_right_arrow06", "crusher_right_arrow07", "crusher_right_arrow08",
-            "crusher_right_arrow09", "crusher_right_arrow10", "crusher_right_arrow11",
-            "crusher_right_arrow12", "crusher_right_arrow13", "crusher_right_arrow14"
-    };
-
-    private static final Component MENU_TITLE = text(NEG_SPACE_8 + "\uD027")
-            .color(WHITE)
-            .append(text(NEG_SPACE_169 + "Crusher")
-                    .color(color(64, 64, 64))); // TODO: figure out if this color makes a difference
-
-    public Crusher(@NotNull Location location, @NotNull Player player) {
-        super(3, MENU_TITLE, location, player);
-        populate(player);
+    public Crusher(Location location, Player player) {
+        super(MachineType.CRUSHER, location, player);
         populate();
     }
 
@@ -88,14 +73,6 @@ public class Crusher extends Machine {
                 .itemModel(NamespacedKey.minecraft("crusher_right_arrow00"))
                 .hideTooltipBox()
                 .build());
-    }
-
-    @Override
-    public ItemStack toItemStack() {
-        return new ItemStackBuilder(Material.STONECUTTER)
-                .name(text("Crusher"))
-                .persistentDataContainer("machine", "crusher") // TODO: DEBUG
-                .build();
     }
 
     @Override
@@ -176,18 +153,22 @@ public class Crusher extends Machine {
         }
     }
 
+    @Override
     public @Nullable ItemStack getInputItem() {
         return getInventory().getItem(INPUT_SLOT);
     }
 
+    @Override
     public void setInputItem(@Nullable ItemStack inputItem) {
         getInventory().setItem(INPUT_SLOT, inputItem);
     }
 
+    @Override
     public @Nullable ItemStack getOutputItem() {
         return getInventory().getItem(OUTPUT_SLOT);
     }
 
+    @Override
     public void setOutputItem(@Nullable ItemStack outputItem) {
         getInventory().setItem(OUTPUT_SLOT, outputItem);
     }
@@ -204,7 +185,9 @@ public class Crusher extends Machine {
 
     @Override
     protected void onInventoryDrag(InventoryDragEvent event) {
-
+        if (event.getRawSlots().contains(OUTPUT_SLOT)) {
+            event.setCancelled(true);
+        }
     }
 
     @Override

@@ -25,12 +25,9 @@ public class MerchantManager implements Listener {
         Merchant tokenMerchant = new TokenMerchant();
         merchants.put(tokenMerchant.getVillager().getUniqueId(), tokenMerchant);
 
-//        registerVillager(world, new Location(world, -3.5, 97, 21.5),
-//                Villager.Type.SAVANNA, Villager.Profession.LIBRARIAN, "Token Seller");
-//        registerVillager(world, new Location(world, 0.5, 97, 21.5),
-//                Villager.Type.SNOW, Villager.Profession.CARTOGRAPHER, "Ore Merchant");
-//        registerVillager(world, new Location(world, 4.5, 97, 21.5),
-//                Villager.Type.TAIGA, Villager.Profession.ARMORER, "Machine Seller");
+
+        Merchant machineMerchant = new MachineMerchant();
+        merchants.put(machineMerchant.getVillager().getUniqueId(), machineMerchant);
     }
 
     @EventHandler

@@ -1,6 +1,6 @@
 package com.gotze.spellcasting;
 
-import com.gotze.spellcasting.machine.crusher.Crusher;
+import com.gotze.spellcasting.machine.Crusher;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
