@@ -4,12 +4,6 @@ import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
-import com.gotze.spellcasting.util.Loot;
-import com.gotze.spellcasting.util.block.BlockCategories;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -37,26 +31,6 @@ public interface BlockBreaker {
                 blockBreakListener.onBlockBreak(player, block, pickaxeData, isNaturalBreak);
             }
         }
-
-        handleBlockBreak(player, block, pickaxeData, isNaturalBreak);
-    }
-
-    static void handleBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
         pickaxeData.addBlocksBroken(1);
-
-        Loot oreLoot = BlockCategories.ORE_BLOCKS.get(block.getType());
-
-        if (oreLoot != null) {
-            World world = block.getWorld();
-            Location blockLocation = block.getLocation().toCenterLocation();
-            world.dropItemNaturally(blockLocation, oreLoot.drop());
-
-            if (!isNaturalBreak) {
-                world.playEffect(blockLocation, Effect.STEP_SOUND, block.getBlockData());
-                block.setType(Material.AIR, false);
-            }
-        } else if (!isNaturalBreak) {
-            block.breakNaturally(true);
-        }
     }
 }
