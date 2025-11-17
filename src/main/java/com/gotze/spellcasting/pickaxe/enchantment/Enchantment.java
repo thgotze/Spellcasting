@@ -109,6 +109,11 @@ public abstract class Enchantment {
                 3,
                 Material.PISTON,
                 "Gives you extended reach"),
+        MAGNET(MagnetEnchantment.class,
+                Rarity.RARE,
+                3,
+                Material.IRON_INGOT,
+                "Magnets items"),
         ;
 
         private final Class<? extends Enchantment> enchantmentClass;
