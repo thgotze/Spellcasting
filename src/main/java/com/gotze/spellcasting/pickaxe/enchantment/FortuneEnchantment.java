@@ -1,24 +1,26 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
 import com.gotze.spellcasting.data.PickaxeData;
-import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
+import com.gotze.spellcasting.pickaxe.capability.BlockDropItemListener;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.block.BlockCategories;
-import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FortuneEnchantment extends Enchantment implements BlockBreakListener {
+public class FortuneEnchantment extends Enchantment implements BlockDropItemListener {
 
     public FortuneEnchantment() {
         super(EnchantmentType.FORTUNE);
     }
 
     @Override
-    public void onBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
-        Loot lootEntry = BlockCategories.ORE_BLOCKS.get(block.getType());
+    public void onBlockDropItem(Player player, BlockState blockState, List<Item> droppedItems, PickaxeData pickaxeData) {
+        Loot lootEntry = BlockCategories.ORE_BLOCKS.get(blockState.getType());
         if (lootEntry == null) return;
 
         double random = ThreadLocalRandom.current().nextDouble();
@@ -30,10 +32,10 @@ public class FortuneEnchantment extends Enchantment implements BlockBreakListene
         };
         if (multiplier == 1) return;
 
-        ItemStack oreDrops = lootEntry.drop();
-        oreDrops.setAmount((oreDrops.getAmount() * multiplier) - oreDrops.getAmount());
-        // Subtract the base drop because the normal block break already drops it
-
-        block.getWorld().dropItemNaturally(block.getLocation().toCenterLocation(), oreDrops);
+        for (Item itemEntity : droppedItems) {
+            ItemStack itemStack = itemEntity.getItemStack();
+            itemStack.setAmount(itemStack.getAmount() * multiplier);
+            itemEntity.setItemStack(itemStack);
+        }
     }
 }
