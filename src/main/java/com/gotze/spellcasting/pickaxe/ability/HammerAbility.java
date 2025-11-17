@@ -59,7 +59,7 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
         };
         if (blocksToBreak == null) return;
         blocksToBreak.remove(block);
-        breakBlocks(player, blocksToBreak, pickaxeData, false);
+        breakBlocks(player, blocksToBreak, pickaxeData);
     }
 
     @Override

@@ -11,24 +11,24 @@ import java.util.List;
 
 public interface BlockBreaker {
 
-    default void breakBlocks(Player player, List<Block> blocks, PickaxeData pickaxeData, boolean isNaturalBreak) {
+    default void breakBlocks(Player player, List<Block> blocks, PickaxeData pickaxeData) {
         for (Block block : blocks) {
-            breakBlock(player, block, pickaxeData, isNaturalBreak);
+            breakBlock(player, block, pickaxeData);
         }
     }
 
-    default void breakBlock(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
+    default void breakBlock(Player player, Block block, PickaxeData pickaxeData) {
         if (!Spellcasting.getMineManager().isInMine(block)) return;
 
         for (Enchantment enchantment : pickaxeData.getEnchantments()) {
             if (enchantment instanceof BlockBreakListener blockBreakListener) {
-                blockBreakListener.onBlockBreak(player, block, pickaxeData, isNaturalBreak);
+                blockBreakListener.onBlockBreak(player, block, pickaxeData, false);
             }
         }
 
         for (Ability ability : pickaxeData.getAbilities()) {
             if (ability instanceof BlockBreakListener blockBreakListener) {
-                blockBreakListener.onBlockBreak(player, block, pickaxeData, isNaturalBreak);
+                blockBreakListener.onBlockBreak(player, block, pickaxeData, false);
             }
         }
         pickaxeData.addBlocksBroken(1);

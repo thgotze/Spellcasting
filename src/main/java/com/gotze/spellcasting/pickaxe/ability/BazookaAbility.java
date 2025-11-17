@@ -56,7 +56,7 @@ public class BazookaAbility extends Ability implements BlockBreaker {
                 Block targetBlock = laserLocation.getBlock();
                 if (!targetBlock.getType().isAir()) {
                     List<Block> blocksToBreak = BlockUtils.getBlocksInSpherePattern(targetBlock, 9, 7, 9);
-                    breakBlocks(player, blocksToBreak, pickaxeData, false);
+                    breakBlocks(player, blocksToBreak, pickaxeData);
 
                     world.playSound(targetBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
                     world.spawnParticle(Particle.POOF, laserLocation, 350, 2, 2, 2, 0.35);

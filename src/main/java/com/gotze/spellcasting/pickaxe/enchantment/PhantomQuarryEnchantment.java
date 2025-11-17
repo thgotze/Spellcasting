@@ -190,7 +190,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
 
                     // Break up to 3 blocks every tick
                     for (int i = 0; i < 3 && !blocksToBreak.isEmpty(); i++) {
-                        breakBlock(player, blocksToBreak.removeFirst(), pickaxeData, false);
+                        breakBlock(player, blocksToBreak.removeFirst(), pickaxeData);
                     }
                 }
             }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);

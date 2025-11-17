@@ -83,7 +83,7 @@ public class SliceAbility extends Ability implements BlockBreaker {
                             player.playSound(player, Sound.ITEM_TRIDENT_THROW, 0.20f, 1.35f);
 
                             List<Block> blocksToBreak = getBlocksInLineOfSight(i, player);
-                            breakBlocks(player, blocksToBreak, pickaxeData, false);
+                            breakBlocks(player, blocksToBreak, pickaxeData);
                         }
 
                         String spriteName = (i % 2 == 0) ? ANTI_CLOCKWISE_SPRITES[spriteIndex] : CLOCKWISE_SPRITES[spriteIndex];

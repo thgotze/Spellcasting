@@ -3,7 +3,7 @@ package com.gotze.spellcasting.pickaxe;
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
-import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
+import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockDropItemLister;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
@@ -41,7 +41,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
-public class PlayerPickaxeManager implements Listener, BlockBreaker {
+public class PlayerPickaxeManager implements Listener {
     private static final Map<Player, Integer> selectedAbilityIndex = new HashMap<>();
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -66,8 +66,21 @@ public class PlayerPickaxeManager implements Listener, BlockBreaker {
         // At this point the block break event is allowed to go through i.e., NOT canceled
         Block block = event.getBlock();
 
-        // Handles the block break itself: increments blocks broken and notifies all block break listeners
-        breakBlock(player, block, pickaxeData, true);
+        // Increment blocks broken
+        pickaxeData.addBlocksBroken(1);
+
+        // Notify all block break listeners of this natural block break
+        for (Enchantment enchantment : pickaxeData.getEnchantments()) {
+            if (enchantment instanceof BlockBreakListener blockBreakListener) {
+                blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
+            }
+        }
+
+        for (Ability ability : pickaxeData.getAbilities()) {
+            if (ability instanceof BlockBreakListener blockBreakListener) {
+                blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
+            }
+        }
 
         // Update pickaxe durability and lore a tick later
         Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
