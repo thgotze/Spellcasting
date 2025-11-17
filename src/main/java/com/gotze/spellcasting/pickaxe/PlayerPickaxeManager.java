@@ -5,7 +5,7 @@ import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
-import com.gotze.spellcasting.pickaxe.capability.BlockDropItemLister;
+import com.gotze.spellcasting.pickaxe.capability.BlockDropItemListener;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.menu.PickaxeMenu;
 import com.gotze.spellcasting.util.Loot;
@@ -117,25 +117,25 @@ public class PlayerPickaxeManager implements Listener {
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
+
         BlockState blockState = event.getBlockState();
+        List<Item> droppedItems = event.getItems();
 
         Loot oreLoot = BlockCategories.ORE_BLOCKS.get(blockState.getType());
         if (oreLoot != null) {
-            List<Item> items = event.getItems();
-            items.getFirst().setItemStack(oreLoot.drop());
+            droppedItems.getFirst().setItemStack(oreLoot.drop());
         }
 
-        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
-
         for (Enchantment enchantment : pickaxeData.getEnchantments()) {
-            if (enchantment instanceof BlockDropItemLister blockDropItemListener) {
-                blockDropItemListener.onBlockDropItem(player, event, pickaxeData);
+            if (enchantment instanceof BlockDropItemListener blockDropItemListener) {
+                blockDropItemListener.onBlockDropItem(player, blockState, droppedItems, pickaxeData);
             }
         }
 
         for (Ability ability : pickaxeData.getAbilities()) {
-            if (ability instanceof BlockDropItemLister blockDropItemListener) {
-                blockDropItemListener.onBlockDropItem(player, event, pickaxeData);
+            if (ability instanceof BlockDropItemListener blockDropItemListener) {
+                blockDropItemListener.onBlockDropItem(player, blockState, droppedItems, pickaxeData);
             }
         }
     }
