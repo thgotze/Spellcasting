@@ -64,11 +64,6 @@ public class PlayerPickaxeManager implements Listener, BlockBreaker {
         // Handles the block break itself: increments blocks broken, drops items and notifies all block break listeners
         breakBlock(player, block, pickaxeData, true);
 
-        // Remove default ore drops
-        if (BlockCategories.ORE_BLOCKS.containsKey(block.getType())) {
-            event.setDropItems(false);
-        }
-
         // Update pickaxe durability and lore a tick later
         Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
             int durabilityDamage = pickaxe.getData(DataComponentTypes.DAMAGE);
@@ -94,6 +89,35 @@ public class PlayerPickaxeManager implements Listener, BlockBreaker {
         for (Ability ability : pickaxeData.getAbilities()) {
             if (ability instanceof BlockDamageListener blockDamageListener) {
                 blockDamageListener.onBlockDamage(player, event, pickaxeData);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockDropItemEvent(BlockDropItemEvent event) {
+        Player player = event.getPlayer();
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
+        if (pickaxe == null) return;
+
+        BlockState blockState = event.getBlockState();
+
+        Loot oreLoot = BlockCategories.ORE_BLOCKS.get(blockState.getType());
+        if (oreLoot != null) {
+            List<Item> items = event.getItems();
+            items.getFirst().setItemStack(oreLoot.drop());
+        }
+
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
+
+        for (Enchantment enchantment : pickaxeData.getEnchantments()) {
+            if (enchantment instanceof BlockDropItemLister blockDropItemListener) {
+                blockDropItemListener.onBlockDropItem(player, event, pickaxeData);
+            }
+        }
+
+        for (Ability ability : pickaxeData.getAbilities()) {
+            if (ability instanceof BlockDropItemLister blockDropItemListener) {
+                blockDropItemListener.onBlockDropItem(player, event, pickaxeData);
             }
         }
     }
