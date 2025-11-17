@@ -5,8 +5,10 @@ import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
+import com.gotze.spellcasting.pickaxe.capability.BlockDropItemLister;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.pickaxe.menu.PickaxeMenu;
+import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.block.BlockCategories;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -14,12 +16,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -61,7 +66,7 @@ public class PlayerPickaxeManager implements Listener, BlockBreaker {
         // At this point the block break event is allowed to go through i.e., NOT canceled
         Block block = event.getBlock();
 
-        // Handles the block break itself: increments blocks broken, drops items and notifies all block break listeners
+        // Handles the block break itself: increments blocks broken and notifies all block break listeners
         breakBlock(player, block, pickaxeData, true);
 
         // Update pickaxe durability and lore a tick later
@@ -140,7 +145,6 @@ public class PlayerPickaxeManager implements Listener, BlockBreaker {
         selectedAbilityIndex.put(player, next);
 
         Ability selectedAbility = abilities.get(next);
-        player.sendActionBar(text("Selected ability: ").color(YELLOW).append(selectedAbility.getAbilityType().getFormattedName()));
         player.sendActionBar(text("Selected ability: ", YELLOW)
                 .append(selectedAbility.getAbilityType().getFormattedName()));
     }

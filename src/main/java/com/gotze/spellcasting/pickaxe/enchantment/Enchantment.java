@@ -153,14 +153,14 @@ public abstract class Enchantment {
                     .name(getFormattedName());
 
             for (String line : description) {
-                menuItem.lore(text(line).color(GRAY));
+                menuItem.lore(text(line, GRAY));
             }
 
             menuItem.lore(text(""),
                     text(StringUtils.convertToSmallFont("requirements")),
-                    text(getRequiredTokenAmount() + "x [").color(GRAY)
+                    text(getRequiredTokenAmount() + "x [", GRAY)
                             .append(getUpgradeTokenName())
-                            .append(text("]")).color(GRAY));
+                            .append(text("]", GRAY)));
 
             return menuItem.build();
         }

@@ -9,7 +9,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
@@ -84,7 +85,7 @@ public abstract class Ability {
         DRILL_DASH(DrillDashAbility.class,
                 Rarity.LEGENDARY,
                 3,
-                Material.POINTED_DRIPSTONE,
+                Material.TRIDENT,
                 "Dash forwards and break blocks",
                 "in the direction you are facing"),
         ;
