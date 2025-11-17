@@ -89,8 +89,7 @@ public class EnchantmentMenu extends Menu {
         if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
             player.sendMessage(text("You need " + requiredTokenAmount + "x [")
                     .append(clickedEnchantmentType.getUpgradeTokenName())
-                    .append(text("] to enchant your pickaxe!"))
-                    .color(RED));
+                    .append(text("] to enchant your pickaxe!", RED)));
             SoundUtils.playErrorSound(player);
             return;
         }
@@ -109,8 +108,7 @@ public class EnchantmentMenu extends Menu {
             if (enchantment.isMaxLevel()) {
                 player.sendMessage(text("Cannot upgrade ")
                         .append(clickedEnchantmentType.getFormattedName())
-                        .append(text(" past level " + clickedEnchantmentType.getMaxLevel() + "!"))
-                        .color(RED));
+                        .append(text(" past level " + clickedEnchantmentType.getMaxLevel() + "!", RED)));
                 SoundUtils.playErrorSound(player);
                 return;
             } else {

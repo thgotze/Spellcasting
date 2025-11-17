@@ -117,6 +117,8 @@ public class PlayerPickaxeManager implements Listener, BlockBreaker {
 
         Ability selectedAbility = abilities.get(next);
         player.sendActionBar(text("Selected ability: ").color(YELLOW).append(selectedAbility.getAbilityType().getFormattedName()));
+        player.sendActionBar(text("Selected ability: ", YELLOW)
+                .append(selectedAbility.getAbilityType().getFormattedName()));
     }
 
     @EventHandler

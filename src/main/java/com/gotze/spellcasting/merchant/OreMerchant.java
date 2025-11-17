@@ -119,8 +119,7 @@ public class OreMerchant extends Merchant {
     private void setBlackPanes() {
         for (int slot : BOTTOM_SLOTS) {
             setButton(new Button(slot, new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE)
-                    .name(text("Add items to sell them")
-                            .color(GRAY))
+                    .name(text("Add items to sell them", GRAY))
                     .build()) {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
@@ -133,8 +132,7 @@ public class OreMerchant extends Merchant {
     private void setYellowPanes(double totalSellValue) {
         for (int slot : BOTTOM_SLOTS) {
             setButton(new Button(slot, new ItemStackBuilder(Material.YELLOW_STAINED_GLASS_PANE)
-                    .name(text("Total sell value: " + totalSellValue)
-                            .color(YELLOW))
+                    .name(text("Total sell value: " + totalSellValue, YELLOW))
                     .build()) {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
@@ -147,8 +145,7 @@ public class OreMerchant extends Merchant {
     private void setLimePanes(double totalSellValue) {
         for (int slot : BOTTOM_SLOTS) {
             setButton(new Button(slot, new ItemStackBuilder(Material.LIME_STAINED_GLASS_PANE)
-                    .name(text("Click again to confirm sale")
-                            .color(GREEN))
+                    .name(text("Click again to confirm sale", GREEN))
                     .build()) {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
@@ -162,7 +159,7 @@ public class OreMerchant extends Merchant {
                     }
 
                     Player player = (Player) event.getWhoClicked();
-                    player.sendMessage(text("You sold items worth " + totalSellValue + "!").color(GREEN));
+                    player.sendMessage(text("You sold items worth " + totalSellValue + "!", GREEN));
                     PlayerProfileManager.getPlayerProfile(player).addBalance(totalSellValue);
                     setBlackPanes();
                 }

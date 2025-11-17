@@ -27,7 +27,7 @@ public class DrillDashAbility extends Ability implements BlockBreaker {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
-        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!").color(YELLOW)));
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 
         player.setGravity(false);
         player.setRiptiding(true);

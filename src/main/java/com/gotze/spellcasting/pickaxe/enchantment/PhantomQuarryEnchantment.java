@@ -80,7 +80,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 reset();
                 return;
             }
-            player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated").color(GREEN)));
+            player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated", GREEN)));
 
             this.isActive = true;
             this.cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
@@ -148,7 +148,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 public void run() {
                     if (isActive) {
                         reset();
-                        player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" expired").color(RED)));
+                        player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" expired", RED)));
                     }
                 }
             };

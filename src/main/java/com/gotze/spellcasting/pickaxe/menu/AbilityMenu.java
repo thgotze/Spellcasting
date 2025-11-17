@@ -89,8 +89,7 @@ public class AbilityMenu extends Menu {
         if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
             player.sendMessage(text("You need " + requiredTokenAmount + "x [")
                     .append(clickedAbilityType.getUpgradeTokenName())
-                    .append(text("] to upgrade this ability!"))
-                    .color(RED));
+                    .append(text("] to upgrade this ability!", RED)));
             SoundUtils.playErrorSound(player);
             return;
         }
@@ -109,8 +108,7 @@ public class AbilityMenu extends Menu {
             if (ability.isMaxLevel()) {
                 player.sendMessage(text("Cannot upgrade ")
                         .append(clickedAbilityType.getFormattedName())
-                        .append(text(" past level " + clickedAbilityType.getMaxLevel() + "!"))
-                        .color(RED));
+                        .append(text(" past level " + clickedAbilityType.getMaxLevel() + "!", RED)));
                 SoundUtils.playErrorSound(player);
                 return;
             } else {

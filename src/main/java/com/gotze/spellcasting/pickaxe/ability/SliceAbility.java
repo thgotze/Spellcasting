@@ -46,7 +46,7 @@ public class SliceAbility extends Ability implements BlockBreaker {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
-        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!").color(YELLOW)));
+        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 
         Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
         World world = player.getWorld();
@@ -102,7 +102,7 @@ public class SliceAbility extends Ability implements BlockBreaker {
                     this.cancel();
                     for (ItemDisplay display : itemDisplays) display.remove();
                     isActive = false;
-                    player.sendActionBar(text("Slice ability expired").color(RED));
+                    player.sendActionBar(text("Slice ability expired", RED));
                 }
             }
         }.runTaskTimer(Spellcasting.getPlugin(), 0, 1);
