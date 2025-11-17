@@ -33,15 +33,15 @@ public class Spellcasting extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         mineManager = new MineManager();
-
         PluginManager pluginManager = getServer().getPluginManager();
 
         MachineManager machineManager = new MachineManager();
+        PlayerProfileManager playerProfileManager = new PlayerProfileManager();
 
         // Event listeners
         pluginManager.registerEvents(new GlobalListener(mineManager), this);
         pluginManager.registerEvents(new PlayerPickaxeManager(), this);
-        pluginManager.registerEvents(new PlayerProfileManager(), this);
+        pluginManager.registerEvents(playerProfileManager, this);
         pluginManager.registerEvents(new MenuListener(), this);
         pluginManager.registerEvents(new LootPotManager(), this);
         pluginManager.registerEvents(new ResourcePackManager(), this);
@@ -56,6 +56,7 @@ public class Spellcasting extends JavaPlugin {
 
         lifecycleManagers.add(mineManager);
         lifecycleManagers.add(machineManager);
+        lifecycleManagers.add(playerProfileManager);
 
         lifecycleManagers.forEach(LifecycleManager::start);
     }

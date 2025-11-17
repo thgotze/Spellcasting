@@ -4,6 +4,8 @@ import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
+import com.gotze.spellcasting.util.LifecycleManager;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class PlayerProfileManager implements Listener {
+public class PlayerProfileManager implements Listener, LifecycleManager {
 
     private static final Map<Player, PlayerProfile> PLAYER_PROFILE_MAP = new HashMap<>();
     private static final Map<Player, LocalDateTime> SESSION_START_MAP = new HashMap<>();
@@ -112,13 +114,43 @@ public class PlayerProfileManager implements Listener {
         LocalDateTime sessionStart = SESSION_START_MAP.get(player);
         if (sessionStart != null) {
             Duration sessionDuration = Duration.between(sessionStart, LocalDateTime.now());
-            playerProfile.setPlayTime(playerProfile.getPlayTime().plus(sessionDuration));
+            playerProfile.addPlayTime(sessionDuration);
         }
 
         saveProfile(playerProfile, playerFile, yamlConfiguration);
 
         PLAYER_PROFILE_MAP.remove(player);
         SESSION_START_MAP.remove(player);
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void stop() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            PlayerProfile playerProfile = PLAYER_PROFILE_MAP.get(player);
+            if (playerProfile == null) continue;
+
+            UUID uuid = player.getUniqueId();
+            File playerFile = new File(Spellcasting.getPlugin().getDataFolder() + "/playerdata", uuid + ".yml");
+            YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
+
+            playerProfile.setLastSeen(LocalDateTime.now());
+
+            LocalDateTime sessionStart = SESSION_START_MAP.get(player);
+            if (sessionStart != null) {
+                Duration sessionDuration = Duration.between(sessionStart, LocalDateTime.now());
+                playerProfile.addPlayTime(sessionDuration);
+            }
+
+            saveProfile(playerProfile, playerFile, yamlConfiguration);
+        }
+
+        PLAYER_PROFILE_MAP.clear();
+        SESSION_START_MAP.clear();
     }
 
     private void saveProfile(PlayerProfile playerProfile, File playerFile, YamlConfiguration yamlConfiguration) {
