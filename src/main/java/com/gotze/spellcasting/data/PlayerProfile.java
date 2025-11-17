@@ -71,4 +71,8 @@ public class PlayerProfile {
     public void setPlayTime(Duration playTime) {
         this.playTime = playTime;
     }
+
+    public void addPlayTime(Duration duration) {
+        setPlayTime(playTime.plus(duration));
+    }
 }
