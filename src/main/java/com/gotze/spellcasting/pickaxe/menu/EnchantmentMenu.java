@@ -87,7 +87,7 @@ public class EnchantmentMenu extends Menu {
         upgradeToken.setAmount(requiredTokenAmount);
 
         if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
-            player.sendMessage(text("You need " + requiredTokenAmount + "x [")
+            player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
                     .append(clickedEnchantmentType.getUpgradeTokenName())
                     .append(text("] to enchant your pickaxe!", RED)));
             SoundUtils.playErrorSound(player);

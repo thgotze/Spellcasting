@@ -87,7 +87,7 @@ public class AbilityMenu extends Menu {
         upgradeToken.setAmount(requiredTokenAmount);
 
         if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
-            player.sendMessage(text("You need " + requiredTokenAmount + "x [")
+            player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
                     .append(clickedAbilityType.getUpgradeTokenName())
                     .append(text("] to upgrade this ability!", RED)));
             SoundUtils.playErrorSound(player);

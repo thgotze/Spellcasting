@@ -17,7 +17,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class MaterialMenu extends Menu {
 
@@ -86,7 +87,7 @@ public class MaterialMenu extends Menu {
                     }
 
                     if (!playerInventory.containsAtLeast(upgradeToken, tokenAmount)) {
-                        player.sendMessage(text("You need " + tokenAmount + "x [")
+                        player.sendMessage(text("You need " + tokenAmount + "x [", RED)
                                 .append(pickaxeMaterial.getFormattedUpgradeTokenName())
                                 .append(text("] to upgrade your pickaxe!", RED)));
                         SoundUtils.playErrorSound(player);
