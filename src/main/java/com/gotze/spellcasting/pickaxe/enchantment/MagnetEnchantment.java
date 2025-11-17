@@ -2,21 +2,24 @@ package com.gotze.spellcasting.pickaxe.enchantment;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
-import com.gotze.spellcasting.pickaxe.capability.BlockDropItemLister;
+import com.gotze.spellcasting.pickaxe.capability.BlockDropItemListener;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-public class MagnetEnchantment extends Enchantment implements BlockDropItemLister {
+import java.util.List;
+
+public class MagnetEnchantment extends Enchantment implements BlockDropItemListener {
 
     public MagnetEnchantment() {
         super(EnchantmentType.MAGNET);
     }
 
     @Override
-    public void onBlockDropItem(Player player, BlockDropItemEvent event, PickaxeData pickaxeData) {
-        event.getItems().forEach(item -> {
+    public void onBlockDropItem(Player player, BlockState blockState, List<Item> droppedItems, PickaxeData pickaxeData) {
+        droppedItems.forEach(item -> {
             item.setPickupDelay(0);
             item.setGravity(false);
 
