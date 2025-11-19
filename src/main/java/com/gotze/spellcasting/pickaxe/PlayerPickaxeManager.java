@@ -54,7 +54,7 @@ public class PlayerPickaxeManager implements Listener {
 
         // Check if pickaxe is about to break, cancel event if so
         PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
-        if (pickaxeData.getDurabilityDamage() + 1 == pickaxeData.getPickaxeMaterial().getMaxDurability()) {
+        if (pickaxeData.getDurabilityDamage() + 1 >= pickaxeData.getPickaxeMaterial().getMaxDurability()) {
             event.setCancelled(true);
             player.sendMessage(text("Pickaxe durability too low to continue mining!", RED));
             player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 60, 2));
