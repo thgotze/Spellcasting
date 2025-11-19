@@ -1,6 +1,7 @@
 plugins {
     java
     id("xyz.jpenilla.run-paper") version "3.0.2"
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 repositories {
@@ -9,10 +10,16 @@ repositories {
         name = "papermc-repo"
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
+    maven {
+        name = "undefined-repo"
+        url = uri("https://repo.undefinedcreations.com/releases")
+    }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    implementation("com.undefined:stellar:1.1.1:paper")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
 }
 
 tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
