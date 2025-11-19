@@ -26,6 +26,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -207,6 +208,13 @@ public class PlayerPickaxeManager implements Listener {
         if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) {
             event.setCancelled(true);
             Bukkit.getScheduler().runTask(Spellcasting.getPlugin(), () -> new PickaxeMenu(player));
+        }
+    }
+
+    @EventHandler
+    public void onDropPickaxe(PlayerDropItemEvent event) {
+        if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(event.getItemDrop().getItemStack(), event.getPlayer())) {
+            event.setCancelled(true);
         }
     }
 }
