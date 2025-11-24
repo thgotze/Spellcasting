@@ -28,7 +28,7 @@ public interface BlockBreaker {
     }
 
     default void breakBlock(Player player, Block block, PickaxeData pickaxeData) {
-        if (!Spellcasting.getMineManager().isInMine(block)) return;
+        if (!Spellcasting.getMineManager().isInAnyMine(block)) return;
 
         for (Enchantment enchantment : pickaxeData.getEnchantments()) {
             if (enchantment instanceof BlockBreakListener blockBreakListener) {
@@ -63,7 +63,6 @@ public interface BlockBreaker {
 
         world.playEffect(blockLocation, Effect.STEP_SOUND, block.getBlockData());
         block.setType(Material.AIR, false);
-
 
         for (Enchantment enchantment : pickaxeData.getEnchantments()) {
             if (enchantment instanceof BlockDropItemListener listener) {

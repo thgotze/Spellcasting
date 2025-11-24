@@ -26,7 +26,7 @@ public class GlobalListener implements Listener {
         Player player = event.getPlayer();
 
         if (player.getGameMode() == GameMode.CREATIVE) return;
-        if (mineManager.isInMine(event.getBlock())) return;
+        if (mineManager.isInAnyMine(event.getBlock())) return;
 
         event.setCancelled(true);
     }
@@ -50,7 +50,7 @@ public class GlobalListener implements Listener {
             Block block = event.getClickedBlock();
             if (block == null) return;
 
-            if (mineManager.isInMine(block)) return;
+            if (mineManager.isInAnyMine(block)) return;
 
             event.setCancelled(true);
         }

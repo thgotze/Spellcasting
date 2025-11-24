@@ -17,15 +17,6 @@ public class MineManager implements LifecycleManager {
     private final List<Mine> mines = new ArrayList<>();
     private BukkitTask tickTask;
 
-    public boolean isInMine(Block block) {
-        for (Mine mine : mines) {
-            if (mine.contains(block)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public void start() {
         World world = Spellcasting.getPlugin().getServer().getWorld("world");
@@ -53,6 +44,28 @@ public class MineManager implements LifecycleManager {
                 () -> mines.forEach(Mine::refillMine),
                 2400L, 2400L
         );
+    }
+
+    public boolean isInAnyMine(Block block) {
+        return mines.stream().anyMatch(mine -> mine.contains(block));
+    }
+
+    public boolean isInAnyMine(Location location) {
+        return mines.stream().anyMatch(mine -> mine.contains(location));
+    }
+
+    public boolean isInAnyMine(Entity entity) {
+        return mines.stream().anyMatch(mine -> mine.contains(entity));
+    }
+
+    public List<Player> getAllPlayersInMines() {
+        return mines.stream()
+                .flatMap(mine -> mine.getPlayersInMine().stream())
+                .collect(Collectors.toList());
+    }
+
+    public void teleportAllPlayersToSafety() {
+        mines.forEach(mine -> mine.getPlayersInMine().forEach(mine::teleportPlayerToSafety));
     }
 
     @Override
