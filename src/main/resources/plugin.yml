@@ -2,3 +2,4 @@ name: Spellcasting
 version: '1.0'
 main: com.gotze.spellcasting.Spellcasting
 api-version: '1.21.10'
+depend: [FastAsyncWorldEdit]
