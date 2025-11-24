@@ -46,7 +46,7 @@ public class Spellcasting extends JavaPlugin {
         pluginManager.registerEvents(new PlayerPickaxeManager(), this);
         pluginManager.registerEvents(playerProfileManager, this);
         pluginManager.registerEvents(new MenuListener(), this);
-        pluginManager.registerEvents(new LootPotManager(), this);
+//        pluginManager.registerEvents(new LootPotManager(), this);
         pluginManager.registerEvents(new ResourcePackManager(), this);
         pluginManager.registerEvents(new MerchantManager(), this);
         pluginManager.registerEvents(machineManager, this);

@@ -289,7 +289,7 @@ public class BlockUtils {
         List<Block> blocksInLine = new ArrayList<>();
 
         for (int i = 1; i <= length; i++) {
-            Location blockLocation = origin.getLocation().add(direction.multiply(i));
+            Location blockLocation = origin.getLocation().add(direction.clone().multiply(i));
             blocksInLine.add(blockLocation.getBlock());
         }
         return blocksInLine;

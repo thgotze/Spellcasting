@@ -159,8 +159,7 @@ public class PlayerPickaxeManager implements Listener {
         selectedAbilityIndex.put(player, next);
 
         Ability selectedAbility = abilities.get(next);
-        player.sendActionBar(text("Selected ability: ", YELLOW)
-                .append(selectedAbility.getAbilityType().getFormattedName()));
+        player.sendActionBar(text("Selected ability: ", YELLOW).append(selectedAbility.getAbilityType().getFormattedName()));
     }
 
     @EventHandler
