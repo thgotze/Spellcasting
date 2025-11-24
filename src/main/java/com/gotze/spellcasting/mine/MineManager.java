@@ -2,15 +2,19 @@ package com.gotze.spellcasting.mine;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.LifecycleManager;
+import com.sk89q.worldedit.function.pattern.RandomPattern;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MineManager implements LifecycleManager {
 
@@ -21,23 +25,26 @@ public class MineManager implements LifecycleManager {
     public void start() {
         World world = Spellcasting.getPlugin().getServer().getWorld("world");
 
-        WeightedBlockSelector weightedBlockSelector1 = new WeightedBlockSelector();
-        weightedBlockSelector1.addBlock(Material.DIAMOND_ORE, 0.25);
-        weightedBlockSelector1.addBlock(Material.GOLD_ORE, 1.00);
-        weightedBlockSelector1.addBlock(Material.DEEPSLATE_GOLD_ORE, 0.50);
-        weightedBlockSelector1.addBlock(Material.RAW_GOLD_BLOCK, 0.25);
-        weightedBlockSelector1.addBlock(Material.COPPER_ORE, 3.00);
-        weightedBlockSelector1.addBlock(Material.DEEPSLATE_COPPER_ORE, 1.50);
-        weightedBlockSelector1.addBlock(Material.RAW_COPPER_BLOCK, 0.75);
-        weightedBlockSelector1.addBlock(Material.IRON_ORE, 2.00);
-        weightedBlockSelector1.addBlock(Material.DEEPSLATE_IRON_ORE, 1.00);
-        weightedBlockSelector1.addBlock(Material.RAW_IRON_BLOCK, 0.50);
-        weightedBlockSelector1.addBlock(Material.STONE, 89.25);
+        RandomPattern minePattern1 = new RandomPattern();
+        minePattern1.add(BlockTypes.DIAMOND_ORE.getDefaultState(), 0.25);
+        minePattern1.add(BlockTypes.GOLD_ORE.getDefaultState(), 1.00);
+        minePattern1.add(BlockTypes.DEEPSLATE_GOLD_ORE.getDefaultState(), 0.50);
+        minePattern1.add(BlockTypes.RAW_GOLD_BLOCK.getDefaultState(), 0.25);
+        minePattern1.add(BlockTypes.COPPER_ORE.getDefaultState(), 3.00);
+        minePattern1.add(BlockTypes.DEEPSLATE_COPPER_ORE.getDefaultState(), 1.50);
+        minePattern1.add(BlockTypes.RAW_COPPER_BLOCK.getDefaultState(), 0.75);
+        minePattern1.add(BlockTypes.IRON_ORE.getDefaultState(), 2.00);
+        minePattern1.add(BlockTypes.DEEPSLATE_IRON_ORE.getDefaultState(), 1.00);
+        minePattern1.add(BlockTypes.RAW_IRON_BLOCK.getDefaultState(), 0.50);
+        minePattern1.add(BlockTypes.STONE.getDefaultState(), 89.25);
 
-        mines.add(new Mine(world, weightedBlockSelector1,
+        mines.add(new Mine(
                 new Location(world, -24, 96, 25),
-                new Location(world, 24, 36, 77)
+                new Location(world, 24, 36, 77),
+                new Location(world, 0.5, 97, 22.5),
+                minePattern1
         ));
+
 
         tickTask = Bukkit.getScheduler().runTaskTimer(
                 Spellcasting.getPlugin(),

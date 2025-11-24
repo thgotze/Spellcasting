@@ -1,87 +1,77 @@
 package com.gotze.spellcasting.mine;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Mine {
-    private final World world;
-    private final WeightedBlockSelector weightedBlockSelector;
-    private final Location corner1;
-    private final Location corner2;
-    private final List<Block> blocks;
+    private final CuboidRegion cuboidRegion;
+    private final Location teleportLocation;
+    private final Pattern pattern;
 
-    public Mine(World world, WeightedBlockSelector weightedBlockSelector, Location corner1, Location corner2) {
-        this.world = world;
-        this.weightedBlockSelector = weightedBlockSelector;
-        this.corner1 = corner1;
-        this.corner2 = corner2;
-        this.blocks = getBlocksInRegion();
+    public Mine(Location corner1, Location corner2, Location teleportLocation, Pattern pattern) {
+        if (corner1.getWorld() != corner2.getWorld()) {
+            throw new IllegalArgumentException("Both corners must be in the same world!");
+        }
+
+        this.teleportLocation = teleportLocation;
+        this.cuboidRegion = new CuboidRegion(
+                BukkitAdapter.adapt(corner1.getWorld()),
+                BlockVector3.at(corner1.getBlockX(), corner1.getBlockY(), corner1.getBlockZ()),
+                BlockVector3.at(corner2.getBlockX(), corner2.getBlockY(), corner2.getBlockZ())
+        );
+
+        this.pattern = pattern;
     }
 
     public void refillMine() {
-        int batchSize = 1000;
+        List<Player> playersInMine = getPlayersInMine();
+        playersInMine.forEach(this::teleportPlayerToSafety);
 
-        new BukkitRunnable() {
-            int index = 0;
+        try (EditSession editSession = WorldEdit.getInstance().newEditSession(cuboidRegion.getWorld())) {
+            editSession.setBlocks((Region) cuboidRegion, pattern);
+            editSession.flushQueue();
 
-            @Override
-            public void run() {
-                int end = Math.min(index + batchSize, blocks.size());
-
-                for (int i = index; i < end; i++) {
-                    blocks.get(i).setType(weightedBlockSelector.getRandomBlock());
-                }
-
-                index = end;
-                if (index >= blocks.size()) {
-                    cancel();
-                }
-            }
-        }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);
+        } catch (Exception e) {
+            Spellcasting.getPlugin().getLogger().warning("Failed to refill mine using FAWE: " + e.getMessage());
+        }
     }
 
-    private List<Block> getBlocksInRegion() {
-        List<Block> blocks = new ArrayList<>();
+    public List<Player> getPlayersInMine() {
+        World world = BukkitAdapter.adapt(cuboidRegion.getWorld());
 
-        int minX = Math.min(corner1.getBlockX(), corner2.getBlockX());
-        int maxX = Math.max(corner1.getBlockX(), corner2.getBlockX());
-        int minY = Math.min(corner1.getBlockY(), corner2.getBlockY());
-        int maxY = Math.max(corner1.getBlockY(), corner2.getBlockY());
-        int minZ = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
-        int maxZ = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
+        return world.getPlayers().stream()
+                .filter(this::contains)
+                .collect(Collectors.toList());
+    }
 
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    blocks.add(world.getBlockAt(x, y, z));
-                }
-            }
-        }
-        return blocks;
+    public void teleportPlayerToSafety(Player player) {
+        player.teleport(teleportLocation);
+        player.sendRichMessage("<yellow>The mine has reset! You've been teleported to safety");
     }
 
     public boolean contains(Block block) {
-        if (!block.getWorld().equals(world)) return false;
+        return cuboidRegion.contains(BlockVector3.at(block.getX(), block.getY(), block.getZ()));
+    }
 
-        int x = block.getX();
-        int y = block.getY();
-        int z = block.getZ();
+    public boolean contains(Location location) {
+        return cuboidRegion.contains(BlockVector3.at(location.getX(), location.getY(), location.getZ()));
+    }
 
-        int minX = Math.min(corner1.getBlockX(), corner2.getBlockX());
-        int maxX = Math.max(corner1.getBlockX(), corner2.getBlockX());
-        int minY = Math.min(corner1.getBlockY(), corner2.getBlockY());
-        int maxY = Math.max(corner1.getBlockY(), corner2.getBlockY());
-        int minZ = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
-        int maxZ = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
-
-        return x >= minX && x <= maxX
-                && y >= minY && y <= maxY
-                && z >= minZ && z <= maxZ;
+    public boolean contains(Entity entity) {
+        return cuboidRegion.contains(BlockVector3.at(entity.getX(), entity.getY(), entity.getZ()));
     }
 }
