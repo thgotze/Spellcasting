@@ -195,19 +195,24 @@ public class PlayerPickaxeManager implements Listener {
     }
 
     @EventHandler
-    public void onRightClickPickaxeInInventoryOpenMenu(InventoryClickEvent event) {
-        if (!event.getClick().isRightClick()) return;
-        if (!(event.getInventory().getHolder() instanceof Player player)) return;
-        if (event.getClickedInventory() != player.getInventory()) return;
-        if (!event.getCursor().isEmpty()) return;
+    public void onRightClickPickaxeInInventory(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
 
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem == null) return;
 
-        if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) {
-            event.setCancelled(true);
+        if (!PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) return;
+
+        // Open the pickaxe menu if right-clicking own pickaxe in player inventory
+        if (event.getInventory().getHolder() instanceof Player) {
+            if (!event.getClick().isRightClick()) return;
+            if (!event.getCursor().isEmpty()) return;
+
             Bukkit.getScheduler().runTask(Spellcasting.getPlugin(), () -> new PickaxeMenu(player));
         }
+
+        // Clicked own pickaxe while having a different inventory open
+        event.setCancelled(true);
     }
 
     @EventHandler
