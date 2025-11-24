@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.data.PickaxeData;
+import com.gotze.spellcasting.pickaxe.ability.todo.SlamAbility;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Rarity;
 import com.gotze.spellcasting.util.StringUtils;
@@ -88,6 +89,12 @@ public abstract class Ability {
                 Material.TRIDENT,
                 "Dash forwards and break blocks",
                 "in the direction you are facing"),
+        SLAM(SlamAbility.class,
+                Rarity.RARE,
+                5,
+                Material.NETHERITE_BOOTS,
+                "Jump up and slam the ground",
+                "breaking many blocks on impact"),
         ;
 
         private final Class<? extends Ability> abilityClass;
