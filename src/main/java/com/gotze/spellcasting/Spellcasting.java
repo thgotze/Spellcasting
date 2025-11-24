@@ -53,6 +53,7 @@ public class Spellcasting extends JavaPlugin {
         PickaxeCommandStellar.register(this);
         CommandUtil.unregisterCommand("msg", this);
         CommandUtil.unregisterCommand("tell", this);
+        registerCommand("balance", List.of("bal"), new BalanceCommand());
 
         // Other
         RecipeRegistry.registerRecipes();
