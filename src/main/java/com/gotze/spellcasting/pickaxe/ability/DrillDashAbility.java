@@ -3,7 +3,9 @@ package com.gotze.spellcasting.pickaxe.ability;
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
+import com.gotze.spellcasting.pickaxe.capability.ItemModelModifier;
 import com.gotze.spellcasting.util.block.BlockUtils;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -14,7 +16,7 @@ import java.util.List;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
-public class DrillDashAbility extends Ability implements BlockBreaker {
+public class DrillDashAbility extends Ability implements BlockBreaker, ItemModelModifier {
     private static final float DASH_SPEED = 0.5f;
 
     private boolean isActive;
@@ -29,12 +31,19 @@ public class DrillDashAbility extends Ability implements BlockBreaker {
         this.isActive = true;
         player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 
+        final int DASH_DURATION_TICKS = 5 * getLevel() + 5; // 10, 15, 20, 25, 30
+
+        modifyItemModelTemporarily(player.getInventory().getItemInMainHand(),
+                Material.TRIDENT,
+                DASH_DURATION_TICKS,
+                player::updateInventory
+        );
+
         player.setGravity(false);
         player.setRiptiding(true);
 
         new BukkitRunnable() {
             final Vector startingDirection = player.getLocation().getDirection();
-            final int DASH_DURATION_TICKS = 5 * getLevel() + 5; // 10, 15, 20, 25, 30
             int ticks = 0;
 
             @Override
