@@ -11,6 +11,7 @@ public class PlayerProfile {
     private Duration playTime;
     private double balance;
     private PickaxeData pickaxeData;
+    private Rank rank;
 
     public PlayerProfile() {
         this.joinDate = LocalDateTime.now();
@@ -18,14 +19,16 @@ public class PlayerProfile {
         this.playTime = Duration.ZERO;
         this.balance = 0.00;
         this.pickaxeData = new PickaxeData();
+        this.rank = Rank.A;
     }
 
-    public PlayerProfile(LocalDateTime joinDate, LocalDateTime lastSeen, Duration playTime, double balance, PickaxeData pickaxeData) {
+    public PlayerProfile(LocalDateTime joinDate, LocalDateTime lastSeen, Duration playTime, double balance, PickaxeData pickaxeData, Rank rank) {
         this.joinDate = joinDate;
         this.lastSeen = lastSeen;
         this.playTime = playTime;
         this.balance = balance;
         this.pickaxeData = pickaxeData;
+        this.rank = rank;
     }
 
     public static PlayerProfile fromPlayer(Player player) {
@@ -74,5 +77,9 @@ public class PlayerProfile {
 
     public void addPlayTime(Duration duration) {
         setPlayTime(playTime.plus(duration));
+    }
+
+    public Rank getRank() {
+        return rank;
     }
 }

@@ -91,8 +91,10 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
             }
         }
 
+        Rank rank = Rank.valueOf(yamlConfiguration.getString("rank"));
+
         // Create profile with loaded data
-        playerProfile = new PlayerProfile(joinDate, lastSeen, playTime, balance, pickaxeData);
+        playerProfile = new PlayerProfile(joinDate, lastSeen, playTime, balance, pickaxeData, rank);
         PLAYER_PROFILE_MAP.put(player, playerProfile);
 
         // Track session start time
@@ -174,6 +176,8 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
                 .map(ability -> ability.getAbilityType().name() + " " + ability.getLevel())
                 .toList();
         yamlConfiguration.set("pickaxe-data.abilities", abilitiesSerialized);
+
+        yamlConfiguration.set("rank", playerProfile.getRank().name());
 
         try {
             yamlConfiguration.save(playerFile);
