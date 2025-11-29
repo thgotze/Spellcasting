@@ -49,6 +49,7 @@ public class Spellcasting extends JavaPlugin {
         registerCommand("pay", new PayCommand());
         registerCommand("pickaxe", List.of("pick", "p"), new PickaxeCommand());
         registerCommand("spawn", new SpawnCommand());
+        registerCommand("message", List.of("msg", "dm", "pm", "tell", "whisper", "w"), new MessageCommand());
 
         // Other
         RecipeRegistry.registerRecipes();
