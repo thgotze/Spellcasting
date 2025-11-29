@@ -39,7 +39,10 @@ public class Mine {
 
     public void refillMine() {
         List<Player> playersInMine = getPlayersInMine();
-        playersInMine.forEach(this::teleportPlayerToSafety);
+        playersInMine.forEach(player -> {
+            player.sendRichMessage("<yellow>The mine has reset! You've been teleported to safety");
+            teleportPlayerToSafety(player);
+        });
 
         try (EditSession editSession = WorldEdit.getInstance().newEditSession(cuboidRegion.getWorld())) {
             editSession.setBlocks((Region) cuboidRegion, pattern);
@@ -60,7 +63,6 @@ public class Mine {
 
     public void teleportPlayerToSafety(Player player) {
         player.teleport(teleportLocation);
-        player.sendRichMessage("<yellow>The mine has reset! You've been teleported to safety");
     }
 
     public boolean contains(Block block) {
