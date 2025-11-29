@@ -59,7 +59,11 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
                 for (int i = 0; i < 9 && !blocksToFreeze.isEmpty(); i++) {
                     Block blockToFreeze = blocksToFreeze.removeFirst();
                     frozenBlocks.put(blockToFreeze, blockToFreeze.getBlockData());
-                    blockToFreeze.setType(Material.PACKED_ICE);
+                    if (BlockCategories.ORE_BLOCKS.containsKey(blockToFreeze.getType())) {
+                        blockToFreeze.setType(Material.BLUE_ICE);
+                    } else {
+                        blockToFreeze.setType(Material.PACKED_ICE);
+                    }
                 }
             }
         }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);
