@@ -117,6 +117,12 @@ public abstract class Enchantment {
                 3,
                 Material.ENDER_EYE,
                 "Get ore drops from filler blocks"), // TODO: better desc
+        FRACTURE(FractureEnchantment.class,
+                Rarity.LEGENDARY,
+                3,
+                Material.GRAVEL,
+                "Chance to damage blocks around",
+                "blocks you break"),
         ;
 
         private final Class<? extends Enchantment> enchantmentClass;
