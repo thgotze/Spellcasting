@@ -44,6 +44,7 @@ public class Spellcasting extends JavaPlugin {
         pluginManager.registerEvents(machineManager, this);
 
         // Commands
+        registerCommand("admin", new AdminCommand());
         registerCommand("balance", List.of("bal"), new BalanceCommand());
         registerCommand("pay", new PayCommand());
         registerCommand("pickaxe", List.of("pick", "p"), new PickaxeCommand());
