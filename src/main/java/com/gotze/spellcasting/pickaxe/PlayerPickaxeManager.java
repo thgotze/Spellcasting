@@ -228,7 +228,14 @@ public class PlayerPickaxeManager implements Listener {
     }
 
     @EventHandler
-    public void onRightClickPickaxeInInventory(InventoryClickEvent event) {
+    public void onTryDropPickaxe(PlayerDropItemEvent event) {
+        if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(event.getItemDrop().getItemStack(), event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onClickPickaxeInInventory(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
 
         ItemStack clickedItem = event.getCurrentItem();
