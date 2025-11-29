@@ -1,30 +1,29 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.util.block.BlockUtils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockType;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-import org.joml.Matrix4f;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
-
-import static net.kyori.adventure.text.Component.text;
+import java.util.Map;
 
 public class EnrichenEnchantment extends Enchantment implements BlockBreakListener {
     private static final BlockData ENRICHEN_TINTED_GLASS = BlockType.TINTED_GLASS.createBlockData();
     private static final ParticleBuilder ENRICHEN_PARTICLE = new ParticleBuilder(Particle.DUST)
             .count(0)
-            .data(new Particle.DustOptions(Color.LIME, 1.0f))
+            .data(new Particle.DustOptions(Color.ORANGE, 1.0f))
             .offset(0, 0, 0)
             .extra(0);
     private static final EnumMap<Material, Material> applicableOreTypes = new EnumMap<>(Material.class);
@@ -39,70 +38,76 @@ public class EnrichenEnchantment extends Enchantment implements BlockBreakListen
         applicableOreTypes.put(Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE);
     }
 
+    private final Map<Block, BlockDisplay> markedBlocks = new HashMap<>();
+
     public EnrichenEnchantment() {
         super(EnchantmentType.ENRICHEN);
     }
 
     @Override
     public void onBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
+        markedBlocks.entrySet().removeIf(entry -> {
+            if (entry.getKey().equals(block)) {
+                BlockDisplay display = entry.getValue();
+                display.remove();
+                return true;
+            }
+            return false;
+        });
+
         if (!isNaturalBreak) return;
         // 5% activation chance
 //        if (ThreadLocalRandom.current().nextDouble() > 0.05) return;
+
         List<Block> candidateBlocks = BlockUtils.getBlocksInSquarePattern(block, 3, 3, 3);
         candidateBlocks.remove(block);
         candidateBlocks.removeIf(candidate -> !applicableOreTypes.containsKey(candidate.getType()));
         if (candidateBlocks.isEmpty()) return;
 
         for (Block candidateBlock : candidateBlocks) {
-            // Block display
-            Location displayLocation = candidateBlock.getLocation().add(1 / 512f, 1 / 512f, 1 / 512f);
-            BlockDisplay blockDisplay = (BlockDisplay) block.getWorld().spawnEntity(displayLocation, EntityType.BLOCK_DISPLAY);
-//            blockDisplay.setTransformationMatrix(new Matrix4f().scale(1 - 1 / 8f, 1 - 1 / 8f, 1 - 1 / 8f));
-//            blockDisplay.setTransformationMatrix(new Matrix4f().scale(1 - 1 / 16f, 1 - 1 / 16f, 1 - 1 / 16f));
-//            blockDisplay.setTransformationMatrix(new Matrix4f().scale(1 - 1 / 32f, 1 - 1 / 32f, 1 - 1 / 32f));
-//            blockDisplay.setTransformationMatrix(new Matrix4f().scale(1 - 1 / 64f, 1 - 1 / 64f, 1 - 1 / 64f));
-//            blockDisplay.setTransformationMatrix(new Matrix4f().scale(1 - 1 / 64f, 1 - 1 / 64f, 1 - 1 / 64f));
-            blockDisplay.setTransformationMatrix(new Matrix4f().scale(1 - 1 / 128f, 1 - 1 / 128f, 1 - 1 / 128f));
-//            blockDisplay.setTransformationMatrix(new Matrix4f().scale(1 - 1/256f, 1 - 1/256f, 1 - 1/256f));
-            blockDisplay.setBlock(ENRICHEN_TINTED_GLASS);
-            blockDisplay.setGlowing(true);
-            blockDisplay.setGlowColorOverride(Color.LIME);
-            blockDisplay.setVisibleByDefault(false);
-            player.showEntity(Spellcasting.getPlugin(), blockDisplay);
-            Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), blockDisplay::remove, 10);
+//            // Block display
+//            Location displayLocation = candidateBlock.getLocation().add(1 / 512f, 1 / 512f, 1 / 512f);
+//            BlockDisplay blockDisplay = (BlockDisplay) block.getWorld().spawnEntity(displayLocation, EntityType.BLOCK_DISPLAY);
+//            blockDisplay.setTransformationMatrix(new Matrix4f().scale(1 - 1 / 128f, 1 - 1 / 128f, 1 - 1 / 128f));
+//
+//            blockDisplay.setBlock(ENRICHEN_TINTED_GLASS);
+//            blockDisplay.setGlowing(true);
+//            blockDisplay.setGlowColorOverride(Color.ORANGE);
+//
+//            blockDisplay.setVisibleByDefault(false);
+//            player.showEntity(Spellcasting.getPlugin(), blockDisplay);
+//            Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), blockDisplay::remove, 10);
+//
+//            markedBlocks.put(candidateBlock, blockDisplay);
 
             // Particle outline
             List<Location> particlePoints = BlockUtils.getBlockOutlineForParticles(candidateBlock.getLocation(), 0.10);
             for (Location point : particlePoints) {
                 ENRICHEN_PARTICLE.clone()
                         .location(point)
-                        .receivers(player)
                         .spawn();
             }
             candidateBlock.setType(applicableOreTypes.get(candidateBlock.getType()));
 
             // Particle line
-            Location playerEyeLocation = player.getEyeLocation().clone();
-            playerEyeLocation.add(playerEyeLocation.getDirection().multiply(1)); // offset forward a bit
-
-            Location target = candidateBlock.getLocation().toCenterLocation();
-
-            Vector direction = target.toVector().subtract(playerEyeLocation.toVector());
-            double distance = direction.length();
-            direction.normalize();
-
-            double step = 0.1; // distance between particles
-            int particles = (int) (distance / step);
-
-            for (int i = 0; i < particles; i++) {
-                Vector point = playerEyeLocation.toVector().add(direction.clone().multiply(i * step));
-                Location particleLocation = point.toLocation(player.getWorld());
-                ENRICHEN_PARTICLE.clone()
-                        .location(particleLocation)
-                        .receivers(player)
-                        .spawn();
-            }
+//            Vector playerDirection = player.getLocation().getDirection();
+//            Vector rightVector = playerDirection.crossProduct(new Vector(0, 1, 0)).normalize();
+//            Vector rightOffset = rightVector.multiply(player.getWidth() / 1.8);
+//            Location startLocation = player.getEyeLocation().add(rightOffset);
+//
+//            Location endLocation = candidateBlock.getLocation().toCenterLocation();
+//
+//            double lineDistance = startLocation.distance(endLocation);
+//            double particleDistance = 0.05;
+//            int particleCount = (int) (lineDistance / particleDistance);
+//
+//            Vector directionVector = endLocation.toVector().subtract(startLocation.toVector()).normalize();
+//
+//            for (int i = 0; i <= particleCount; i++) {
+//                ENRICHEN_PARTICLE.clone()
+//                        .location(startLocation.clone().add(directionVector.clone().multiply(i * particleDistance)))
+//                        .spawn();
+//            }
         }
-        player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
     }
 }
