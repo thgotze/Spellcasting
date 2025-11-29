@@ -4,6 +4,7 @@ import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.util.PermissionUtils;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.StringUtils;
 import com.gotze.spellcasting.util.menu.Button;
@@ -70,6 +71,7 @@ public class MaterialMenu extends Menu {
                     upgradeToken.setAmount(tokenAmount);
 
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
+                        if (!PermissionUtils.isAdmin(player)) return;
                         player.getInventory().addItem(upgradeToken);
                         SoundUtils.playUIClickSound(player);
                         return;

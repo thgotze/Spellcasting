@@ -3,6 +3,7 @@ package com.gotze.spellcasting.pickaxe.menu;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
+import com.gotze.spellcasting.util.PermissionUtils;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
@@ -35,6 +36,8 @@ public class EnchantmentMenu extends Menu {
         setButton(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) {
             @Override
             public void onButtonClick(InventoryClickEvent event) {
+                if (!PermissionUtils.isAdmin(player)) return;
+
                 ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                 if (pickaxe == null) return;
 
@@ -55,13 +58,16 @@ public class EnchantmentMenu extends Menu {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
+                        if (!PermissionUtils.isAdmin(player)) return;
+
                         ItemStack upgradeToken = enchantmentType.getUpgradeToken();
                         upgradeToken.setAmount(enchantmentType.getRequiredTokenAmount());
                         player.getInventory().addItem(upgradeToken);
                         SoundUtils.playUIClickSound(player);
-                        return;
+
+                    } else {
+                        upgradeEnchantment(player, enchantmentType);
                     }
-                    upgradeEnchantment(player, enchantmentType);
                 }
             });
         }

@@ -3,6 +3,7 @@ package com.gotze.spellcasting.pickaxe.menu;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
+import com.gotze.spellcasting.util.PermissionUtils;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
@@ -35,6 +36,7 @@ public class AbilityMenu extends Menu {
         setButton(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) { // TODO: debug
             @Override
             public void onButtonClick(InventoryClickEvent event) {
+                if (!PermissionUtils.isAdmin(player)) return;
                 if (event.getClick() != ClickType.DROP) return;
                 ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                 if (pickaxe == null) return;
@@ -55,14 +57,17 @@ public class AbilityMenu extends Menu {
             this.setButton(new Button(startingIndex++, abilityType.getMenuItem()) {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
-                    if (event.getClick() == ClickType.DROP) { // TODO: debug
+                    if (event.getClick() == ClickType.DROP) {
+                        if (!PermissionUtils.isAdmin(player)) return;
+
                         ItemStack upgradeToken = abilityType.getUpgradeToken();
                         upgradeToken.setAmount(abilityType.getRequiredTokenAmount());
                         player.getInventory().addItem(upgradeToken);
                         SoundUtils.playUIClickSound(player);
-                        return;
+
+                    } else {
+                        upgradeAbility(player, abilityType);
                     }
-                    upgradeAbility(player, abilityType);
                 }
             });
         }
