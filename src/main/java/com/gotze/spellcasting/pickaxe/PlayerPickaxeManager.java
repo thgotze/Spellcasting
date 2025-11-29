@@ -51,7 +51,13 @@ public class PlayerPickaxeManager implements Listener {
 
         // Check player is holding their pickaxe
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
-        if (pickaxe == null) return;
+        if (pickaxe == null) {
+            event.setCancelled(true);
+            player.sendActionBar(text("This is not your pickaxe!", RED));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20, 2));
+            SoundUtils.playBassNoteBlockErrorSound(player);
+            return;
+        }
 
         // Check if pickaxe is about to break, cancel event if so
         PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
