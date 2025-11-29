@@ -1,27 +1,24 @@
 package com.gotze.spellcasting.pickaxe;
 
-import com.gotze.spellcasting.util.Rarity;
 import com.gotze.spellcasting.util.StringUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 
 public enum PickaxeMaterial {
-    WOOD(Material.WOODEN_PICKAXE, Rarity.COMMON, Material.OAK_PLANKS),
-    STONE(Material.STONE_PICKAXE, Rarity.COMMON, Material.COBBLESTONE),
-    COPPER(Material.COPPER_PICKAXE, Rarity.UNCOMMON, Material.COPPER_INGOT),
-    IRON(Material.IRON_PICKAXE, Rarity.RARE, Material.IRON_INGOT),
-    DIAMOND(Material.DIAMOND_PICKAXE, Rarity.EPIC, Material.DIAMOND),
-    NETHERITE(Material.NETHERITE_PICKAXE, Rarity.LEGENDARY, Material.NETHERITE_INGOT),
+    WOOD(Material.WOODEN_PICKAXE, Material.OAK_PLANKS),
+    STONE(Material.STONE_PICKAXE, Material.COBBLESTONE),
+    COPPER(Material.COPPER_PICKAXE, Material.COPPER_INGOT),
+    IRON(Material.IRON_PICKAXE, Material.IRON_INGOT),
+    DIAMOND(Material.DIAMOND_PICKAXE, Material.DIAMOND),
+    NETHERITE(Material.NETHERITE_PICKAXE, Material.NETHERITE_INGOT),
     ;
 
     private final Material pickaxeType;
-    private final Rarity rarity;
     private final Material upgradeTokenType;
 
-    PickaxeMaterial(Material pickaxeType, Rarity rarity, Material upgradeTokenType) {
+    PickaxeMaterial(Material pickaxeType, Material upgradeTokenType) {
         this.pickaxeType = pickaxeType;
-        this.rarity = rarity;
         this.upgradeTokenType = upgradeTokenType;
     }
 
@@ -31,10 +28,6 @@ public enum PickaxeMaterial {
 
     public Material getUpgradeTokenType() {
         return upgradeTokenType;
-    }
-
-    public Rarity getRarity() {
-        return rarity;
     }
 
     public int getMaxDurability() {
