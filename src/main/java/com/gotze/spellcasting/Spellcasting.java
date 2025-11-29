@@ -1,9 +1,6 @@
 package com.gotze.spellcasting;
 
-import com.gotze.spellcasting.command.BalanceCommand;
-import com.gotze.spellcasting.command.PayCommand;
-import com.gotze.spellcasting.command.PickaxeCommand;
-import com.gotze.spellcasting.command.SpawnCommand;
+import com.gotze.spellcasting.command.*;
 import com.gotze.spellcasting.data.PlayerProfileManager;
 import com.gotze.spellcasting.machine.MachineManager;
 import com.gotze.spellcasting.merchant.MerchantManager;
@@ -22,22 +19,17 @@ public class Spellcasting extends JavaPlugin {
     private final List<LifecycleManager> lifecycleManagers = new ArrayList<>();
 
     private static Spellcasting plugin;
-    private static MineManager mineManager;
 
     public static Spellcasting getPlugin() {
         return plugin;
     }
 
-    public static MineManager getMineManager() {
-        return mineManager;
-    }
-
     @Override
     public void onEnable() {
         plugin = this;
-        mineManager = new MineManager();
         PluginManager pluginManager = getServer().getPluginManager();
 
+        MineManager mineManager = new MineManager();
         MachineManager machineManager = new MachineManager();
         PlayerProfileManager playerProfileManager = new PlayerProfileManager();
 
