@@ -12,6 +12,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 public class GlobalListener implements Listener {
 
@@ -62,5 +63,11 @@ public class GlobalListener implements Listener {
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL) return;
 
         event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        mineManager.teleportPlayerToSafety(player);
     }
 }

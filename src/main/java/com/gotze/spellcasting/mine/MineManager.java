@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class MineManager implements LifecycleManager {
 
-    private final List<Mine> mines = new ArrayList<>();
+    private static final List<Mine> mines = new ArrayList<>();
     private BukkitTask tickTask;
 
     @Override
@@ -71,7 +71,16 @@ public class MineManager implements LifecycleManager {
                 .collect(Collectors.toList());
     }
 
-    public void teleportAllPlayersToSafety() {
+    public static void teleportPlayerToSafety(Player player) {
+        for (Mine mine : mines) {
+            if (mine.contains(player)) {
+                mine.teleportPlayerToSafety(player);
+                return;
+            }
+        }
+    }
+
+    public static void teleportAllPlayersToSafety() {
         mines.forEach(mine -> mine.getPlayersInMine().forEach(mine::teleportPlayerToSafety));
     }
 
