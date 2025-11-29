@@ -1,5 +1,6 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
+import com.gotze.spellcasting.pickaxe.enchantment.todo.ScavengeEnchantment;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Rarity;
 import com.gotze.spellcasting.util.StringUtils;
@@ -111,9 +112,11 @@ public abstract class Enchantment {
                 "Gives you extended reach"),
         MAGNET(MagnetEnchantment.class,
                 Rarity.RARE,
+        SCAVENGE(ScavengeEnchantment.class,
+                Rarity.EPIC,
                 3,
-                Material.IRON_INGOT,
-                "Magnets items"),
+                Material.ENDER_EYE,
+                "Get ore drops from filler blocks"), // TODO: better desc
         ;
 
         private final Class<? extends Enchantment> enchantmentClass;
