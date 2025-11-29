@@ -31,6 +31,7 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
+        player.swingMainHand();
         player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 
         modifyItemModelTemporarily(player.getInventory().getItemInMainHand(),

@@ -46,6 +46,7 @@ public class SliceAbility extends Ability implements BlockBreaker {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
         this.isActive = true;
+        player.swingMainHand();
         player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 
         Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
@@ -75,6 +76,8 @@ public class SliceAbility extends Ability implements BlockBreaker {
 
                     if (spriteIndex >= 4 && spriteIndex <= 6) {
                         if (spriteIndex == 4) {
+                            player.swingMainHand();
+
                             itemDisplays[i].setItemStack(ItemStack.of(Material.PAPER));
 
                             itemDisplays[i].teleport(player.getEyeLocation()

@@ -32,6 +32,7 @@ public class BazookaAbility extends Ability implements BlockBreaker {
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (System.currentTimeMillis() < cooldown) return;
         this.cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
+        player.swingMainHand();
         player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 
         World world = player.getWorld();
