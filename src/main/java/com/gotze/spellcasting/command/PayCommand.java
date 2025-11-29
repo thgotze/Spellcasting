@@ -60,7 +60,7 @@ public class PayCommand implements BasicCommand {
         PlayerProfile senderProfile = PlayerProfile.fromPlayer(player);
         PlayerProfile targetProfile = PlayerProfile.fromPlayer(targetPlayer);
 
-        // Check if sender has enough balance
+        // Check if the sender has enough balance
         if (senderProfile.getBalance() < amount) {
             player.sendMessage(text("Insufficient balance! You need $" + String.format("%.2f", amount) +
                     " but only have $" + String.format("%.2f", senderProfile.getBalance()), RED));
@@ -80,7 +80,7 @@ public class PayCommand implements BasicCommand {
 
     @Override
     public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, String[] args) {
-        // First argument - suggest online player names (excluding the sender)
+        // No arguments - suggest all online player names (excluding the sender)
         if (args.length == 0) {
             return Bukkit.getOnlinePlayers().stream()
                     .filter(p -> !p.equals(commandSourceStack.getSender()))
@@ -89,8 +89,7 @@ public class PayCommand implements BasicCommand {
 
         } else if (args.length == 1) {
             String input = args[0].toLowerCase();
-
-            // If input is empty, show all players
+            // First argument empty - suggest all online player names (excluding the sender)
             if (input.isEmpty()) {
                 return Bukkit.getOnlinePlayers().stream()
                         .filter(p -> !p.equals(commandSourceStack.getSender()))
@@ -98,14 +97,13 @@ public class PayCommand implements BasicCommand {
                         .toList();
             }
 
-            // Otherwise, filter by what they've typed
+            // First argument not empty - suggest online player names filtered by input
             return Bukkit.getOnlinePlayers().stream()
                     .filter(p -> !p.equals(commandSourceStack.getSender()))
                     .map(Player::getName)
                     .filter(name -> name.toLowerCase().startsWith(input))
                     .toList();
         }
-
         // No suggestions for other arguments
         return Collections.emptyList();
     }
