@@ -237,27 +237,45 @@ public class PlayerPickaxeManager implements Listener {
     public void onClickPickaxeInInventory(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
 
-        ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null) return;
+        // Shift right-clicking the player's pickaxe in the player's own inventory cancels the event and opens the pickaxe menu
+        if (event.getClick() == ClickType.SHIFT_RIGHT) {
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem != null) {
+                if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) {
+                    event.setCancelled(true);
 
-        if (!PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) return;
-
-        // Open the pickaxe menu if right-clicking own pickaxe in player inventory
-        if (event.getInventory().getHolder() instanceof Player) {
-            if (!event.getClick().isRightClick()) return;
-            if (!event.getCursor().isEmpty()) return;
-
-            Bukkit.getScheduler().runTask(Spellcasting.getPlugin(), () -> new PickaxeMenu(player));
+                    if (event.getInventory().getHolder() instanceof Player) {
+                        Bukkit.getScheduler().runTask(Spellcasting.getPlugin(), () -> new PickaxeMenu(player));
+                    }
+                }
+            }
+            return;
         }
 
-        // Clicked own pickaxe while having a different inventory open
-        event.setCancelled(true);
-    }
+        // Trying to swap the player pickaxe's inventory slot location is only allowed within
+        // the player's own inventory and only in the 9 hotbar slots or the offhand slot
+        if (event.getAction() == InventoryAction.HOTBAR_SWAP) {
+            ItemStack clickedItem = player.getInventory().getItem(event.getHotbarButton());
+            if (clickedItem != null) {
+                if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) {
+                    event.setCancelled(true);
 
-    @EventHandler
-    public void onDropPickaxe(PlayerDropItemEvent event) {
-        if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(event.getItemDrop().getItemStack(), event.getPlayer())) {
-            event.setCancelled(true);
+                    if (event.getInventory().getHolder() instanceof Player) {
+                        if (event.getRawSlot() >= 36 && event.getRawSlot() <= 45) {
+                            event.setCancelled(false);
+                        }
+                    }
+                }
+            }
+            return;
+        }
+
+        // Trying to interact with the player pickaxe in any other way cancels the event
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem != null) {
+            if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(clickedItem, player)) {
+                event.setCancelled(true);
+            }
         }
     }
 }
