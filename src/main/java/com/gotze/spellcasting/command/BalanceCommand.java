@@ -22,45 +22,44 @@ public class BalanceCommand implements BasicCommand {
         if (args.length == 0) {
             PlayerProfile playerProfile = PlayerProfile.fromPlayer(player);
             player.sendMessage(text("Your balance: " + playerProfile.getBalance()));
-
-        } else {
-            String targetPlayerName = args[0];
-
-            Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
-            if (targetPlayer == null) {
-                player.sendMessage(text("Player '" + targetPlayerName + "' is not online!", RED));
-                return;
-            }
-
-            PlayerProfile targetProfile = PlayerProfile.fromPlayer(targetPlayer);
-            player.sendMessage(text("Balance of " + targetPlayerName + ": " + targetProfile.getBalance()));
+            return;
         }
+
+        String targetPlayerName = args[0];
+
+        Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
+        if (targetPlayer == null) {
+            player.sendMessage(text("Player '" + targetPlayerName + "' is not online!", RED));
+            return;
+        }
+
+        PlayerProfile targetProfile = PlayerProfile.fromPlayer(targetPlayer);
+        player.sendMessage(text("Balance of " + targetPlayerName + ": " + targetProfile.getBalance()));
     }
 
     @Override
-    public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, String @NotNull [] args) {
-
-        // First argument - suggest online player names (excluding the sender)
+    public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, String @NotNull []
+            args) {
+        // No arguments - suggest all online player names (excluding the sender)
         if (args.length == 0) {
             return Bukkit.getOnlinePlayers().stream()
-                    .filter(p -> !p.equals(commandSourceStack.getSender())) // Exclude the sender
+                    .filter(p -> !p.equals(commandSourceStack.getSender()))
                     .map(Player::getName)
                     .toList();
 
         } else if (args.length == 1) {
             String input = args[0].toLowerCase();
-
-            // If input is empty, show all players
+            // First argument empty - suggest all online player names (excluding the sender)
             if (input.isEmpty()) {
                 return Bukkit.getOnlinePlayers().stream()
-                        .filter(p -> !p.equals(commandSourceStack.getSender())) // Exclude the sender
+                        .filter(p -> !p.equals(commandSourceStack.getSender()))
                         .map(Player::getName)
                         .toList();
             }
 
-            // Otherwise, filter by what they've typed
+            // First argument not empty - suggest online player names filtered by input
             return Bukkit.getOnlinePlayers().stream()
-                    .filter(p -> !p.equals(commandSourceStack.getSender())) // Exclude the sender
+                    .filter(p -> !p.equals(commandSourceStack.getSender()))
                     .map(Player::getName)
                     .filter(name -> name.toLowerCase().startsWith(input))
                     .toList();
