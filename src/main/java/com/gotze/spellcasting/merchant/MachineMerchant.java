@@ -45,7 +45,7 @@ public class MachineMerchant extends Merchant {
 
                 } else {
                     player.sendMessage(text("You cannot afford this", RED));
-                    SoundUtils.playErrorSound(player);
+                    SoundUtils.playBassNoteBlockErrorSound(player);
                 }
             }
         });
@@ -66,7 +66,7 @@ public class MachineMerchant extends Merchant {
                     SoundUtils.playSuccessSound(player);
                 } else {
                     player.sendMessage(text("You cannot afford this", RED));
-                    SoundUtils.playErrorSound(player);
+                    SoundUtils.playBassNoteBlockErrorSound(player);
                 }
             }
         });
@@ -87,7 +87,7 @@ public class MachineMerchant extends Merchant {
                     SoundUtils.playSuccessSound(player);
                 } else {
                     player.sendMessage(text("You cannot afford this", RED));
-                    SoundUtils.playErrorSound(player);
+                    SoundUtils.playBassNoteBlockErrorSound(player);
                 }
             }
         });

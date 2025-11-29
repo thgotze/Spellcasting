@@ -3,6 +3,7 @@ package com.gotze.spellcasting.merchant;
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PlayerProfileManager;
 import com.gotze.spellcasting.util.ItemStackBuilder;
+import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.menu.Button;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -161,6 +162,7 @@ public class OreMerchant extends Merchant {
                     Player player = (Player) event.getWhoClicked();
                     player.sendMessage(text("You sold items worth " + totalSellValue + "!", GREEN));
                     PlayerProfileManager.getPlayerProfile(player).addBalance(totalSellValue);
+                    SoundUtils.playSuccessSound(player);
                     setBlackPanes();
                 }
             });

@@ -90,7 +90,7 @@ public class AbilityMenu extends Menu {
             player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
                     .append(clickedAbilityType.getUpgradeTokenName())
                     .append(text("] to upgrade this ability!", RED)));
-            SoundUtils.playErrorSound(player);
+            SoundUtils.playBassNoteBlockErrorSound(player);
             return;
         }
 
@@ -109,7 +109,7 @@ public class AbilityMenu extends Menu {
                 player.sendMessage(text("Cannot upgrade ")
                         .append(clickedAbilityType.getFormattedName())
                         .append(text(" past level " + clickedAbilityType.getMaxLevel() + "!", RED)));
-                SoundUtils.playErrorSound(player);
+                SoundUtils.playBassNoteBlockErrorSound(player);
                 return;
             } else {
                 ability.increaseLevel();

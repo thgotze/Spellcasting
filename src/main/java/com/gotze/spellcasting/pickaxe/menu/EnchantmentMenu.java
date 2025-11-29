@@ -90,7 +90,7 @@ public class EnchantmentMenu extends Menu {
             player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
                     .append(clickedEnchantmentType.getUpgradeTokenName())
                     .append(text("] to enchant your pickaxe!", RED)));
-            SoundUtils.playErrorSound(player);
+            SoundUtils.playBassNoteBlockErrorSound(player);
             return;
         }
 
@@ -109,7 +109,7 @@ public class EnchantmentMenu extends Menu {
                 player.sendMessage(text("Cannot upgrade ")
                         .append(clickedEnchantmentType.getFormattedName())
                         .append(text(" past level " + clickedEnchantmentType.getMaxLevel() + "!", RED)));
-                SoundUtils.playErrorSound(player);
+                SoundUtils.playBassNoteBlockErrorSound(player);
                 return;
             } else {
                 enchantment.increaseLevel();

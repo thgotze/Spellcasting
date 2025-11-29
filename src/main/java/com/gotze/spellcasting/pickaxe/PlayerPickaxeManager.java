@@ -208,8 +208,8 @@ public class PlayerPickaxeManager implements Listener {
 
         if (pickaxeData.getDurabilityDamage() + 20 >= pickaxeData.getPickaxeMaterial().getMaxDurability()) {
             player.sendMessage(text("Pickaxe durability too low to activate ability", RED));
-            player.playSound(player, Sound.ENTITY_VILLAGER_NO, SoundCategory.MASTER, 1.0f, 1.0f, 404);
-            SoundUtils.playErrorSound(player);
+            SoundUtils.playBassNoteBlockErrorSound(player);
+            SoundUtils.playVillagerErrorSound(player);
             return;
         }
 

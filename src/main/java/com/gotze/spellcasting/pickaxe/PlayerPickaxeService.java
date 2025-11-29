@@ -226,7 +226,7 @@ public class PlayerPickaxeService {
         if (!isItemStackPlayerOwnPickaxe(heldItem, player)) {
             if (notifyOnError) {
                 player.sendMessage(text("You are not holding your own pickaxe!", RED));
-                SoundUtils.playErrorSound(player);
+                SoundUtils.playBassNoteBlockErrorSound(player);
             }
             return null;
         }

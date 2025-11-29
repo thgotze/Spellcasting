@@ -82,7 +82,7 @@ public class MaterialMenu extends Menu {
 
                     if (pickaxeMaterial != nextTierPickaxe) {
                         player.sendMessage(text("Cannot upgrade from " + currentPickaxeMaterial + " to " + pickaxeMaterial + "!", RED));
-                        SoundUtils.playErrorSound(player);
+                        SoundUtils.playBassNoteBlockErrorSound(player);
                         return;
                     }
 
@@ -90,7 +90,7 @@ public class MaterialMenu extends Menu {
                         player.sendMessage(text("You need " + tokenAmount + "x [", RED)
                                 .append(pickaxeMaterial.getFormattedUpgradeTokenName())
                                 .append(text("] to upgrade your pickaxe!", RED)));
-                        SoundUtils.playErrorSound(player);
+                        SoundUtils.playBassNoteBlockErrorSound(player);
                         return;
                     }
 
