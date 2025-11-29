@@ -53,19 +53,19 @@ public class MineManager implements LifecycleManager {
         );
     }
 
-    public boolean isInAnyMine(Block block) {
+    public static boolean isInAnyMine(Block block) {
         return mines.stream().anyMatch(mine -> mine.contains(block));
     }
 
-    public boolean isInAnyMine(Location location) {
+    public static boolean isInAnyMine(Location location) {
         return mines.stream().anyMatch(mine -> mine.contains(location));
     }
 
-    public boolean isInAnyMine(Entity entity) {
+    public static boolean isInAnyMine(Entity entity) {
         return mines.stream().anyMatch(mine -> mine.contains(entity));
     }
 
-    public List<Player> getAllPlayersInMines() {
+    public static List<Player> getAllPlayersInMines() {
         return mines.stream()
                 .flatMap(mine -> mine.getPlayersInMine().stream())
                 .collect(Collectors.toList());

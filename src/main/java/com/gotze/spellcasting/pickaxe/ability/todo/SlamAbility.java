@@ -85,10 +85,6 @@ public class SlamAbility extends Ability implements BlockBreaker {
         );
         blocksToBreak.removeIf(blockToBreak -> blockToBreak.getType().isAir());
         
-        // Break the blocks
         breakBlocks(player, blocksToBreak, pickaxeData);
-        
-        // Optional: Add visual/sound effect here if desired
-        player.sendActionBar(text("SLAM! ", YELLOW).append(text("Broke " + blocksToBreak.size() + " blocks!")));
     }
 }

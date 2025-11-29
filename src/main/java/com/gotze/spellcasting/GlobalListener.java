@@ -59,7 +59,7 @@ public class GlobalListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onFallDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
+        if (!(event.getEntity() instanceof Player)) return;
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL) return;
 
         event.setCancelled(true);

@@ -10,6 +10,7 @@ import com.gotze.spellcasting.util.menu.Button;
 import com.gotze.spellcasting.util.menu.Menu;
 import com.gotze.spellcasting.util.menu.MenuUtils;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -51,7 +52,7 @@ public class MaterialMenu extends Menu {
             };
 
             setButton(new Button(slotIndexes[startingIndex++], new ItemStackBuilder(pickaxeMaterial.getPickaxeType())
-                    .name(pickaxeMaterial.getFormattedPickaxeTypeName().color(pickaxeMaterial.getRarity().getColor()))
+                    .name(pickaxeMaterial.getFormattedPickaxeTypeName())
                     .lore(text(""),
                             text(StringUtils.convertToSmallFont("requirements")),
                             text(tokenAmount + "x [", GRAY)
@@ -101,7 +102,7 @@ public class MaterialMenu extends Menu {
                     playerInventory.setItem(EquipmentSlot.HAND, updatedPickaxe);
 
                     getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));
-                    player.playSound(player, Sound.BLOCK_SMITHING_TABLE_USE, 1.0f, 1.0f);
+                    player.playSound(player, Sound.BLOCK_SMITHING_TABLE_USE, SoundCategory.MASTER, 1.0f, 1.0f, 0);
                 }
             });
         }

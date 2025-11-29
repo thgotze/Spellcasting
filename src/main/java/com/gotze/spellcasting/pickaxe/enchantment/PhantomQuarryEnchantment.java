@@ -27,7 +27,6 @@ import org.joml.Matrix4f;
 import java.util.*;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
@@ -37,20 +36,16 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
             .data(new Particle.DustOptions(Color.FUCHSIA, 1.0f))
             .offset(0, 0, 0)
             .extra(0);
-//    private static final long BASE_COOLDOWN = 300; // 15 seconds
     private static final long BASE_COOLDOWN = 20; // 1 second
     private static final long TIMEOUT_TASK_LENGTH = 300; // 15 seconds
 
+    private boolean isActive;
     private boolean isProcessingQuarry;
     private Block centerBlock;
     private long cooldown;
     private BukkitRunnable timeoutTask;
     private BlockFace blockFace;
-    // ---------------
-    // public as other enchants and abilities might need to know what blocks have been marked
-    // ---------------
-    public boolean isActive;
-    public final Map<Block, BlockDisplay> markedCornerBlocks = new HashMap<>();
+    private final Map<Block, BlockDisplay> markedCornerBlocks = new HashMap<>();
 
     public PhantomQuarryEnchantment() {
         super(EnchantmentType.PHANTOM_QUARRY);
@@ -80,26 +75,14 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 reset();
                 return;
             }
-            player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated", GREEN)));
 
             this.isActive = true;
             this.cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
             World world = player.getWorld();
 
             for (Block cornerBlock : cornerBlocks) {
-//                Location displayLocation = cornerBlock.getLocation().add(0.0625f, 0.0625f, 0.0625f);
-//                Location displayLocation = cornerBlock.getLocation().add(0.03125f, 0.03125f, 0.03125f);
-//                Location displayLocation = cornerBlock.getLocation().add(0.015625f, 0.015625, 0.015625);
-
-//                Location displayLocation = cornerBlock.getLocation().add(0.00390625f, 0.00390625f, 0.00390625f);
-
                 Location displayLocation = cornerBlock.getLocation().add(0.001953125f, 0.001953125f, 0.001953125f);
-
                 BlockDisplay blockDisplay = (BlockDisplay) world.spawnEntity(displayLocation, EntityType.BLOCK_DISPLAY);
-//                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.875f, 0.875f, 0.875f));
-//                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.9375f, 0.9375f, 0.9375f));
-//                blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.96875f, 0.96875f, 0.96875f));
-
                 blockDisplay.setTransformationMatrix(new Matrix4f().scale(0.9921875f, 0.9921875f, 0.9921875f));
 
                 blockDisplay.setBlock(PHANTOM_QUARRY_TINTED_GLASS);

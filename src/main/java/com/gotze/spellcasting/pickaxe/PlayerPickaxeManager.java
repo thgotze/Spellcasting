@@ -4,6 +4,7 @@ import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
+import com.gotze.spellcasting.pickaxe.capability.BlockDamageAbortListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockDropItemListener;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
@@ -13,8 +14,7 @@ import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.block.BlockCategories;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Item;
@@ -23,8 +23,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageAbortEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -49,7 +52,7 @@ public class PlayerPickaxeManager implements Listener {
     public void onBlockBreakWithPickaxe(BlockBreakEvent event) {
         Player player = event.getPlayer();
 
-        // Check player is holding their pickaxe
+        // Check player is holding their own pickaxe
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) {
             event.setCancelled(true);
@@ -142,6 +145,8 @@ public class PlayerPickaxeManager implements Listener {
     @EventHandler
     public void onBlockDropItemEvent(BlockDropItemEvent event) {
         Player player = event.getPlayer();
+        if (player.getGameMode() == GameMode.CREATIVE) return;
+
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
@@ -149,6 +154,7 @@ public class PlayerPickaxeManager implements Listener {
 
         BlockState blockState = event.getBlockState();
         List<Item> droppedItems = event.getItems();
+        if (droppedItems.isEmpty()) return;
 
         Loot oreLoot = BlockCategories.ORE_BLOCKS.get(blockState.getType());
         if (oreLoot != null) {

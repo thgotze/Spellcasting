@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.util.block;
 
-import com.google.common.collect.Lists;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -296,7 +295,7 @@ public class BlockUtils {
     }
 
     public static List<Location> getBlockOutlineForParticles(Location location, double particleDistance) {
-        List<Location> result = Lists.newArrayList();
+        List<Location> result = new ArrayList<>();
         World world = location.getWorld();
         double minX = location.getBlockX();
         double minY = location.getBlockY();

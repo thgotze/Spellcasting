@@ -13,8 +13,6 @@ import org.bukkit.event.block.BlockDamageEvent;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static net.kyori.adventure.text.Component.text;
-
 public class MitosisEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener {
 
     private BlockFace blockFace;
@@ -44,8 +42,6 @@ public class MitosisEnchantment extends Enchantment implements BlockBreakListene
         if (candidateBlocks == null) return;
         candidateBlocks.removeIf(candidate -> !BlockCategories.FILLER_BLOCKS.contains(candidate.getType()));
         if (candidateBlocks.isEmpty()) return;
-
-        player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
 
         Block chosenBlock1 = candidateBlocks.remove(ThreadLocalRandom.current().nextInt(candidateBlocks.size()));
         chosenBlock1.setType(block.getType());

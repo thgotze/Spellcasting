@@ -44,7 +44,7 @@ public class PlayerPickaxeService {
         PickaxeMaterial pickaxeMaterial = pickaxeData.getPickaxeMaterial();
 
         ItemStackBuilder builder = new ItemStackBuilder(pickaxeData.getPickaxeMaterial().getPickaxeType())
-                .name(pickaxeMaterial.getFormattedPickaxeTypeName().color(pickaxeMaterial.getRarity().getColor()))
+                .name(pickaxeMaterial.getFormattedPickaxeTypeName())
                 .persistentDataContainer("owner", player.getUniqueId().toString())
                 .lore(getPickaxeLore(pickaxeData))
                 .hideAttributes()
