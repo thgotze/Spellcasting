@@ -113,6 +113,27 @@ public class PlayerPickaxeManager implements Listener {
     }
 
     @EventHandler
+    public void onAbortBlockDamageEvent(BlockDamageAbortEvent event) {
+        Player player = event.getPlayer();
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
+        if (pickaxe == null) return;
+
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
+
+        for (Enchantment enchantment : pickaxeData.getEnchantments()) {
+            if (enchantment instanceof BlockDamageAbortListener blockDamageAbortListener) {
+                blockDamageAbortListener.onBlockDamageAbort(player, event, pickaxeData);
+            }
+        }
+
+        for (Ability ability : pickaxeData.getAbilities()) {
+            if (ability instanceof BlockDamageAbortListener blockDamageAbortListener) {
+                blockDamageAbortListener.onBlockDamageAbort(player, event, pickaxeData);
+            }
+        }
+    }
+
+    @EventHandler
     public void onBlockDropItemEvent(BlockDropItemEvent event) {
         Player player = event.getPlayer();
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
