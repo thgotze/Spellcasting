@@ -10,11 +10,17 @@ import com.gotze.spellcasting.util.StringUtils;
 import com.gotze.spellcasting.util.menu.MenuUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemAttributeModifiers;
+import io.papermc.paper.datacomponent.item.Tool;
+import io.papermc.paper.registry.RegistryKey;
+import io.papermc.paper.registry.TypedKey;
+import io.papermc.paper.registry.set.RegistrySet;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.util.TriState;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.BlockType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
@@ -80,72 +86,70 @@ public class PlayerPickaxeService {
             }
         }
 
-        // ---------------
-        // Tool rule shenanigans
-        // ---------------
-//        Tool
-//        defaultPickaxeToolData = pickaxe.getType().getDefaultData(DataComponentTypes.TOOL);
-//        List<Tool.Rule> defaultRules = defaultPickaxeToolData.rules();
+        Enchantment glaciate = pickaxeData.getEnchantment(Enchantment.EnchantmentType.GLACIATE);
+        if (glaciate != null) {
+            Tool defaultData = pickaxe.getData(DataComponentTypes.TOOL);
+            if (defaultData != null) {
+                int defaultDamagePerBlock = defaultData.damagePerBlock();
+                float defaultMiningSpeed = defaultData.defaultMiningSpeed();
+                boolean canDestroyBlocksInCreative = defaultData.canDestroyBlocksInCreative();
 
-//        List<Tool.Rule> modifiedRules = new ArrayList<>();
-//        for (Tool.Rule rule : defaultRules) {
-//            // Get all block keys from this rule
-//            List<TypedKey<BlockType>> blocksWithoutBlueIce = new ArrayList<>();
-//
-//            for (TypedKey<BlockType> blockKey : rule.blocks()) {
-//                // Check if this block is NOT blue ice
-//                if (!blockKey.key().equals(BlockType.BLUE_ICE.key().key())) {
-//                    blocksWithoutBlueIce.add(blockKey);
-//                }
-//            }
-//
-//            // Only add the rule if it still has blocks after removing blue ice
-//            if (!blocksWithoutBlueIce.isEmpty()) {
-//                Tool.Rule modifiedRule = Tool.rule(
-//                        RegistrySet.keySet(RegistryKey.BLOCK, Set.copyOf(blocksWithoutBlueIce)),
-//                        rule.speed(),
-//                        rule.correctForDrops()
-//                );
-//                modifiedRules.add(modifiedRule);
-//            }
-//        }
-//
-//        Tool.Rule glassRule = Tool.rule(RegistrySet.keySetFromValues(RegistryKey.BLOCK,
-//                        List.of(BlockType.GLASS)),
-//                2f,
-//                TriState.TRUE);
-//
-//        Tool.Rule dirtRule = Tool.rule(RegistrySet.keySetFromValues(RegistryKey.BLOCK,
-//                        List.of(BlockType.DIRT)),
-//                0.10f,
-//                TriState.FALSE);
+                // Create a new tool builder object
+                Tool.Builder toolBuilder = Tool.tool();
 
-//        Tool.Rule blueIceRule = Tool.rule(RegistrySet.keySetFromValues(RegistryKey.BLOCK,
-//                        List.of(BlockType.BLUE_ICE)),
-//                2.0f,
-//                TriState.TRUE);
-//
-//        Tool tool = Tool.tool()
-//                .addRules(modifiedRules)
-//                .addRule(glassRule)
-//                .addRule(dirtRule)
-//                .addRule(blueIceRule)
-//                .build();
+                // Give it the default values
+                toolBuilder.damagePerBlock(defaultDamagePerBlock);
+                toolBuilder.defaultMiningSpeed(defaultMiningSpeed);
+                toolBuilder.canDestroyBlocksInCreative(canDestroyBlocksInCreative);
 
-//        player.sendMessage("First: " + defaultRules.getFirst().blocks().size());
-//        player.sendMessage("Last: " + defaultRules.getLast().blocks().size());
-//        player.sendMessage(defaultRules.size() + " ");
-//        pickaxe.setData(DataComponentTypes.TOOL, tool);
+                // Modify default rules and take out the blue ice rule
+                List<Tool.Rule> modifiedRules = new ArrayList<>();
 
-//        ItemMeta meta = pickaxe.getItemMeta();
-//        ToolComponent toolComponent = meta.getTool();
-//
-//        toolComponent.addRule(Material.BLUE_ICE, 100.0f, Boolean.TRUE);
-//
-//        meta.setTool(toolComponent);
-//        pickaxe.setItemMeta(meta);
+                for (Tool.Rule defaultRule : defaultData.rules()) {
+                    Float defaultRuleSpeed = defaultRule.speed();
+                    TriState defaultCorrectForDrops = defaultRule.correctForDrops();
+
+                    List<TypedKey<BlockType>> newBlocksInRule = new ArrayList<>();
+
+                    for (TypedKey<BlockType> blockKey : defaultRule.blocks()) {
+                        if (!blockKey.key().equals(BlockType.BLUE_ICE.key().key())) {
+                            newBlocksInRule.add(blockKey);
+                        }
+                    }
+
+                    Tool.Rule modifiedRule = Tool.rule(
+                            RegistrySet.keySet(RegistryKey.BLOCK, newBlocksInRule),
+                            defaultRuleSpeed,
+                            defaultCorrectForDrops
+                    );
+                    modifiedRules.add(modifiedRule);
+                }
+                toolBuilder.addRules(modifiedRules);
+
+                // Add the blue ice rule back in with higher speed value
+                List<TypedKey<BlockType>> blueIceRuleBlock = new ArrayList<>();
+                TypedKey<BlockType> blueIce = RegistryKey.BLOCK.typedKey("blue_ice");
+                blueIceRuleBlock.add(blueIce);
+
+                float blueIceMiningSpeed;
+                if (pickaxeMaterial == PickaxeMaterial.WOOD || pickaxeMaterial == PickaxeMaterial.STONE) {
+                    blueIceMiningSpeed = 70f;
+                } else {
+                    blueIceMiningSpeed = 74f;
+                }
+
+                Tool.Rule blueIceRule = Tool.rule(
+                        RegistrySet.keySet(RegistryKey.BLOCK, blueIceRuleBlock),
+                        blueIceMiningSpeed,
+                        TriState.TRUE
+                );
+                toolBuilder.addRule(blueIceRule);
+
+                // Finally, build the tool builder and set it to the pickaxe's tool data
+                pickaxe.setData(DataComponentTypes.TOOL, toolBuilder.build());
+            }
+        }
         return pickaxe;
-//        return builder.build();
     }
 
     public static List<Component> getPickaxeLore(PickaxeData pickaxeData) {
