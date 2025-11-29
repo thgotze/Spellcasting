@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.data.PickaxeData;
+import com.gotze.spellcasting.pickaxe.ability.todo.LaserAbility;
 import com.gotze.spellcasting.pickaxe.ability.todo.SlamAbility;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Rarity;
@@ -58,12 +59,6 @@ public abstract class Ability {
     }
 
     public enum AbilityType {
-//        PEEK(PeekAbility.class,
-//                Rarity.COMMON,
-//                5,
-//                Material.SPYGLASS,
-//                "Temporarily transform nearby",
-//                "filler blocks into glass"),
         HAMMER(HammerAbility.class,
                 Rarity.EPIC,
                 1,
@@ -95,6 +90,12 @@ public abstract class Ability {
                 Material.NETHERITE_BOOTS,
                 "Jump up and slam the ground",
                 "breaking many blocks on impact"),
+        LASER(LaserAbility.class,
+                Rarity.LEGENDARY,
+                1,
+                Material.AMETHYST_SHARD,
+                "Shoot a laser beam that breaks blocks",
+                "in its path"),
         ;
 
         private final Class<? extends Ability> abilityClass;
