@@ -40,24 +40,14 @@ public class MaterialMenu extends Menu {
 
         setItem(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player));
 
-        int[] slotIndexes = {19, 20, 21, 22, 23, 24, 25};
+        int[] slotIndexes = {37, 20, 21, 22, 23, 24, 25};
         int startingIndex = 0;
         for (PickaxeMaterial pickaxeMaterial : PickaxeMaterial.values()) {
-
-            int tokenAmount = switch (pickaxeMaterial) { // TODO: placeholder amounts
-                case WOOD -> 32;
-                case STONE -> 32;
-                case COPPER -> 32;
-                case IRON -> 32;
-                case DIAMOND -> 32;
-                case NETHERITE -> 32;
-            };
-
             setButton(new Button(slotIndexes[startingIndex++], new ItemStackBuilder(pickaxeMaterial.getPickaxeType())
                     .name(pickaxeMaterial.getFormattedPickaxeTypeName())
                     .lore(text(""),
                             text(StringUtils.convertToSmallFont("requirements")),
-                            text(tokenAmount + "x [", GRAY)
+                            text(pickaxeMaterial.getRequiredTokenAmount() + "x [", GRAY)
                                     .append(pickaxeMaterial.getFormattedUpgradeTokenName())
                                     .append(text("]", GRAY)))
                     .hideAttributes()

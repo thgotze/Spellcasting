@@ -16,18 +16,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class GlobalListener implements Listener {
 
-    private final MineManager mineManager;
-
-    public GlobalListener(MineManager mineManager) {
-        this.mineManager = mineManager;
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
 
         if (player.getGameMode() == GameMode.CREATIVE) return;
-        if (mineManager.isInAnyMine(event.getBlock())) return;
+        if (MineManager.isInAnyMine(event.getBlock())) return;
 
         event.setCancelled(true);
     }
@@ -51,7 +45,7 @@ public class GlobalListener implements Listener {
             Block block = event.getClickedBlock();
             if (block == null) return;
 
-            if (mineManager.isInAnyMine(block)) return;
+            if (MineManager.isInAnyMine(block)) return;
 
             event.setCancelled(true);
         }
@@ -68,6 +62,6 @@ public class GlobalListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        mineManager.teleportPlayerToSafety(player);
+        MineManager.teleportPlayerToSafety(player);
     }
 }
