@@ -52,4 +52,8 @@ public enum PickaxeMaterial {
     public String toString() {
         return StringUtils.toTitleCase(name());
     }
+
+    public int getRequiredTokenAmount() {
+        return 32; // TODO: placeholder amount
+    }
 }
