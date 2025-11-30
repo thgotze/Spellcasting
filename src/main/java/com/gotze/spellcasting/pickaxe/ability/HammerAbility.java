@@ -1,10 +1,10 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.data.PickaxeData;
-import com.gotze.spellcasting.pickaxe.capability.ItemModelModifier;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
+import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
 import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,7 +18,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
-public class HammerAbility extends Ability implements BlockBreakListener, BlockDamageListener, BlockBreaker, ItemModelModifier {
+public class HammerAbility extends Ability implements BlockBreakListener, BlockDamageListener, BlockBreaker {
 
     boolean isActive;
     BlockFace blockFace;
@@ -30,16 +30,18 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
     @Override
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
+        if (ItemModelManager.hasActiveModification(player)) return;
         this.isActive = true;
+
         player.swingMainHand();
         player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 
-        modifyItemModelTemporarily(player.getInventory().getItemInMainHand(),
+        ItemModelManager.modifyItemModelTemporarily(player,
+                player.getInventory().getItemInMainHand(),
                 Material.MACE,
-                20L * 15,
+                300L,
                 () -> {
                     player.sendActionBar(text("Hammer ability expired", RED));
-                    player.updateInventory();
                     this.isActive = false;
                 }
         );
