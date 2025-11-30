@@ -2,6 +2,8 @@ package com.gotze.spellcasting.util;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public enum Rarity {
     COMMON(NamedTextColor.WHITE, 0.5061),
     UNCOMMON(NamedTextColor.GREEN, 0.2581),
@@ -24,6 +26,22 @@ public enum Rarity {
 
     public double getWeight() {
         return weight;
+    }
+
+    public static Rarity getRandom() {
+        double totalWeight = 0;
+        for (Rarity rarity : values()) {
+            totalWeight += rarity.weight;
+        }
+
+        double target = ThreadLocalRandom.current().nextDouble(totalWeight);
+        for (Rarity rarity : values()) {
+            target -= rarity.weight;
+            if (target <= 0) {
+                return rarity;
+            }
+        }
+        return COMMON;
     }
 
     @Override
