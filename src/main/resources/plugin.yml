@@ -8,7 +8,7 @@ permissions:
     default: op
     children:
       command.admin: true
-      command.pickaxe.copy: true
+      command.pickaxe.clone: true
       command.pickaxe.debug: true
       command.pickaxe.repair: true
       command.pickaxe.reset: true

@@ -36,14 +36,20 @@ public class PickaxeCommand implements BasicCommand {
 
         switch (args[0].toLowerCase()) {
             case "menu", "m" -> new PickaxeMenu(player);
-            case "copy" -> {
+            case "get" -> {
+                if (player.hasPermission("spellcasting.pickaxe.get")) {
+                    player.getInventory().addItem(PlayerPickaxeService.getPlayerPickaxe(player));
+                    player.sendMessage(text("You received your pickaxe!", GREEN));
+                }
+            }
+            case "clone" -> {
                 if (player.hasPermission("spellcasting.admin")) {
                     if (args.length == 1) {
-                        // Copy own pickaxe
+                        // Clone own pickaxe
                         player.getInventory().addItem(PlayerPickaxeService.getPlayerPickaxe(player));
-                        player.sendMessage(text("You copied your pickaxe!", GREEN));
+                        player.sendMessage(text("You cloned your pickaxe!", GREEN));
                     } else if (args.length == 2) {
-                        // Copy another player's pickaxe
+                        // Clone another player's pickaxe
                         String targetPlayerName = args[1];
                         Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
 
@@ -53,9 +59,9 @@ public class PickaxeCommand implements BasicCommand {
                         }
 
                         player.getInventory().addItem(PlayerPickaxeService.getPlayerPickaxe(targetPlayer));
-                        player.sendMessage(text("You copied " + targetPlayer.getName() + "'s pickaxe!", GREEN));
+                        player.sendMessage(text("You cloned " + targetPlayer.getName() + "'s pickaxe!", GREEN));
                     } else {
-                        player.sendMessage(text("Usage: /pickaxe copy <player>", RED));
+                        player.sendMessage(text("Usage: /pickaxe clone <player>", RED));
                     }
                 }
             }
@@ -160,7 +166,7 @@ public class PickaxeCommand implements BasicCommand {
             suggestions.add("menu");
 
             if (player.hasPermission("spellcasting.admin")) {
-                suggestions.addAll(List.of("copy", "debug", "repair", "reset"));
+                suggestions.addAll(List.of("get","clone", "debug", "repair", "reset"));
             }
             return suggestions;
 
@@ -170,7 +176,8 @@ public class PickaxeCommand implements BasicCommand {
             if ("menu".startsWith(input)) return List.of("menu");
 
             if (player.hasPermission("spellcasting.admin")) {
-                if ("copy".startsWith(input)) return List.of("copy");
+                if ("get".startsWith(input)) return List.of("get");
+                if ("clone".startsWith(input)) return List.of("clone");
                 if ("debug".startsWith(input)) return List.of("debug");
                 if ("repair".startsWith(input)) return List.of("repair");
                 if ("reset".startsWith(input)) return List.of("reset");
@@ -178,7 +185,11 @@ public class PickaxeCommand implements BasicCommand {
 
         } else if (args.length == 2) {
             // Second argument - only suggest players for command if admin
-            if ((args[0].equalsIgnoreCase("copy") || args[0].equalsIgnoreCase("reset") || args[0].equalsIgnoreCase("repair"))
+            if ((args[0].equalsIgnoreCase("get") ||
+                    args[0].equalsIgnoreCase("clone") ||
+                    args[0].equalsIgnoreCase("debug") ||
+                    args[0].equalsIgnoreCase("repair") ||
+                    args[0].equalsIgnoreCase("reset"))
                     && player.hasPermission("spellcasting.admin")) {
                 String input = args[1].toLowerCase();
 
