@@ -1,5 +1,6 @@
 package com.gotze.spellcasting.pickaxe.capability;
 
+import com.gotze.spellcasting.bossbar.LootCrateFeature;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.mine.MineManager;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
@@ -42,6 +43,8 @@ public interface BlockBreaker {
             }
         }
         pickaxeData.addBlocksBroken(1);
+
+        LootCrateFeature.processBlockBreak(player, block);
 
         List<Item> droppedItems = new ArrayList<>();
 
