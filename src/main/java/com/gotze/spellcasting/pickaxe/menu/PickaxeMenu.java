@@ -22,7 +22,7 @@ public class PickaxeMenu extends Menu {
     private final Player player;
 
     public PickaxeMenu(Player player) {
-        super(5, text("Pickaxe"), false);
+        super(5, text("Your Pickaxe"), false);
         this.player = player;
         populate();
         open(player);

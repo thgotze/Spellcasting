@@ -23,7 +23,7 @@ public class EnchantmentMenu extends Menu {
     private final Player player;
 
     public EnchantmentMenu(Player player) {
-        super(5, text("Enchantments"), false);
+        super(5, text("Pickaxe Enchantments"), false);
         this.player = player;
         populate();
         open(player);

@@ -27,7 +27,7 @@ public class MaterialMenu extends Menu {
     private final Player player;
 
     public MaterialMenu(Player player) {
-        super(5, text("Materials"), false);
+        super(5, text("Pickaxe Materials"), false);
         this.player = player;
         populate();
         open(player);

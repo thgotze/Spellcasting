@@ -23,7 +23,7 @@ public class AbilityMenu extends Menu {
     private final Player player;
 
     public AbilityMenu(Player player) {
-        super(5, text("Abilities"), false);
+        super(5, text("Pickaxe Abilities"), false);
         this.player = player;
         populate();
         open(player);
