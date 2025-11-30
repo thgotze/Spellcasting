@@ -2,6 +2,7 @@ package com.gotze.spellcasting.pickaxe.menu;
 
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
+import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.PermissionUtils;
 import com.gotze.spellcasting.util.SoundUtils;
@@ -57,17 +58,64 @@ public class EnchantmentMenu extends Menu {
             setButton(new Button(startingIndex++, enchantmentType.getMenuItem()) {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
+                    ItemStack upgradeToken = enchantmentType.getUpgradeToken();
+                    int requiredTokenAmount = enchantmentType.getRequiredTokenAmount();
+                    upgradeToken.setAmount(requiredTokenAmount);
+
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
                         if (!PermissionUtils.isAdmin(player)) return;
-
-                        ItemStack upgradeToken = enchantmentType.getUpgradeToken();
-                        upgradeToken.setAmount(enchantmentType.getRequiredTokenAmount());
                         player.getInventory().addItem(upgradeToken);
                         SoundUtils.playUIClickSound(player);
-
-                    } else {
-                        upgradeEnchantment(player, enchantmentType);
+                        return;
                     }
+
+                    ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
+                    if (pickaxe == null) return;
+
+                    if (ItemModelManager.hasActiveModification(player)) {
+                        player.sendMessage(text("You currently have an ability active!", RED));
+                        SoundUtils.playBassNoteBlockErrorSound(player);
+                        return;
+                    }
+
+                    PlayerInventory playerInventory = player.getInventory();
+
+                    if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
+                        player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
+                                .append(enchantmentType.getUpgradeTokenName())
+                                .append(text("] to enchant your pickaxe!", RED)));
+                        SoundUtils.playBassNoteBlockErrorSound(player);
+                        return;
+                    }
+
+                    PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
+                    Enchantment enchantment = pickaxeData.getEnchantment(enchantmentType);
+
+                    if (enchantment == null) {
+                        try {
+                            Enchantment newEnchantment = enchantmentType.getEnchantmentClass().getDeclaredConstructor().newInstance();
+                            pickaxeData.addEnchantment(newEnchantment);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        if (enchantment.isMaxLevel()) {
+                            player.sendMessage(text("Cannot upgrade ")
+                                    .append(enchantmentType.getFormattedName())
+                                    .append(text(" past level " + enchantmentType.getMaxLevel() + "!", RED)));
+                            SoundUtils.playBassNoteBlockErrorSound(player);
+                            return;
+                        } else {
+                            enchantment.increaseLevel();
+                        }
+                    }
+
+                    playerInventory.removeItem(upgradeToken);
+                    ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
+                    player.getInventory().setItem(EquipmentSlot.HAND, updatedPickaxe);
+
+                    getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));
+                    player.playSound(player, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f);
                 }
             });
         }
@@ -79,55 +127,6 @@ public class EnchantmentMenu extends Menu {
                 SoundUtils.playUIClickSound(player);
             }
         });
-    }
-
-    private void upgradeEnchantment(Player player, Enchantment.EnchantmentType clickedEnchantmentType) {
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
-        if (pickaxe == null) return;
-
-        PlayerInventory playerInventory = player.getInventory();
-
-        ItemStack upgradeToken = clickedEnchantmentType.getUpgradeToken();
-        int requiredTokenAmount = clickedEnchantmentType.getRequiredTokenAmount();
-
-        upgradeToken.setAmount(requiredTokenAmount);
-
-        if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
-            player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
-                    .append(clickedEnchantmentType.getUpgradeTokenName())
-                    .append(text("] to enchant your pickaxe!", RED)));
-            SoundUtils.playBassNoteBlockErrorSound(player);
-            return;
-        }
-
-        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
-        Enchantment enchantment = pickaxeData.getEnchantment(clickedEnchantmentType);
-
-        if (enchantment == null) {
-            try {
-                Enchantment newEnchantment = clickedEnchantmentType.getEnchantmentClass().getDeclaredConstructor().newInstance();
-                pickaxeData.addEnchantment(newEnchantment);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            if (enchantment.isMaxLevel()) {
-                player.sendMessage(text("Cannot upgrade ")
-                        .append(clickedEnchantmentType.getFormattedName())
-                        .append(text(" past level " + clickedEnchantmentType.getMaxLevel() + "!", RED)));
-                SoundUtils.playBassNoteBlockErrorSound(player);
-                return;
-            } else {
-                enchantment.increaseLevel();
-            }
-        }
-
-        playerInventory.removeItem(upgradeToken);
-        ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
-        player.getInventory().setItem(EquipmentSlot.HAND, updatedPickaxe);
-
-        getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));
-        player.playSound(player, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f);
     }
 
     @Override
