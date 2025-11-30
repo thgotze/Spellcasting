@@ -3,6 +3,7 @@ package com.gotze.spellcasting.pickaxe.menu;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
+import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.PermissionUtils;
 import com.gotze.spellcasting.util.SoundUtils;
@@ -63,17 +64,23 @@ public class MaterialMenu extends Menu {
                     .build()) {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
-                    ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
-                    if (pickaxe == null) return;
-
                     ItemStack upgradeToken = ItemStack.of(pickaxeMaterial.getUpgradeTokenType());
+                    int requiredTokenAmount = pickaxeMaterial.getRequiredTokenAmount();
+                    upgradeToken.setAmount(requiredTokenAmount);
 
-                    upgradeToken.setAmount(tokenAmount);
-
-                    if (event.getClick() == ClickType.DROP) { // TODO: debug
+                    if (event.getClick() == ClickType.DROP) {
                         if (!PermissionUtils.isAdmin(player)) return;
                         player.getInventory().addItem(upgradeToken);
                         SoundUtils.playUIClickSound(player);
+                        return;
+                    }
+
+                    ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
+                    if (pickaxe == null) return;
+
+                    if (ItemModelManager.hasActiveModification(player)) {
+                        player.sendMessage(text("You currently have an ability active!", RED));
+                        SoundUtils.playBassNoteBlockErrorSound(player);
                         return;
                     }
 
@@ -89,8 +96,8 @@ public class MaterialMenu extends Menu {
                         return;
                     }
 
-                    if (!playerInventory.containsAtLeast(upgradeToken, tokenAmount)) {
-                        player.sendMessage(text("You need " + tokenAmount + "x [", RED)
+                    if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
+                        player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
                                 .append(pickaxeMaterial.getFormattedUpgradeTokenName())
                                 .append(text("] to upgrade your pickaxe!", RED)));
                         SoundUtils.playBassNoteBlockErrorSound(player);
