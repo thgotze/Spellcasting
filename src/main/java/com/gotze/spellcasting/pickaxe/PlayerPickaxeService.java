@@ -233,6 +233,20 @@ public class PlayerPickaxeService {
         return heldItem;
     }
 
+    public static @Nullable ItemStack getPlayerPickaxeFromInventory(Player player, boolean notifyOnError) {
+        for (ItemStack itemStack : player.getInventory()) {
+            if (isItemStackPlayerOwnPickaxe(itemStack, player)) {
+                return itemStack;
+            }
+        }
+
+        if (notifyOnError) {
+            player.sendMessage(text("Your pickaxe is not in your inventory!", RED));
+            SoundUtils.playBassNoteBlockErrorSound(player);
+        }
+        return null;
+    }
+
     public static boolean isItemStackPlayerOwnPickaxe(@NotNull ItemStack itemStack, Player player) {
         NamespacedKey ownerKey = new NamespacedKey(Spellcasting.getPlugin(), "owner");
         String owner = itemStack.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
