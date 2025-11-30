@@ -91,6 +91,7 @@ public class PlayerPickaxeManager implements Listener {
             }
         }
 
+        LootCrateFeature.processBlockBreak(player, block);
         // Update pickaxe durability and lore a tick later
         Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
             int durabilityDamage = pickaxe.getData(DataComponentTypes.DAMAGE);
