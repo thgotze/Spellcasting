@@ -3,6 +3,7 @@ package com.gotze.spellcasting.pickaxe.menu;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
+import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
 import com.gotze.spellcasting.util.PermissionUtils;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.menu.Button;
@@ -36,8 +37,8 @@ public class AbilityMenu extends Menu {
         setButton(new Button(4, PlayerPickaxeService.pickaxeCloneWithoutDurability(player)) { // TODO: debug
             @Override
             public void onButtonClick(InventoryClickEvent event) {
-                if (!PermissionUtils.isAdmin(player)) return;
                 if (event.getClick() != ClickType.DROP) return;
+                if (!PermissionUtils.isAdmin(player)) return;
                 ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                 if (pickaxe == null) return;
 
@@ -57,17 +58,64 @@ public class AbilityMenu extends Menu {
             this.setButton(new Button(startingIndex++, abilityType.getMenuItem()) {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
+                    ItemStack upgradeToken = abilityType.getUpgradeToken();
+                    int requiredTokenAmount = abilityType.getRequiredTokenAmount();
+                    upgradeToken.setAmount(requiredTokenAmount);
+
                     if (event.getClick() == ClickType.DROP) {
                         if (!PermissionUtils.isAdmin(player)) return;
-
-                        ItemStack upgradeToken = abilityType.getUpgradeToken();
-                        upgradeToken.setAmount(abilityType.getRequiredTokenAmount());
                         player.getInventory().addItem(upgradeToken);
                         SoundUtils.playUIClickSound(player);
-
-                    } else {
-                        upgradeAbility(player, abilityType);
+                        return;
                     }
+
+                    ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
+                    if (pickaxe == null) return;
+
+                    if (ItemModelManager.hasActiveModification(player)) {
+                        player.sendMessage(text("You currently have an ability active!", RED));
+                        SoundUtils.playBassNoteBlockErrorSound(player);
+                        return;
+                    }
+
+                    PlayerInventory playerInventory = player.getInventory();
+
+                    if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
+                        player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
+                                .append(abilityType.getUpgradeTokenName())
+                                .append(text("] to upgrade this ability!", RED)));
+                        SoundUtils.playBassNoteBlockErrorSound(player);
+                        return;
+                    }
+
+                    PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
+                    Ability ability = pickaxeData.getAbility(abilityType);
+
+                    if (ability == null) {
+                        try {
+                            Ability newAbility = abilityType.getAbilityClass().getDeclaredConstructor().newInstance();
+                            pickaxeData.addAbility(newAbility);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        if (ability.isMaxLevel()) {
+                            player.sendMessage(text("Cannot upgrade ")
+                                    .append(abilityType.getFormattedName())
+                                    .append(text(" past level " + abilityType.getMaxLevel() + "!", RED)));
+                            SoundUtils.playBassNoteBlockErrorSound(player);
+                            return;
+                        } else {
+                            ability.increaseLevel();
+                        }
+                    }
+
+                    playerInventory.removeItem(upgradeToken);
+                    ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
+                    playerInventory.setItem(EquipmentSlot.HAND, updatedPickaxe);
+
+                    getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));
+                    player.playSound(player, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f);
                 }
             });
         }
@@ -79,54 +127,6 @@ public class AbilityMenu extends Menu {
                 SoundUtils.playUIClickSound(player);
             }
         });
-    }
-
-    private void upgradeAbility(Player player, Ability.AbilityType clickedAbilityType) {
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
-        if (pickaxe == null) return;
-        PlayerInventory playerInventory = player.getInventory();
-
-        ItemStack upgradeToken = clickedAbilityType.getUpgradeToken();
-        int requiredTokenAmount = clickedAbilityType.getRequiredTokenAmount();
-
-        upgradeToken.setAmount(requiredTokenAmount);
-
-        if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
-            player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
-                    .append(clickedAbilityType.getUpgradeTokenName())
-                    .append(text("] to upgrade this ability!", RED)));
-            SoundUtils.playBassNoteBlockErrorSound(player);
-            return;
-        }
-
-        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
-        Ability ability = pickaxeData.getAbility(clickedAbilityType);
-
-        if (ability == null) {
-            try {
-                Ability newAbility = clickedAbilityType.getAbilityClass().getDeclaredConstructor().newInstance();
-                pickaxeData.addAbility(newAbility);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            if (ability.isMaxLevel()) {
-                player.sendMessage(text("Cannot upgrade ")
-                        .append(clickedAbilityType.getFormattedName())
-                        .append(text(" past level " + clickedAbilityType.getMaxLevel() + "!", RED)));
-                SoundUtils.playBassNoteBlockErrorSound(player);
-                return;
-            } else {
-                ability.increaseLevel();
-            }
-        }
-
-        playerInventory.removeItem(upgradeToken);
-        ItemStack updatedPickaxe = PlayerPickaxeService.getPlayerPickaxe(player);
-        playerInventory.setItem(EquipmentSlot.HAND, updatedPickaxe);
-
-        getInventory().setItem(4, MenuUtils.cloneItemWithoutDamage(updatedPickaxe));
-        player.playSound(player, Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1.0f, 1.0f);
     }
 
     @Override
