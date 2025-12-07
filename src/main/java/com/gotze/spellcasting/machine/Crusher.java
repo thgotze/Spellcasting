@@ -1,11 +1,10 @@
 package com.gotze.spellcasting.machine;
 
 import com.gotze.spellcasting.util.ItemStackBuilder;
-import org.bukkit.Effect;
+import com.gotze.spellcasting.util.menu.Button;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -18,10 +17,12 @@ import static net.kyori.adventure.text.Component.text;
 
 public class Crusher extends Machine {
 
+    private static final int[] EMPTY_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
     private static final int INPUT_SLOT = 11;
+    private static final int LEFT_ARROW_SLOT = 12;
+    private static final int CRUSHER_SAWS_SLOT = 13;
+    private static final int RIGHT_ARROW_SLOT = 14;
     private static final int OUTPUT_SLOT = 15;
-    private static final int DEFAULT_PROCESSING_TIME_IN_TICKS = 200;
-
 //    private static final String[] LEFT_ARROW_SPRITES = {
 //            "crusher_left_arrow00", "crusher_left_arrow01", "crusher_left_arrow02",
 //            "crusher_left_arrow03", "crusher_left_arrow04", "crusher_left_arrow05",
@@ -45,112 +46,121 @@ public class Crusher extends Machine {
 
     @Override
     protected void populate() {
-        for (int i = 0; i <= 10; i++) {
-            getInventory().setItem(i, new ItemStackBuilder(Material.PAPER)
-                    .itemModel(NamespacedKey.minecraft("air"))
+        for (int slot : EMPTY_SLOTS) {
+            setButton(new Button(slot, new ItemStackBuilder(Material.PAPER)
+                    .itemModel(Material.AIR)
                     .hideTooltipBox()
-                    .build());
+                    .build()) {
+                @Override
+                public void onButtonClick(InventoryClickEvent event) {
+                    // Do nothing
+                }
+            });
         }
 
-        for (int i = 16; i <= 26; i++) {
-            getInventory().setItem(i, new ItemStackBuilder(Material.PAPER)
-                    .itemModel(NamespacedKey.minecraft("air"))
-                    .hideTooltipBox()
-                    .build());
-        }
-
-        getInventory().setItem(12, new ItemStackBuilder(Material.PAPER)
+        setButton(new Button(LEFT_ARROW_SLOT, new ItemStackBuilder(Material.PAPER)
                 .itemModel(NamespacedKey.minecraft("crusher_left_arrow00"))
                 .hideTooltipBox()
-                .build());
+                .build()) {
+            @Override
+            public void onButtonClick(InventoryClickEvent event) {
+                // Do nothing
+            }
+        });
 
-        getInventory().setItem(13, new ItemStackBuilder(Material.PAPER)
+        setButton(new Button(CRUSHER_SAWS_SLOT, new ItemStackBuilder(Material.PAPER)
                 .itemModel(NamespacedKey.minecraft("crusher_saws0"))
                 .hideTooltipBox()
-                .build());
+                .build()) {
+            @Override
+            public void onButtonClick(InventoryClickEvent event) {
+                // Do nothing
+            }
+        });
 
-        getInventory().setItem(14, new ItemStackBuilder(Material.PAPER)
+        setButton(new Button(RIGHT_ARROW_SLOT, new ItemStackBuilder(Material.PAPER)
                 .itemModel(NamespacedKey.minecraft("crusher_right_arrow00"))
                 .hideTooltipBox()
-                .build());
+                .build()) {
+            @Override
+            public void onButtonClick(InventoryClickEvent event) {
+                // Do nothing
+            }
+        });
     }
 
     @Override
     public void tick() {
-        if (progress == 0) {
-            getInventory().getItem(12).editMeta(itemMeta ->
-                    itemMeta.setItemModel(NamespacedKey.minecraft("crusher_left_arrow00")));
-
-            getInventory().getItem(14).editMeta(itemMeta ->
-                    itemMeta.setItemModel(NamespacedKey.minecraft("crusher_right_arrow00")));
-        } else {
-            int frame = progress % 3;
-            getInventory().getItem(13).editMeta(itemMeta ->
-                    itemMeta.setItemModel(NamespacedKey.minecraft("crusher_saws" + frame)));
-        }
-
         // Check if there is something in the input slot
         ItemStack inputItem = getInputItem();
         if (inputItem == null) {
-            progress = 0;
+            resetProcess();
             return;
         }
 
-        // Check if the input is a valid crushable material
-        CrushingRecipe crushingRecipe = CrushingRecipe.fromMaterial(inputItem.getType());
-        if (crushingRecipe == null) {
-            progress = 0;
+        // Check if the input is a valid crushing recipe ingredient
+        ItemStack resultItem = CrushingRecipe.fromIngredient(inputItem);
+        if (resultItem == null) {
+            resetProcess();
             return;
         }
 
         // Check if the output item matches the result item
-        ItemStack resultItem = crushingRecipe.getResultItem();
         ItemStack outputItem = getOutputItem();
         if (outputItem != null) {
             // Output slot has items - check if we can add more
             if (!outputItem.isSimilar(resultItem)) {
-                progress = 0;
-                return; // Different item type
+                resetProcess(); // Different item type
+                return;
+
+            } else if (outputItem.getAmount() + resultItem.getAmount() > outputItem.getMaxStackSize()) {
+                resetProcess(); // Would overflow
+                return;
             }
-            if (outputItem.getAmount() + resultItem.getAmount() > outputItem.getMaxStackSize()) {
-                progress = 0;
-            }
-            return; // Would overflow
         }
 
         // ---------------
-        // At this point we know that the machine can process the item
+        // At this point we know that the output slot is empty or that it already
+        // holds some of the result item, so we can start processing
         // ---------------
-        if (progress < 100) {
-            progress++;
+        this.progress++;
 
-            int leftArrowFrame = (progress * 14) / 100;
+        int frame = progress % 3;
+        getInventory().getItem(CRUSHER_SAWS_SLOT).editMeta(itemMeta ->
+                itemMeta.setItemModel(NamespacedKey.minecraft("crusher_saws" + frame)));
+
+        if (progress < getProcessingTime() / 2) {
+            int leftArrowFrame = (progress * 14) / (getProcessingTime() / 2);
             String leftFrameStr = String.format("%02d", leftArrowFrame);
 
-            getInventory().getItem(12).editMeta(itemMeta ->
+            getInventory().getItem(LEFT_ARROW_SLOT).editMeta(itemMeta ->
                     itemMeta.setItemModel(NamespacedKey.minecraft("crusher_left_arrow" + leftFrameStr)));
 
-        } else if (progress < 200) {
-            progress++;
-
-            int rightArrowFrame = ((progress - 100) * 14) / 100;
+        } else if (progress < getProcessingTime()) {
+            int rightArrowFrame = ((progress - getProcessingTime() / 2) * 14) / (getProcessingTime() / 2);
             String rightFrameStr = String.format("%02d", rightArrowFrame);
 
-            getInventory().getItem(14).editMeta(itemMeta ->
+            getInventory().getItem(RIGHT_ARROW_SLOT).editMeta(itemMeta ->
                     itemMeta.setItemModel(NamespacedKey.minecraft("crusher_right_arrow" + rightFrameStr)));
 
-        } else if (progress >= DEFAULT_PROCESSING_TIME_IN_TICKS) {
-            progress = 0;
-
-            inputItem.subtract();
+        } else if (progress >= getProcessingTime()) {
+            inputItem.subtract(1);
 
             if (outputItem != null) {
-                outputItem.add(2);
+                outputItem.add(resultItem.getAmount());
             } else {
                 setOutputItem(resultItem);
             }
-            getLocation().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, crushingRecipe.getBlockData());
+            resetProcess();
         }
+    }
+
+    private void resetProcess() {
+        progress = 0;
+        getInventory().getItem(LEFT_ARROW_SLOT).editMeta(itemMeta ->
+                itemMeta.setItemModel(NamespacedKey.minecraft("crusher_left_arrow00")));
+        getInventory().getItem(RIGHT_ARROW_SLOT).editMeta(itemMeta ->
+                itemMeta.setItemModel(NamespacedKey.minecraft("crusher_right_arrow00")));
     }
 
     @Override
@@ -201,55 +211,42 @@ public class Crusher extends Machine {
     }
 
     public enum CrushingRecipe {
-        CRUSHED_COPPER(Material.RAW_COPPER,
+        CRUSHED_COPPER_ORE(ItemStack.of(Material.RAW_COPPER),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Crushed Copper"))
-                        .itemModel(NamespacedKey.minecraft("crushed_copper"))
+                        .name(text("Crushed Copper Ore"))
+                        .itemModel(NamespacedKey.minecraft("crushed_copper_ore"))
                         .amount(2)
-                        .build(),
-                Material.RAW_COPPER_BLOCK.createBlockData()),
-        CRUSHED_IRON(Material.RAW_IRON,
+                        .build()),
+        CRUSHED_IRON_ORE(ItemStack.of(Material.RAW_IRON),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Crushed Iron"))
-                        .itemModel(NamespacedKey.minecraft("crushed_iron"))
+                        .name(text("Crushed Iron Ore"))
+                        .itemModel(NamespacedKey.minecraft("crushed_iron_ore"))
                         .amount(2)
-                        .build(),
-                Material.RAW_IRON_BLOCK.createBlockData()),
-        CRUSHED_GOLD(Material.RAW_GOLD,
+                        .build()),
+        CRUSHED_GOLD_ORE(ItemStack.of(Material.RAW_GOLD),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Crushed Gold"))
-                        .itemModel(NamespacedKey.minecraft("crushed_gold"))
+                        .name(text("Crushed Gold Ore"))
+                        .itemModel(NamespacedKey.minecraft("crushed_gold_ore"))
                         .amount(2)
-                        .build(),
-                Material.RAW_GOLD_BLOCK.createBlockData()),
+                        .build()),
         ;
 
-        private final Material ingredient;
+        private final ItemStack ingredientItem;
         private final ItemStack resultItem;
-        private final BlockData blockData;
 
-        CrushingRecipe(Material ingredient, ItemStack resultItem, BlockData blockData) {
-            this.ingredient = ingredient;
+        CrushingRecipe(ItemStack ingredientItem, ItemStack resultItem) {
+            this.ingredientItem = ingredientItem;
             this.resultItem = resultItem;
-            this.blockData = blockData;
-        }
-
-        public Material getIngredient() {
-            return ingredient;
         }
 
         public ItemStack getResultItem() {
             return resultItem.clone();
         }
 
-        public BlockData getBlockData() {
-            return blockData;
-        }
-
-        public static @Nullable CrushingRecipe fromMaterial(Material material) {
+        public static @Nullable ItemStack fromIngredient(ItemStack ingredientItem) {
             for (CrushingRecipe recipe : values()) {
-                if (recipe.getIngredient() == material) {
-                    return recipe;
+                if (ingredientItem.isSimilar(recipe.ingredientItem)) {
+                    return recipe.resultItem.clone();
                 }
             }
             return null;
