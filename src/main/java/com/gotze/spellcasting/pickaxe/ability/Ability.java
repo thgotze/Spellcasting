@@ -98,6 +98,8 @@ public abstract class Ability {
 //                "in its path"),
         TRIDENT_THROW(TridentThrowAbility.class,
                 Rarity.RARE,
+        WIND_BURST(WindBurstAbility.class,
+                Rarity.COMMON,
                 5,
                 Material.NETHERITE_BOOTS,
                 "Jump up and slam the ground",
@@ -108,6 +110,9 @@ public abstract class Ability {
                 Material.AMETHYST_SHARD,
                 "Shoot a laser beam that breaks blocks",
                 "in its path"),
+                Material.WIND_CHARGE,
+                "Shoot wind charges that",
+                "turn filler blocks into air... Poof!"),
         ;
 
         private final Class<? extends Ability> abilityClass;
