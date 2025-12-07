@@ -1,54 +1,49 @@
 package com.gotze.spellcasting.bossbar;
 
+import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.Rarity;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockType;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.joml.Matrix4f;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class LootCrateFeature implements Listener {
 
+    private static final BlockData LOOT_CRATE_TINTED_GLASS = BlockType.TINTED_GLASS.createBlockData();
     private static final Map<Player, BossBar> playerBossBar = new HashMap<>();
     private static final Map<Player, Integer> playerEnergy = new HashMap<>();
     private static final Map<Player, LootCrate> playerActiveLootCrate = new HashMap<>();
-    private static final Map<Player, Set<Block>> playerLootCratesInWorld = new HashMap<>();
+    private static final Map<Player, Map<Block, BlockDisplay>> playerLootCratesInWorld = new HashMap<>();
 
-    public static void processBlockBreak(Player player, Block block) {
-        int energyFromBlock = switch (block.getType()) {
-            case COPPER_ORE -> 3;
-            case DEEPSLATE_COPPER_ORE -> 6;
-            case RAW_COPPER_BLOCK -> 9;
-            case IRON_ORE -> 5;
-            case DEEPSLATE_IRON_ORE -> 10;
-            case RAW_IRON_BLOCK -> 15;
-            case GOLD_ORE -> 7;
-            case DEEPSLATE_GOLD_ORE -> 14;
-            case RAW_GOLD_BLOCK -> 21;
-            case DIAMOND_ORE -> 20;
-            case DEEPSLATE_DIAMOND_ORE -> 40;
-            default -> 1;
-        };
+    public static void applyEnergyFromBlockBreak(Player player, Block block) {
+        int energyFromBlock = getEnergyFromBlock(block);
+        applyEnergyToBossBar(player, energyFromBlock);
+    }
+
+    public static void applyEnergyToBossBar(Player player, int amount) {
+        if (amount == 0) return;
 
         int currentEnergy = playerEnergy.getOrDefault(player, 0);
-        int totalEnergy = currentEnergy + energyFromBlock;
+        int totalEnergy = currentEnergy + amount;
 
         LootCrate activeLootCrate = playerActiveLootCrate.get(player);
         int requiredEnergy = activeLootCrate.getRequiredEnergy();
@@ -63,6 +58,30 @@ public class LootCrateFeature implements Listener {
         bossBar.name(activeLootCrate.computeBossBarName(totalEnergy));
         bossBar.progress((float) totalEnergy / activeLootCrate.getRequiredEnergy());
         bossBar.color(activeLootCrate.getBossBarColor());
+    }
+
+    public static int getEnergyFromBlock(Block block) {
+        return switch (block.getType()) {
+            case COPPER_ORE -> 3;
+            case DEEPSLATE_COPPER_ORE -> 6;
+            case RAW_COPPER_BLOCK -> 9;
+            case IRON_ORE -> 5;
+            case DEEPSLATE_IRON_ORE -> 10;
+            case RAW_IRON_BLOCK -> 15;
+            case GOLD_ORE -> 7;
+            case DEEPSLATE_GOLD_ORE -> 14;
+            case RAW_GOLD_BLOCK -> 21;
+            case DIAMOND_ORE -> 20;
+            case DEEPSLATE_DIAMOND_ORE -> 40;
+            default -> 1;
+        };
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onLootCrateExplosionDamage(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Firework) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -82,17 +101,17 @@ public class LootCrateFeature implements Listener {
         playerBossBar.put(player, bossBar);
         playerEnergy.put(player, 0);
         playerActiveLootCrate.put(player, randomLootCrate);
-        playerLootCratesInWorld.put(player, new HashSet<>());
+        playerLootCratesInWorld.put(player, new HashMap<>());
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onLeftClickLootCrate(PlayerInteractEvent event) {
         if (event.getAction() != Action.LEFT_CLICK_BLOCK) return;
 
         Block block = event.getClickedBlock();
         if (block == null) return;
 
-        if (!playerLootCratesInWorld.get(event.getPlayer()).contains(block)) return;
+        if (!playerLootCratesInWorld.get(event.getPlayer()).containsKey(block)) return;
 
         LootCrate lootCrate = switch (block.getType()) {
             case WHITE_SHULKER_BOX -> LootCrate.COMMON;
@@ -104,9 +123,12 @@ public class LootCrateFeature implements Listener {
         };
         if (lootCrate == null) return;
 
+        BlockDisplay blockDisplay = playerLootCratesInWorld.get(event.getPlayer()).remove(block);
+        if (blockDisplay != null && blockDisplay.isValid()) {
+            blockDisplay.remove();
+        }
 
         block.setType(Material.AIR);
-        playerLootCratesInWorld.get(event.getPlayer()).remove(block);
         ItemStack loot = switch (ThreadLocalRandom.current().nextInt(4)) {
             case 0 -> ItemStack.of(Material.DIAMOND, 3);
             case 1 -> ItemStack.of(Material.EMERALD, 3);
@@ -168,7 +190,7 @@ public class LootCrateFeature implements Listener {
                 for (int x = -r; x <= r; x++) {
                     for (int z = -r; z <= r; z++) {
 
-                        double dist = Math.sqrt(x*x + z*z);
+                        double dist = Math.sqrt(x * x + z * z);
                         if (dist < 5 || dist > 7) continue;  // STRICT ENFORCEMENT
 
                         Block candidate = base.clone().add(x, 0, z).getBlock();
@@ -183,12 +205,21 @@ public class LootCrateFeature implements Listener {
             }
         }
 
-        if (targetBlock == null) {
-            player.sendMessage(text("Target block is null! :(", RED)); // TODO fix later
-            return;
-        }
+        if (targetBlock == null) return;
+
         targetBlock.setType(lootCrate.getShulkerBox());
-        playerLootCratesInWorld.get(player).add(targetBlock);
+        Location displayLocation = targetBlock.getLocation().add(1 / 512f, 1 / 512f, 1 / 512f);
+        BlockDisplay blockDisplay = (BlockDisplay) displayLocation.getWorld().spawnEntity(displayLocation, EntityType.BLOCK_DISPLAY);
+        blockDisplay.setTransformationMatrix(new Matrix4f().scale(1 - 1 / 128f, 1 - 1 / 128f, 1 - 1 / 128f));
+
+        blockDisplay.setBlock(LOOT_CRATE_TINTED_GLASS);
+        blockDisplay.setGlowing(true);
+        blockDisplay.setGlowColorOverride(lootCrate.getFireworkColor());
+
+        blockDisplay.setVisibleByDefault(false);
+        player.showEntity(Spellcasting.getPlugin(), blockDisplay);
+
+        playerLootCratesInWorld.get(player).put(targetBlock, blockDisplay);
 
         Firework firework = targetBlock.getWorld().spawn(targetBlock.getLocation().add(0.5, 1.0, 0.5), Firework.class);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
