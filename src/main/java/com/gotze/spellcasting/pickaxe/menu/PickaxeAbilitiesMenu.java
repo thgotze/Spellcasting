@@ -100,7 +100,7 @@ public class PickaxeAbilitiesMenu extends Menu {
                         }
                     } else {
                         if (ability.isMaxLevel()) {
-                            player.sendMessage(text("Cannot upgrade ")
+                            player.sendMessage(text("Cannot upgrade ", RED)
                                     .append(abilityType.getFormattedName())
                                     .append(text(" past level " + abilityType.getMaxLevel() + "!", RED)));
                             SoundUtils.playBassNoteBlockErrorSound(player);

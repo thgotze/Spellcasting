@@ -100,7 +100,7 @@ public class PickaxeEnchantmentsMenu extends Menu {
                         }
                     } else {
                         if (enchantment.isMaxLevel()) {
-                            player.sendMessage(text("Cannot upgrade ")
+                            player.sendMessage(text("Cannot upgrade ", RED)
                                     .append(enchantmentType.getFormattedName())
                                     .append(text(" past level " + enchantmentType.getMaxLevel() + "!", RED)));
                             SoundUtils.playBassNoteBlockErrorSound(player);
