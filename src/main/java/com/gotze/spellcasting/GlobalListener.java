@@ -4,6 +4,7 @@ import com.gotze.spellcasting.mine.MineManager;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.WindCharge;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,6 +12,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -63,5 +66,21 @@ public class GlobalListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         MineManager.teleportPlayerToSafety(player);
+    }
+
+    // Is here because of the Wind Burst Ability
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onWindChargeHitEntity(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof WindCharge) {
+            event.setCancelled(true);
+        }
+    }
+
+    // Is here because of the Wind Burst Ability
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onWindChargeExplode(ExplosionPrimeEvent event) {
+        if (event.getEntity() instanceof WindCharge) {
+            event.setRadius(0f);
+        }
     }
 }
