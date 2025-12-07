@@ -10,49 +10,33 @@ public class PlayerProfile {
     private LocalDateTime lastSeen;
     private Duration playTime;
     private double balance;
-    private PickaxeData pickaxeData;
     private Rank rank;
+    private PickaxeData pickaxeData;
+//    private final Map<Integer, ItemStack[]> privateVaults;
 
     public PlayerProfile() {
         this.joinDate = LocalDateTime.now();
         this.lastSeen = LocalDateTime.now();
         this.playTime = Duration.ZERO;
         this.balance = 0.00;
-        this.pickaxeData = new PickaxeData();
         this.rank = Rank.A;
+        this.pickaxeData = new PickaxeData();
+//        this.privateVaults = new HashMap<>();
     }
 
-    public PlayerProfile(LocalDateTime joinDate, LocalDateTime lastSeen, Duration playTime, double balance, PickaxeData pickaxeData, Rank rank) {
+    public PlayerProfile(LocalDateTime joinDate, LocalDateTime lastSeen, Duration playTime, double balance, Rank rank,
+                         PickaxeData pickaxeData/*, Map<Integer, ItemStack[]> privateVaults*/) {
         this.joinDate = joinDate;
         this.lastSeen = lastSeen;
         this.playTime = playTime;
         this.balance = balance;
-        this.pickaxeData = pickaxeData;
         this.rank = rank;
+        this.pickaxeData = pickaxeData;
+//        this.privateVaults = privateVaults;
     }
 
     public static PlayerProfile of(Player player) {
         return PlayerProfileManager.getPlayerProfile(player);
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
-
-    public void addBalance(double amount) {
-        setBalance(balance + amount);
-    }
-
-    public PickaxeData getPickaxeData() {
-        return pickaxeData;
-    }
-
-    public void setPickaxeData(PickaxeData pickaxeData) {
-        this.pickaxeData = pickaxeData;
     }
 
     public LocalDateTime getJoinDate() {
@@ -79,7 +63,43 @@ public class PlayerProfile {
         setPlayTime(playTime.plus(duration));
     }
 
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public void addBalance(double amount) {
+        setBalance(balance + amount);
+    }
+
     public Rank getRank() {
         return rank;
     }
+
+    public void setRank(Rank rank) {
+        this.rank = rank;
+    }
+
+    public PickaxeData getPickaxeData() {
+        return pickaxeData;
+    }
+
+    public void setPickaxeData(PickaxeData pickaxeData) {
+        this.pickaxeData = pickaxeData;
+    }
+
+//    public Map<Integer, ItemStack[]> getPrivateVaults() {
+//        return privateVaults;
+//    }
+//
+//    public void setPrivateVault(int vaultNumber, ItemStack[] items) {
+//        this.privateVaults.put(vaultNumber, items);
+//    }
+//
+//    public ItemStack[] getPrivateVault(int vaultNumber) {
+//        return this.privateVaults.getOrDefault(vaultNumber, new ItemStack[54]);
+//    }
 }
