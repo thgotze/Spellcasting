@@ -23,11 +23,11 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-public class MaterialMenu extends Menu {
+public class PickaxeMaterialsMenu extends Menu {
 
     private final Player player;
 
-    public MaterialMenu(Player player) {
+    public PickaxeMaterialsMenu(Player player) {
         super(5, text("Pickaxe Materials"), false);
         this.player = player;
         populate();
@@ -109,7 +109,7 @@ public class MaterialMenu extends Menu {
         setButton(new Button(36, MenuUtils.RETURN_ITEM) {
             @Override
             public void onButtonClick(InventoryClickEvent event) {
-                new PickaxeMenu(player);
+                new YourPickaxeMenu(player);
                 SoundUtils.playUIClickSound(player);
             }
         });

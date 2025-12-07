@@ -17,11 +17,11 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
-public class PickaxeMenu extends Menu {
+public class YourPickaxeMenu extends Menu {
 
     private final Player player;
 
-    public PickaxeMenu(Player player) {
+    public YourPickaxeMenu(Player player) {
         super(5, text("Your Pickaxe"), false);
         this.player = player;
         populate();
@@ -40,7 +40,7 @@ public class PickaxeMenu extends Menu {
                 .build()) {
             @Override
             public void onButtonClick(InventoryClickEvent event) {
-                new EnchantmentMenu(player);
+                new PickaxeEnchantmentsMenu(player);
                 SoundUtils.playUIClickSound(player);
             }
         });
@@ -51,7 +51,7 @@ public class PickaxeMenu extends Menu {
                 .build()) {
             @Override
             public void onButtonClick(InventoryClickEvent event) {
-                new MaterialMenu(player);
+                new PickaxeMaterialsMenu(player);
                 SoundUtils.playUIClickSound(player);
             }
         });
@@ -62,7 +62,7 @@ public class PickaxeMenu extends Menu {
                 .build()) {
             @Override
             public void onButtonClick(InventoryClickEvent event) {
-                new AbilityMenu(player);
+                new PickaxeAbilitiesMenu(player);
                 SoundUtils.playUIClickSound(player);
             }
         });
