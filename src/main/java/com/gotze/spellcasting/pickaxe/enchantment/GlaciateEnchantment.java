@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GlaciateEnchantment extends Enchantment implements BlockBreakListener {
 
@@ -27,24 +28,20 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
         BlockData originalBlockData = frozenBlocks.remove(block);
         if (originalBlockData != null) {
             block.setBlockData(originalBlockData);
+            return;
         }
 
         if (!isNaturalBreak) return;
         if (this.isActive) return;
 
-        // 0.25% activation chance
-//        if (ThreadLocalRandom.current().nextDouble() > 0.0025) return;
+        if (ThreadLocalRandom.current().nextDouble() > (0.0025 + getLevel() * 0.00125)) return; // 0.25%, 0.375%, 0.5%, 0.625%, 0.75%
 
         this.isActive = true;
         List<Block> blocksToFreeze = BlockUtils.getBlocksInSpherePattern(block, 5, 5, 5);
         blocksToFreeze.remove(block);
-        blocksToFreeze.removeIf(candidate -> !BlockCategories.FILLER_BLOCKS.contains(candidate.getType()) &&
-                !BlockCategories.ORE_BLOCKS.containsKey(candidate.getType()));
         Collections.shuffle(blocksToFreeze);
 
-        List<Block> blocksToFreezeClone = new ArrayList<>(blocksToFreeze);
-
-        // Freeze up to 9 blocks every tick
+        List<Block> frozenInThisCycle = new ArrayList<>();
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -53,37 +50,41 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
                     cancel();
                 }
 
+                // Freeze up to 9 blocks every tick
                 for (int i = 0; i < 9 && !blocksToFreeze.isEmpty(); i++) {
                     Block blockToFreeze = blocksToFreeze.removeFirst();
-                    frozenBlocks.put(blockToFreeze, blockToFreeze.getBlockData());
+
+                    // Ore blocks become blue ice
                     if (BlockCategories.ORE_BLOCKS.containsKey(blockToFreeze.getType())) {
+                        frozenBlocks.put(blockToFreeze, blockToFreeze.getBlockData());
                         blockToFreeze.setType(Material.BLUE_ICE);
-                    } else {
+                        frozenInThisCycle.add(blockToFreeze);
+
+                        // Filler blocks become packed ice
+                    } else if (BlockCategories.FILLER_BLOCKS.contains(blockToFreeze.getType())) {
+                        frozenBlocks.put(blockToFreeze, blockToFreeze.getBlockData());
                         blockToFreeze.setType(Material.PACKED_ICE);
+                        frozenInThisCycle.add(blockToFreeze);
                     }
                 }
             }
         }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);
 
-        // Frozen block return to their previous block type after 10 seconds
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (blocksToFreezeClone.isEmpty()) {
+                if (frozenInThisCycle.isEmpty()) {
                     cancel();
                     return;
                 }
 
-//                for (int i = 0; i < 3 && !blocksToFreezeClone.isEmpty(); i++) {
-                    Block blockToFreeze = blocksToFreezeClone.removeFirst();
-                    if (blockToFreeze.getType() != Material.PACKED_ICE) return;
-
-                    BlockData originalBlockData = frozenBlocks.remove(blockToFreeze);
-                    if (originalBlockData != null) {
-                        blockToFreeze.setBlockData(originalBlockData);
-                    }
-//                }
+                // Thaw frozen blocks every 1/4th second after 10 seconds
+                Block blockToThaw = frozenInThisCycle.removeFirst();
+                BlockData originalBlockData = frozenBlocks.remove(blockToThaw);
+                if (originalBlockData != null) {
+                    blockToThaw.setBlockData(originalBlockData);
+                }
             }
-        }.runTaskTimer(Spellcasting.getPlugin(), 10 * 20L, 5L);
+        }.runTaskTimer(Spellcasting.getPlugin(), 200L, 5L);
     }
 }
