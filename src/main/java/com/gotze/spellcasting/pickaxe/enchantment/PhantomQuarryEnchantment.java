@@ -8,10 +8,7 @@ import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
 import com.gotze.spellcasting.util.block.BlockCategories;
 import com.gotze.spellcasting.util.block.BlockUtils;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockType;
@@ -21,22 +18,24 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 import org.joml.Matrix4f;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
+
     private static final BlockData PHANTOM_QUARRY_TINTED_GLASS = BlockType.TINTED_GLASS.createBlockData();
-    private static final ParticleBuilder PHANTOM_QUARRY_PARTICLE = new ParticleBuilder(Particle.DUST)
-            .count(0)
-            .data(new Particle.DustOptions(Color.FUCHSIA, 1.0f))
-            .offset(0, 0, 0)
-            .extra(0);
-    private static final long BASE_COOLDOWN = 20; // 1 second
+    private static final ParticleBuilder PHANTOM_QUARRY_PARTICLE = Particle.DUST_COLOR_TRANSITION.builder()
+            .count(1)
+            .colorTransition(Color.ORANGE, Color.WHITE);
+    private static final ParticleBuilder PHANTOM_QUARRY_TRAIL_PARTICLE = Particle.TRAIL.builder()
+            .offset(0.5, 0.5, 0.5)
+            .count(1);
+    private static final long BASE_COOLDOWN = 1000; // 1 second
     private static final long TIMEOUT_TASK_LENGTH = 300; // 15 seconds
 
     private boolean isActive;
@@ -60,8 +59,8 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
         if (!this.isActive) {
             if (!isNaturalBreak) return;
             if (System.currentTimeMillis() < cooldown) return;
-            // 0.25% activation chance
-//            if (ThreadLocalRandom.current().nextDouble() > 0.0025) return;
+
+            if (ThreadLocalRandom.current().nextDouble() > (0.01 + getLevel() * 0.001)) return; // 1%, 2%, 3%, 4%, 5%
 
             this.centerBlock = block;
             List<Block> cornerBlocks = new ArrayList<>();
@@ -87,7 +86,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
 
                 blockDisplay.setBlock(PHANTOM_QUARRY_TINTED_GLASS);
                 blockDisplay.setGlowing(true);
-                blockDisplay.setGlowColorOverride(Color.FUCHSIA);
+                blockDisplay.setGlowColorOverride(Color.ORANGE);
 
                 blockDisplay.setVisibleByDefault(false);
                 player.showEntity(Spellcasting.getPlugin(), blockDisplay);
@@ -95,32 +94,16 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 markedCornerBlocks.put(cornerBlock, blockDisplay);
 
                 // Particle outline
-                List<Location> particlePoints = BlockUtils.getBlockOutlineForParticles(cornerBlock.getLocation(), 0.10);
-                for (Location point : particlePoints) {
+                for (Location particlePoint : BlockUtils.getBlockOutlineForParticles(cornerBlock.getLocation(), 0.10)) {
                     PHANTOM_QUARRY_PARTICLE.clone()
-                            .location(point)
+                            .location(particlePoint)
                             .receivers(player)
                             .spawn();
-                }
 
-                // Particle line
-                Location playerEyeLocation = player.getEyeLocation().clone();
-                playerEyeLocation.add(playerEyeLocation.getDirection().multiply(1)); // offset forward a bit
-
-                Location target = cornerBlock.getLocation().toCenterLocation();
-
-                Vector direction = target.toVector().subtract(playerEyeLocation.toVector());
-                double distance = direction.length();
-                direction.normalize();
-
-                double step = 0.1; // distance between particles
-                int particles = (int) (distance / step);
-
-                for (int i = 0; i < particles; i++) {
-                    Vector point = playerEyeLocation.toVector().add(direction.clone().multiply(i * step));
-                    Location particleLocation = point.toLocation(player.getWorld());
-                    PHANTOM_QUARRY_PARTICLE.clone()
-                            .location(particleLocation)
+                    PHANTOM_QUARRY_TRAIL_PARTICLE.clone()
+                            .data(new Particle.Trail(particlePoint, Color.ORANGE, 30))
+                            .location(particlePoint)
+                            .receivers(player)
                             .spawn();
                 }
             }
@@ -144,6 +127,13 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
         // ---------------
         markedCornerBlocks.entrySet().removeIf(entry -> {
             if (entry.getKey().equals(block)) {
+                player.playSound(block.getLocation(), Sound.BLOCK_SCULK_CATALYST_HIT, 1.0f,1.0f);
+                for (Location particlePoint : BlockUtils.getBlockOutlineForParticles(block.getLocation(), 0.10)) {
+                    PHANTOM_QUARRY_PARTICLE.clone()
+                            .location(particlePoint)
+                            .receivers(player)
+                            .spawn();
+                }
                 BlockDisplay display = entry.getValue();
                 display.remove();
                 return true;
@@ -152,6 +142,8 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
         });
 
         if (markedCornerBlocks.isEmpty()) {
+            player.playSound(centerBlock.getLocation(), Sound.BLOCK_SCULK_PLACE, 1.0f,1.0f);
+            player.playSound(centerBlock.getLocation(), Sound.ENTITY_PHANTOM_BITE, 1.0f,0.75f);
             this.isProcessingQuarry = true;
             List<Block> blocksToBreak = switch (blockFace) {
                 case NORTH, SOUTH -> BlockUtils.getBlocksInSquarePattern(centerBlock, 5, 5, 1);
