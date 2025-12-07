@@ -28,19 +28,19 @@ public class MachineMerchant extends Merchant {
 
     @Override
     protected void populate() {
-        setButton(new Button(20, Machine.MachineType.CRUSHER.getMachineItem()) {
+        setButton(new Button(19, Machine.MachineType.CRUSHER.getMachineItem()) {
             @Override
             public void onButtonClick(InventoryClickEvent event) {
                 Player player = (Player) event.getWhoClicked();
-                PlayerProfile profile = PlayerProfile.fromPlayer(player);
+                PlayerProfile profile = PlayerProfile.of(player);
 
                 double balance = profile.getBalance();
-                if (balance >= 10000) {
-                    profile.setBalance(balance - 10000);
-                    player.getInventory().addItem(Machine.MachineType.CRUSHER.getMachineItem());
+                if (balance >= 1000) {
+                    profile.setBalance(balance - 1000);
+                    player.give(Machine.MachineType.CRUSHER.getMachineItem());
                     player.sendMessage(text("You bought 1x [", GREEN)
                             .append(Machine.MachineType.CRUSHER.getFormattedName())
-                            .append(text("] for $10000", GREEN)));
+                            .append(text("] for $1000", GREEN)));
                     SoundUtils.playSuccessSound(player);
 
                 } else {
@@ -50,19 +50,19 @@ public class MachineMerchant extends Merchant {
             }
         });
 
-        setButton(new Button(22, Machine.MachineType.SIFTER.getMachineItem()) {
+        setButton(new Button(21, Machine.MachineType.SIFTER.getMachineItem()) {
             @Override
             public void onButtonClick(InventoryClickEvent event) {
                 Player player = (Player) event.getWhoClicked();
-                PlayerProfile profile = PlayerProfile.fromPlayer(player);
+                PlayerProfile profile = PlayerProfile.of(player);
 
                 double balance = profile.getBalance();
-                if (balance >= 10000) {
-                    profile.setBalance(balance - 10000);
-                    player.getInventory().addItem(Machine.MachineType.SIFTER.getMachineItem());
+                if (balance >= 1000) {
+                    profile.setBalance(balance - 1000);
+                    player.give(Machine.MachineType.SIFTER.getMachineItem());
                     player.sendMessage(text("You bought 1x [", GREEN)
                             .append(Machine.MachineType.SIFTER.getFormattedName())
-                            .append(text("] for $10000", GREEN)));
+                            .append(text("] for $1000", GREEN)));
                     SoundUtils.playSuccessSound(player);
                 } else {
                     player.sendMessage(text("You cannot afford this", RED));
@@ -71,19 +71,40 @@ public class MachineMerchant extends Merchant {
             }
         });
 
-        setButton(new Button(24, Machine.MachineType.WASHER.getMachineItem()) {
+        setButton(new Button(23, Machine.MachineType.WASHER.getMachineItem()) {
             @Override
             public void onButtonClick(InventoryClickEvent event) {
                 Player player = (Player) event.getWhoClicked();
-                PlayerProfile profile = PlayerProfile.fromPlayer(player);
+                PlayerProfile profile = PlayerProfile.of(player);
 
                 double balance = profile.getBalance();
-                if (balance >= 10000) {
-                    profile.setBalance(balance - 10000);
-                    player.getInventory().addItem(Machine.MachineType.WASHER.getMachineItem());
+                if (balance >= 1000) {
+                    profile.setBalance(balance - 1000);
+                    player.give(Machine.MachineType.WASHER.getMachineItem());
                     player.sendMessage(text("You bought 1x [", GREEN)
                             .append(Machine.MachineType.WASHER.getFormattedName())
-                            .append(text("] for $10000", GREEN)));
+                            .append(text("] for $1000", GREEN)));
+                    SoundUtils.playSuccessSound(player);
+                } else {
+                    player.sendMessage(text("You cannot afford this", RED));
+                    SoundUtils.playBassNoteBlockErrorSound(player);
+                }
+            }
+        });
+
+        setButton(new Button(25, Machine.MachineType.CENTRIFUGE.getMachineItem()) {
+            @Override
+            public void onButtonClick(InventoryClickEvent event) {
+                Player player = (Player) event.getWhoClicked();
+                PlayerProfile profile = PlayerProfile.of(player);
+
+                double balance = profile.getBalance();
+                if (balance >= 1000) {
+                    profile.setBalance(balance - 1000);
+                    player.give(Machine.MachineType.CENTRIFUGE.getMachineItem());
+                    player.sendMessage(text("You bought 1x [", GREEN)
+                            .append(Machine.MachineType.CENTRIFUGE.getFormattedName())
+                            .append(text("] for $1000", GREEN)));
                     SoundUtils.playSuccessSound(player);
                 } else {
                     player.sendMessage(text("You cannot afford this", RED));
