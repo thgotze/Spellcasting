@@ -48,44 +48,65 @@ public abstract class Machine extends Menu {
         return placedBy;
     }
 
+    public int getProcessingTime() {
+        return machineType.getProcessingTime();
+    }
+
     private static final String NEG_SPACE = "\uF001";
     private static final String NEG_SPACE_8 = NEG_SPACE.repeat(8);
     private static final String NEG_SPACE_169 = NEG_SPACE.repeat(169);
 
     public enum MachineType {
         CRUSHER(Crusher.class,
-                Material.STONECUTTER,
+                new ItemStackBuilder(Material.STONECUTTER)
+                        .name(text("Crusher"))
+                        .persistentDataContainer("machine", "crusher")
+                        .build(),
                 3,
                 text(NEG_SPACE_8 + "\uD027", WHITE)
-                        .append(text(NEG_SPACE_169 + "Crusher", color(64, 64, 64)))), // TODO: figure out if this color makes a difference
-        SIFTER(Sifter.class,
-                Material.LOOM,
-                3,
-                text("Sifter menu title!")),
+                        .append(text(NEG_SPACE_169 + "Crusher", color(64, 64, 64))),
+                200),
         WASHER(Washer.class,
-                Material.CAULDRON,
+                new ItemStackBuilder(Material.CAULDRON)
+                        .name(text("Washer"))
+                        .persistentDataContainer("machine", "washer")
+                        .build(),
                 3,
-                text("Washer menu title!"))
+                text(NEG_SPACE_8 + "\uD027", WHITE)
+                        .append(text(NEG_SPACE_169 + "Washer", color(64, 64, 64))),
+                200),
+        SIFTER(Sifter.class,
+                new ItemStackBuilder(Material.LOOM)
+                        .name(text("Sifter"))
+                        .persistentDataContainer("machine", "sifter")
+                        .build(),
+                3,
+                text(NEG_SPACE_8 + "\uD027", WHITE)
+                        .append(text(NEG_SPACE_169 + "Sifter", color(64, 64, 64))),
+                200),
+        CENTRIFUGE(Centrifuge.class,
+                new ItemStackBuilder(Material.SMOKER)
+                        .name(text("Centrifuge"))
+                        .persistentDataContainer("machine", "centrifuge")
+                        .build(),
+                3,
+                text(NEG_SPACE_8 + "\uD027", WHITE)
+                        .append(text(NEG_SPACE_169 + "Centrifuge", color(64, 64, 64))),
+                200),
         ;
 
         private final Class<? extends Machine> machineClass;
+        private final ItemStack machineItem;
         private final int menuRows;
         private final Component menuTitle;
+        private final int processingTime;
 
-        private final ItemStack machineItem;
-
-        MachineType(Class<? extends Machine> machineClass, Material machineItemType, int menuRows, Component menuTitle) {
+        MachineType(Class<? extends Machine> machineClass, ItemStack machineItem, int menuRows, Component menuTitle, int processingTime) {
             this.machineClass = machineClass;
+            this.machineItem = machineItem;
             this.menuRows = menuRows;
             this.menuTitle = menuTitle;
-            this.machineItem = buildMachineItem(machineItemType);
-        }
-
-        private ItemStack buildMachineItem(Material machineItemType) {
-            return new ItemStackBuilder(machineItemType)
-                    .name(getFormattedName())
-                    .persistentDataContainer("machine", name().toLowerCase()) // TODO: DEBUG
-                    .build();
+            this.processingTime = processingTime;
         }
 
         public Class<? extends Machine> getMachineClass() {
@@ -98,6 +119,10 @@ public abstract class Machine extends Menu {
 
         public Component getFormattedName() {
             return text(StringUtils.toTitleCase(name()));
+        }
+
+        public int getProcessingTime() {
+            return processingTime;
         }
     }
 }
