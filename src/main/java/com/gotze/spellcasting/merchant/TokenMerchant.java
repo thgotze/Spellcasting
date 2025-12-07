@@ -25,7 +25,7 @@ public class TokenMerchant extends Merchant {
 
     public TokenMerchant() {
         super(5, text("Token Merchant"), false,
-                "Token Merchant", new Location(Bukkit.getWorld("world"), -3.5, 97, 21.5),
+                "Token Merchant", new Location(Bukkit.getWorld("world"), 10.5, 97, 13.5, 22.5f, 0),
                 Villager.Type.SAVANNA, Villager.Profession.LIBRARIAN);
         populate();
     }

@@ -21,7 +21,7 @@ public class MachineMerchant extends Merchant {
 
     public MachineMerchant() {
         super(5, text("Machine Merchant"), false,
-                "Machine Merchant", new Location(Bukkit.getWorld("world"), 4.5, 97, 21.5),
+                "Machine Merchant", new Location(Bukkit.getWorld("world"), 15.5, 97, 18.5, 67.5f,0),
                 Villager.Type.TAIGA, Villager.Profession.ARMORER);
         populate();
     }
