@@ -31,7 +31,7 @@ public class PlayerProfile {
         this.rank = rank;
     }
 
-    public static PlayerProfile fromPlayer(Player player) {
+    public static PlayerProfile of(Player player) {
         return PlayerProfileManager.getPlayerProfile(player);
     }
 
