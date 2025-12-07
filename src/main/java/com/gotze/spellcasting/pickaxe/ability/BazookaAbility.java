@@ -38,11 +38,15 @@ public class BazookaAbility extends Ability implements BlockBreaker {
         World world = player.getWorld();
         Location startLocation = player.getEyeLocation();
         Vector lookingDirection = player.getLocation().getDirection();
+
         float yaw = player.getLocation().getYaw();
         double radians = Math.toRadians(yaw);
         Vector horizontalDirection = new Vector(-Math.sin(radians), 0, Math.cos(radians)).normalize();
+
         Vector recoil = horizontalDirection.multiply(-1);
         player.setVelocity(recoil);
+
+        world.playSound(player, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1.0f, 1.0f);
 
         new BukkitRunnable() {
             int ticks = 0;
@@ -59,7 +63,10 @@ public class BazookaAbility extends Ability implements BlockBreaker {
                     List<Block> blocksToBreak = BlockUtils.getBlocksInSpherePattern(targetBlock, 9, 7, 9);
                     breakBlocks(player, blocksToBreak, pickaxeData);
 
-                    world.playSound(targetBlock.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+                    Location targetBlockLocation = targetBlock.getLocation();
+
+                    world.playSound(targetBlockLocation, Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 10.0f, 1.0f);
+                    world.playSound(targetBlockLocation, Sound.ENTITY_GENERIC_EXPLODE, 10.0f, 1.0f);
                     world.spawnParticle(Particle.POOF, laserLocation, 350, 2, 2, 2, 0.35);
 
                     this.cancel();
