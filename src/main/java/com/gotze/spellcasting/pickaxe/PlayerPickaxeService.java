@@ -25,7 +25,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -247,7 +246,9 @@ public class PlayerPickaxeService {
         return null;
     }
 
-    public static boolean isItemStackPlayerOwnPickaxe(@NotNull ItemStack itemStack, Player player) {
+    public static boolean isItemStackPlayerOwnPickaxe(ItemStack itemStack, Player player) {
+        if (itemStack == null) return false;
+
         NamespacedKey ownerKey = new NamespacedKey(Spellcasting.getPlugin(), "owner");
         String owner = itemStack.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
         return player.getUniqueId().toString().equals(owner);
