@@ -28,7 +28,7 @@ public class ExperienceEnchantment extends Enchantment implements BlockBreakList
             case 1 -> random < 0.33 ? 2 : 1;
             case 2 -> random < 0.25 ? 3 : random < 0.50 ? 2 : 1;
             case 3 -> random < 0.20 ? 4 : random < 0.40 ? 3 : random < 0.60 ? 2 : 1;
-            default -> throw new IllegalStateException("Unexpected inquisitive level: " + getLevel());
+            default -> throw new IllegalStateException("Unexpected Experience enchantment level: " + getLevel());
         };
         if (multiplier == 1) return;
 
