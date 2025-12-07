@@ -5,7 +5,6 @@ import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
 import com.gotze.spellcasting.util.block.BlockUtils;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -32,14 +31,8 @@ public class DrillDashAbility extends Ability implements BlockBreaker {
         this.isActive = true;
 
         player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
-        final int DASH_DURATION_TICKS = 5 * getLevel() + 5; // 10, 15, 20, 25, 30
 
-        ItemModelManager.modifyItemModelTemporarily(player,
-                player.getInventory().getItemInMainHand(),
-                Material.TRIDENT,
-                DASH_DURATION_TICKS,
-                () -> this.isActive = false
-        );
+        final int DASH_DURATION_TICKS = 5 + getLevel() * 5; // 10, 15, 20, 25, 30
 
         player.setGravity(false);
         player.setRiptiding(true);
@@ -60,6 +53,7 @@ public class DrillDashAbility extends Ability implements BlockBreaker {
                 if (ticks >= DASH_DURATION_TICKS) {
                     player.setGravity(true);
                     player.setRiptiding(false);
+                    isActive = false;
                     cancel();
                 }
             }
