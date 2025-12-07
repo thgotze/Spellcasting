@@ -46,6 +46,7 @@ public class Spellcasting extends JavaPlugin {
         pluginManager.registerEvents(machineManager, this);
         pluginManager.registerEvents(new ItemModelManager(), this);
         pluginManager.registerEvents(new LootCrateFeature(), this);
+        pluginManager.registerEvents(new IslandManager(), this); // TODO: add impl
 
         // Commands
         registerCommand("admin", new AdminCommand());
@@ -57,6 +58,11 @@ public class Spellcasting extends JavaPlugin {
 
         // Other
         RecipeRegistry.registerRecipes();
+
+        IslandManager islandManager = new IslandManager();
+        pluginManager.registerEvents(islandManager, this);
+
+        registerCommand("island", List.of("is"), new IslandCommand(islandManager)); // TODO: add impl
 
         lifecycleManagers.add(mineManager);
         lifecycleManagers.add(machineManager);
