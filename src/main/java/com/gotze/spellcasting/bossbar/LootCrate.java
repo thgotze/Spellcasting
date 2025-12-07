@@ -41,7 +41,7 @@ public enum LootCrate {
     EPIC(Rarity.EPIC,
             4000,
             Material.MAGENTA_SHULKER_BOX,
-            Color.PURPLE,
+            Color.FUCHSIA,
             NamedTextColor.LIGHT_PURPLE,
             BossBar.Color.PINK,
             80L
