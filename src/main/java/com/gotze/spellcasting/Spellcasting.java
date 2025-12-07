@@ -1,5 +1,7 @@
 package com.gotze.spellcasting;
 
+import com.gotze.islands.IslandCommand;
+import com.gotze.islands.IslandManager;
 import com.gotze.spellcasting.bossbar.LootCrateFeature;
 import com.gotze.spellcasting.command.*;
 import com.gotze.spellcasting.data.PlayerProfileManager;
@@ -46,6 +48,7 @@ public class Spellcasting extends JavaPlugin {
         pluginManager.registerEvents(machineManager, this);
         pluginManager.registerEvents(new ItemModelManager(), this);
         pluginManager.registerEvents(new LootCrateFeature(), this);
+//        pluginManager.registerEvents(new PrivateVaultManager(), this); // TODO: fix impl
         pluginManager.registerEvents(new IslandManager(), this); // TODO: add impl
 
         // Commands
@@ -55,6 +58,7 @@ public class Spellcasting extends JavaPlugin {
         registerCommand("pickaxe", List.of("pick", "p"), new PickaxeCommand());
         registerCommand("spawn", new SpawnCommand());
         registerCommand("message", List.of("msg", "dm", "pm", "tell", "whisper", "w"), new MessageCommand());
+//        registerCommand("pv", new PrivateVaultCommand());
 
         // Other
         RecipeRegistry.registerRecipes();

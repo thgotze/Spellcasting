@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "minecraft:item/purified_ores/purified_iron_ore"
+  }
+}
+

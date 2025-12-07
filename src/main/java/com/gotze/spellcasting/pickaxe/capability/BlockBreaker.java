@@ -44,7 +44,7 @@ public interface BlockBreaker {
         }
         pickaxeData.addBlocksBroken(1);
 
-        LootCrateFeature.processBlockBreak(player, block);
+        LootCrateFeature.applyEnergyFromBlockBreak(player, block);
 
         List<Item> droppedItems = new ArrayList<>();
 

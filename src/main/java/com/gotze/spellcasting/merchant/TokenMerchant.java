@@ -32,6 +32,11 @@ public class TokenMerchant extends Merchant {
 
     @Override
     protected void populate() {
+        setItem(4, MenuUtils.FRAME_ITEM);
+        setItem(13, MenuUtils.FRAME_ITEM);
+        setItem(22, MenuUtils.FRAME_ITEM);
+        setItem(31, MenuUtils.FRAME_ITEM);
+        setItem(40, MenuUtils.FRAME_ITEM);
 
         int startingEnchantmentIndex = 0;
         for (Enchantment.EnchantmentType enchantmentType : Enchantment.EnchantmentType.values()) {
@@ -49,12 +54,12 @@ public class TokenMerchant extends Merchant {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
                     Player player = (Player) event.getWhoClicked();
-                    PlayerProfile profile = PlayerProfile.fromPlayer(player);
+                    PlayerProfile profile = PlayerProfile.of(player);
 
                     double balance = profile.getBalance();
                     if (balance >= 250) {
                         profile.setBalance(balance - 250);
-                        player.getInventory().addItem(enchantmentType.getUpgradeToken());
+                        player.give(enchantmentType.getUpgradeToken());
                         player.sendMessage(text("You bought 1x [", GREEN)
                                 .append(enchantmentType.getUpgradeTokenName())
                                 .append(text("] for $250", GREEN)));
@@ -84,12 +89,12 @@ public class TokenMerchant extends Merchant {
                 @Override
                 public void onButtonClick(InventoryClickEvent event) {
                     Player player = (Player) event.getWhoClicked();
-                    PlayerProfile profile = PlayerProfile.fromPlayer(player);
+                    PlayerProfile profile = PlayerProfile.of(player);
 
                     double balance = profile.getBalance();
                     if (balance >= 2500) {
                         profile.setBalance(balance - 2500);
-                        player.getInventory().addItem(abilityType.getUpgradeToken());
+                        player.give(abilityType.getUpgradeToken());
                         player.sendMessage(text("You bought 1x [", GREEN)
                                 .append(abilityType.getUpgradeTokenName())
                                 .append(text("] for $2500", GREEN)));
@@ -101,12 +106,6 @@ public class TokenMerchant extends Merchant {
                 }
             });
         }
-
-        setItem(4, MenuUtils.FRAME_ITEM);
-        setItem(13, MenuUtils.FRAME_ITEM);
-        setItem(22, MenuUtils.FRAME_ITEM);
-        setItem(31, MenuUtils.FRAME_ITEM);
-        setItem(40, MenuUtils.FRAME_ITEM);
     }
 
     @Override

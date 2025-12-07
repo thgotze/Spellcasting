@@ -9,7 +9,7 @@ import com.gotze.spellcasting.pickaxe.capability.BlockDamageAbortListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockDropItemListener;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
-import com.gotze.spellcasting.pickaxe.menu.PickaxeMenu;
+import com.gotze.spellcasting.pickaxe.menu.YourPickaxeMenu;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.block.BlockCategories;
@@ -94,7 +94,7 @@ public class PlayerPickaxeManager implements Listener {
             }
         }
 
-        LootCrateFeature.processBlockBreak(player, block);
+        LootCrateFeature.applyEnergyFromBlockBreak(player, block);
 
         // Update pickaxe durability and lore a tick later
         Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
@@ -233,7 +233,11 @@ public class PlayerPickaxeManager implements Listener {
 
     @EventHandler
     public void onTryDropPickaxe(PlayerDropItemEvent event) {
-        if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(event.getItemDrop().getItemStack(), event.getPlayer())) {
+        Player player = event.getPlayer();
+
+        if (player.getGameMode() == GameMode.CREATIVE) return;
+
+        if (PlayerPickaxeService.isItemStackPlayerOwnPickaxe(event.getItemDrop().getItemStack(), player)) {
             event.setCancelled(true);
         }
     }
@@ -241,6 +245,8 @@ public class PlayerPickaxeManager implements Listener {
     @EventHandler
     public void onClickPickaxeInInventory(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
+
+        if (player.getGameMode() == GameMode.CREATIVE) return;
 
         // Shift right-clicking the player's pickaxe in the player's own inventory cancels the event and opens the pickaxe menu
         if (event.getClick() == ClickType.SHIFT_RIGHT) {
@@ -250,7 +256,7 @@ public class PlayerPickaxeManager implements Listener {
                     event.setCancelled(true);
 
                     if (event.getInventory().getHolder() instanceof Player) {
-                        Bukkit.getScheduler().runTask(Spellcasting.getPlugin(), () -> new PickaxeMenu(player));
+                        Bukkit.getScheduler().runTask(Spellcasting.getPlugin(), () -> new YourPickaxeMenu(player));
                     }
                 }
             }

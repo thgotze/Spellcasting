@@ -52,6 +52,7 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
         LocalDateTime lastSeen = LocalDateTime.parse(Objects.requireNonNull(yamlConfiguration.getString("last-seen")));
         Duration playTime = Duration.ofSeconds(yamlConfiguration.getLong("playtime-seconds"));
         double balance = yamlConfiguration.getDouble("balance");
+        Rank rank = Rank.valueOf(yamlConfiguration.getString("rank"));
 
         // Pickaxe Data
         PickaxeData pickaxeData = new PickaxeData();
@@ -91,10 +92,21 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
             }
         }
 
-        Rank rank = Rank.valueOf(yamlConfiguration.getString("rank"));
+//        // Vaults
+//        ConfigurationSection vaultSection = yamlConfiguration.getConfigurationSection("private-vaults");
+//        Map<Integer, ItemStack[]> privateVaults = new HashMap<>();
+//        if (vaultSection != null) {
+//            for (String key : vaultSection.getKeys(false)) {
+//                int vaultNumber = Integer.parseInt(key);
+//                String base64 = vaultSection.getString(key);
+//
+//                ItemStack[] items = ItemSerializer.deserializeInventory(base64);
+//                privateVaults.put(vaultNumber, items);
+//            }
+//        }
 
         // Create profile with loaded data
-        playerProfile = new PlayerProfile(joinDate, lastSeen, playTime, balance, pickaxeData, rank);
+        playerProfile = new PlayerProfile(joinDate, lastSeen, playTime, balance, rank, pickaxeData/*, privateVaults*/);
         PLAYER_PROFILE_MAP.put(player, playerProfile);
 
         // Track session start time
@@ -160,6 +172,7 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
         yamlConfiguration.set("last-seen", playerProfile.getLastSeen().toString());
         yamlConfiguration.set("playtime-seconds", playerProfile.getPlayTime().getSeconds());
         yamlConfiguration.set("balance", playerProfile.getBalance());
+        yamlConfiguration.set("rank", playerProfile.getRank().name());
 
         // Pickaxe Data
         PickaxeData pickaxeData = playerProfile.getPickaxeData();
@@ -177,7 +190,16 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
                 .toList();
         yamlConfiguration.set("pickaxe-data.abilities", abilitiesSerialized);
 
-        yamlConfiguration.set("rank", playerProfile.getRank().name());
+//        // Vaults
+//        Map<Integer, ItemStack[]> vaults = playerProfile.getPrivateVaults();
+//
+//        for (Map.Entry<Integer, ItemStack[]> entry : vaults.entrySet()) {
+//            int vaultNumber = entry.getKey();
+//            ItemStack[] items = entry.getValue();
+//
+//            String base64 = ItemSerializer.serializeItems(items);
+//            yamlConfiguration.set("private-vaults." + vaultNumber, base64);
+//        }
 
         try {
             yamlConfiguration.save(playerFile);

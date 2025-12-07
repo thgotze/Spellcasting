@@ -107,12 +107,12 @@ public class MachineManager implements Listener, LifecycleManager {
         Machine.MachineType type = machine.getMachineType();
         world.dropItemNaturally(centerLocation, type.getMachineItem());
 
-        // Drop input/output items
+        // Drop input and output items
         ItemStack inputItem = machine.getInputItem();
-        ItemStack outputItem = machine.getOutputItem();
         if (inputItem != null) {
             world.dropItemNaturally(centerLocation, inputItem);
         }
+        ItemStack outputItem = machine.getOutputItem();
         if (outputItem != null) {
             world.dropItemNaturally(centerLocation, outputItem);
         }

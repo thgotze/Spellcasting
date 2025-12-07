@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
-import com.gotze.spellcasting.pickaxe.enchantment.todo.ScavengeEnchantment;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Rarity;
 import com.gotze.spellcasting.util.StringUtils;
@@ -86,7 +85,7 @@ public abstract class Enchantment {
                 "ores around the mined ore"),
         GLACIATE(GlaciateEnchantment.class,
                 Rarity.RARE,
-                1,
+                5,
                 Material.PACKED_ICE,
                 "Chance to freeze nearby blocks",
                 "making them quicker to mine"),
@@ -99,9 +98,9 @@ public abstract class Enchantment {
 //                "temporary stacking haste",
 //                "and marks a new ore"),
         PHANTOM_QUARRY(PhantomQuarryEnchantment.class,
-                Rarity.EPIC,
+                Rarity.LEGENDARY,
                 5,
-                Material.TINTED_GLASS,
+                Material.PHANTOM_MEMBRANE,
                 "Chance to mark 3-4 corners of",
                 "a 5x5 square centering from",
                 "the broken block. Breaking all",
@@ -118,17 +117,23 @@ public abstract class Enchantment {
                 Material.FISHING_ROD,
                 "Pulls item drops from broken",
                 "blocks towards you"),
-        SCAVENGE(ScavengeEnchantment.class,
-                Rarity.EPIC,
-                3,
-                Material.ENDER_EYE,
-                "Get ore drops from filler blocks"), // TODO: better desc
-        FRACTURE(FractureEnchantment.class,
-                Rarity.LEGENDARY,
-                3,
-                Material.GRAVEL,
-                "Chance to damage blocks around",
-                "blocks you break"),
+        //        SCAVENGE(ScavengeEnchantment.class,
+//                Rarity.EPIC,
+//                3,
+//                Material.ENDER_EYE,
+//                "Get ore drops from filler blocks"), // TODO: better desc
+//        FRACTURE(FractureEnchantment.class,
+//                Rarity.LEGENDARY,
+//                3,
+//                Material.GRAVEL,
+//                "Chance to damage blocks around",
+//                "blocks you break"),
+//        SURGE(SurgeEnchantment.class,
+//                Rarity.LEGENDARY,
+//                3,
+//                Material.BLAZE_POWDER,
+//                "Chance to gain a burst",
+//                "of energy from blocks you break"),
         DOUBLE_TAP(DoubleTapEnchantment.class,
                 Rarity.RARE,
                 5,
@@ -136,6 +141,11 @@ public abstract class Enchantment {
                 "Periodically your next block",
                 "break will also break the",
                 "block behind it triggering effects"),
+//        FLOURISH(FlourishEnchantment.class,
+//                Rarity.EPIC,
+//                1,
+//                Material.TORCHFLOWER,
+//        "Chance to spawn a beneficial flower")
         ;
 
         private final Class<? extends Enchantment> enchantmentClass;

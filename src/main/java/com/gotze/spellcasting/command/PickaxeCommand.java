@@ -4,7 +4,7 @@ import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.data.PlayerProfile;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
-import com.gotze.spellcasting.pickaxe.menu.PickaxeMenu;
+import com.gotze.spellcasting.pickaxe.menu.YourPickaxeMenu;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -30,12 +30,12 @@ public class PickaxeCommand implements BasicCommand {
         if (!(commandSourceStack.getSender() instanceof Player player)) return;
 
         if (args.length == 0) {
-            new PickaxeMenu(player);
+            new YourPickaxeMenu(player);
             return;
         }
 
         switch (args[0].toLowerCase()) {
-            case "menu", "m" -> new PickaxeMenu(player);
+            case "menu", "m" -> new YourPickaxeMenu(player);
             case "get" -> {
                 if (player.hasPermission("spellcasting.pickaxe.get")) {
                     player.getInventory().addItem(PlayerPickaxeService.getPlayerPickaxe(player));
@@ -126,7 +126,7 @@ public class PickaxeCommand implements BasicCommand {
                         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                         if (pickaxe == null) return;
 
-                        PlayerProfile.fromPlayer(player).setPickaxeData(new PickaxeData());
+                        PlayerProfile.of(player).setPickaxeData(new PickaxeData());
                         player.getInventory().setItem(EquipmentSlot.HAND, pickaxe);
                         player.sendMessage(text("Your pickaxe data has been reset!", GREEN));
 
@@ -146,7 +146,7 @@ public class PickaxeCommand implements BasicCommand {
                             return;
                         }
 
-                        PlayerProfile.fromPlayer(targetPlayer).setPickaxeData(new PickaxeData());
+                        PlayerProfile.of(targetPlayer).setPickaxeData(new PickaxeData());
                         targetPlayer.getInventory().setItem(EquipmentSlot.HAND, PlayerPickaxeService.getPlayerPickaxe(targetPlayer));
                         targetPlayer.sendMessage(text("Your pickaxe data has been reset!", GREEN));
                         player.sendMessage(text("Pickaxe data of " + targetPlayer.getName() + " has been reset!", GREEN));

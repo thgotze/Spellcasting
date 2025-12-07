@@ -1,8 +1,6 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.data.PickaxeData;
-import com.gotze.spellcasting.pickaxe.ability.todo.LaserAbility;
-import com.gotze.spellcasting.pickaxe.ability.todo.SlamAbility;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.Rarity;
 import com.gotze.spellcasting.util.StringUtils;
@@ -80,8 +78,8 @@ public abstract class Ability {
                 "breaking blocks in a large radius"),
         DRILL_DASH(DrillDashAbility.class,
                 Rarity.LEGENDARY,
-                3,
-                Material.TRIDENT,
+                5,
+                Material.HOPPER,
                 "Dash forwards and break blocks",
                 "in the direction you are facing"),
 //        SLAM(SlamAbility.class,
@@ -105,15 +103,6 @@ public abstract class Ability {
         WIND_BURST(WindBurstAbility.class,
                 Rarity.COMMON,
                 5,
-                Material.NETHERITE_BOOTS,
-                "Jump up and slam the ground",
-                "breaking many blocks on impact"),
-        LASER(LaserAbility.class,
-                Rarity.LEGENDARY,
-                1,
-                Material.AMETHYST_SHARD,
-                "Shoot a laser beam that breaks blocks",
-                "in its path"),
                 Material.WIND_CHARGE,
                 "Shoot wind charges that",
                 "turn filler blocks into air... Poof!"),

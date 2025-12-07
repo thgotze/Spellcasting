@@ -57,8 +57,8 @@ public class PayCommand implements BasicCommand {
         }
 
         // Get player profiles
-        PlayerProfile senderProfile = PlayerProfile.fromPlayer(player);
-        PlayerProfile targetProfile = PlayerProfile.fromPlayer(targetPlayer);
+        PlayerProfile senderProfile = PlayerProfile.of(player);
+        PlayerProfile targetProfile = PlayerProfile.of(targetPlayer);
 
         // Check if the sender has enough balance
         if (senderProfile.getBalance() < amount) {
