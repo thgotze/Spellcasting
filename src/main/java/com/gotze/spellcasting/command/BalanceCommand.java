@@ -20,7 +20,7 @@ public class BalanceCommand implements BasicCommand {
         if (!(commandSourceStack.getSender() instanceof Player player)) return;
 
         if (args.length == 0) {
-            PlayerProfile playerProfile = PlayerProfile.fromPlayer(player);
+            PlayerProfile playerProfile = PlayerProfile.of(player);
             player.sendMessage(text("Your balance: " + playerProfile.getBalance()));
             return;
         }
@@ -33,7 +33,7 @@ public class BalanceCommand implements BasicCommand {
             return;
         }
 
-        PlayerProfile targetProfile = PlayerProfile.fromPlayer(targetPlayer);
+        PlayerProfile targetProfile = PlayerProfile.of(targetPlayer);
         player.sendMessage(text("Balance of " + targetPlayerName + ": " + targetProfile.getBalance()));
     }
 
