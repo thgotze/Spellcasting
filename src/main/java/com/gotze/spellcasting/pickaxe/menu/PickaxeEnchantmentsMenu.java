@@ -64,7 +64,7 @@ public class PickaxeEnchantmentsMenu extends Menu {
 
                     if (event.getClick() == ClickType.DROP) { // TODO: debug
                         if (!PermissionUtils.isAdmin(player)) return;
-                        player.getInventory().addItem(upgradeToken);
+                        player.give(upgradeToken);
                         SoundUtils.playUIClickSound(player);
                         return;
                     }
