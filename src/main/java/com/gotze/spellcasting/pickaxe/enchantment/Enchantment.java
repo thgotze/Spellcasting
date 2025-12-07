@@ -71,6 +71,8 @@ public abstract class Enchantment {
                 3,
                 Material.EXPERIENCE_BOTTLE,
                 "Receive more experience from ores"),
+                "Chance to receive more",
+                "experience from ores"),
         ENRICHEN(EnrichenEnchantment.class,
                 Rarity.LEGENDARY,
                 5,
