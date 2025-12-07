@@ -129,6 +129,13 @@ public abstract class Enchantment {
                 Material.GRAVEL,
                 "Chance to damage blocks around",
                 "blocks you break"),
+        DOUBLE_TAP(DoubleTapEnchantment.class,
+                Rarity.RARE,
+                5,
+                Material.LIGHT_BLUE_GLAZED_TERRACOTTA,
+                "Periodically your next block",
+                "break will also break the",
+                "block behind it triggering effects"),
         ;
 
         private final Class<? extends Enchantment> enchantmentClass;
