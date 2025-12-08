@@ -69,7 +69,7 @@ public class GlobalListener implements Listener {
     }
 
     // Is here because of the Wind Burst Ability
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onWindChargeHitEntity(ProjectileHitEvent event) {
         if (event.getEntity() instanceof WindCharge) {
             event.setCancelled(true);
@@ -77,7 +77,7 @@ public class GlobalListener implements Listener {
     }
 
     // Is here because of the Wind Burst Ability
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onWindChargeExplode(ExplosionPrimeEvent event) {
         if (event.getEntity() instanceof WindCharge) {
             event.setRadius(0f);
