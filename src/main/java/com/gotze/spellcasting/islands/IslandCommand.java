@@ -14,32 +14,27 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
 public class IslandCommand implements BasicCommand {
 
-    private final IslandManager islandManager;
-
-    public IslandCommand(IslandManager islandManager) {
-        this.islandManager = islandManager;
-    }
-
     @Override
     public void execute(CommandSourceStack commandSourceStack, String @NotNull [] args) {
         if (!(commandSourceStack.getSender() instanceof Player player)) return;
 
         if (args.length == 0) {
-            player.sendMessage(text("Usage: /island <create|home>", GREEN));
+            player.sendMessage(text("Usage: /island <create|home|sethome|resethome>", GREEN));
             return;
         }
 
-        if (args[0].equalsIgnoreCase("create")) {
-            islandManager.createIsland(player);
-        } else if (args[0].equalsIgnoreCase("home")) {
-            islandManager.teleportHome(player);
+        switch (args[0].toLowerCase()) {
+            case "create" -> IslandManager.createIsland(player);
+            case "home" -> IslandManager.teleportToIslandHome(player);
+            case "sethome" -> IslandManager.setIslandHome(player);
+            case "resethome" -> IslandManager.resetIslandHome(player);
         }
     }
 
     @Override
     public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, String[] args) {
         if (args.length == 0 || args.length == 1) {
-            return List.of("create", "home");
+            return List.of("create", "home", "sethome", "resethome");
         }
         return Collections.emptyList();
     }
