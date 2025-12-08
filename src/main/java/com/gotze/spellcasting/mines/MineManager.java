@@ -45,7 +45,6 @@ public class MineManager implements LifecycleManager {
                 minePattern1
         ));
 
-
         tickTask = Bukkit.getScheduler().runTaskTimer(
                 Spellcasting.getPlugin(),
                 () -> mines.forEach(Mine::refillMine),

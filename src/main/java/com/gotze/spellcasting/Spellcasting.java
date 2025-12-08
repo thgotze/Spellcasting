@@ -1,13 +1,13 @@
 package com.gotze.spellcasting;
 
-import com.gotze.islands.IslandCommand;
-import com.gotze.islands.IslandManager;
+import com.gotze.spellcasting.islands.IslandCommand;
+import com.gotze.spellcasting.islands.IslandManager;
 import com.gotze.spellcasting.bossbar.LootCrateFeature;
-import com.gotze.spellcasting.command.*;
+import com.gotze.spellcasting.commands.*;
 import com.gotze.spellcasting.data.PlayerProfileManager;
-import com.gotze.spellcasting.machine.MachineManager;
-import com.gotze.spellcasting.merchant.MerchantManager;
-import com.gotze.spellcasting.mine.MineManager;
+import com.gotze.spellcasting.machines.MachineManager;
+import com.gotze.spellcasting.merchants.MerchantManager;
+import com.gotze.spellcasting.mines.MineManager;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
 import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
 import com.gotze.spellcasting.util.LifecycleManager;
@@ -49,7 +49,7 @@ public class Spellcasting extends JavaPlugin {
         pluginManager.registerEvents(new ItemModelManager(), this);
         pluginManager.registerEvents(new LootCrateFeature(), this);
 //        pluginManager.registerEvents(new PrivateVaultManager(), this); // TODO: fix impl
-        pluginManager.registerEvents(new IslandManager(), this); // TODO: add impl
+        pluginManager.registerEvents(new IslandManager(), this);
 
         // Commands
         registerCommand("admin", new AdminCommand());
@@ -58,15 +58,11 @@ public class Spellcasting extends JavaPlugin {
         registerCommand("pickaxe", List.of("pick", "p"), new PickaxeCommand());
         registerCommand("spawn", new SpawnCommand());
         registerCommand("message", List.of("msg", "dm", "pm", "tell", "whisper", "w"), new MessageCommand());
+        registerCommand("island", List.of("is"), new IslandCommand());
 //        registerCommand("pv", new PrivateVaultCommand());
 
         // Other
         RecipeRegistry.registerRecipes();
-
-        IslandManager islandManager = new IslandManager();
-        pluginManager.registerEvents(islandManager, this);
-
-        registerCommand("island", List.of("is"), new IslandCommand()); // TODO: add impl
 
         lifecycleManagers.add(mineManager);
         lifecycleManagers.add(machineManager);
