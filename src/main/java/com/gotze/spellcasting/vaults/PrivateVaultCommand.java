@@ -1,4 +1,4 @@
-package com.gotze.vault;
+package com.gotze.spellcasting.vaults;
 
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;

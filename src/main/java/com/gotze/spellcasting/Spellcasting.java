@@ -66,7 +66,7 @@ public class Spellcasting extends JavaPlugin {
         IslandManager islandManager = new IslandManager();
         pluginManager.registerEvents(islandManager, this);
 
-        registerCommand("island", List.of("is"), new IslandCommand(islandManager)); // TODO: add impl
+        registerCommand("island", List.of("is"), new IslandCommand()); // TODO: add impl
 
         lifecycleManagers.add(mineManager);
         lifecycleManagers.add(machineManager);

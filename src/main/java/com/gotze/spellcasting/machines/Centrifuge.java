@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.machine;
+package com.gotze.spellcasting.machines;
 
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.menu.Button;
@@ -13,34 +13,21 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static net.kyori.adventure.text.Component.text;
 
-public class Crusher extends Machine {
+public class Centrifuge extends Machine {
 
     private static final int[] EMPTY_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
     private static final int INPUT_SLOT = 11;
     private static final int LEFT_ARROW_SLOT = 12;
-    private static final int CRUSHER_SAWS_SLOT = 13;
+    private static final int CENTRIFUGE_ICON_SLOT = 13;
     private static final int RIGHT_ARROW_SLOT = 14;
     private static final int OUTPUT_SLOT = 15;
-//    private static final String[] LEFT_ARROW_SPRITES = {
-//            "crusher_left_arrow00", "crusher_left_arrow01", "crusher_left_arrow02",
-//            "crusher_left_arrow03", "crusher_left_arrow04", "crusher_left_arrow05",
-//            "crusher_left_arrow06", "crusher_left_arrow07", "crusher_left_arrow08",
-//            "crusher_left_arrow09", "crusher_left_arrow10", "crusher_left_arrow11",
-//            "crusher_left_arrow12", "crusher_left_arrow13", "crusher_left_arrow14"
-//    };
-//
-//    private static final String[] RIGHT_ARROW_SPRITES = {
-//            "crusher_right_arrow00", "crusher_right_arrow01", "crusher_right_arrow02",
-//            "crusher_right_arrow03", "crusher_right_arrow04", "crusher_right_arrow05",
-//            "crusher_right_arrow06", "crusher_right_arrow07", "crusher_right_arrow08",
-//            "crusher_right_arrow09", "crusher_right_arrow10", "crusher_right_arrow11",
-//            "crusher_right_arrow12", "crusher_right_arrow13", "crusher_right_arrow14"
-//    };
 
-    public Crusher(Location location, Player player) {
-        super(MachineType.CRUSHER, location, player);
+    public Centrifuge(Location location, Player player) {
+        super(MachineType.CENTRIFUGE, location, player);
         populate();
     }
 
@@ -68,8 +55,7 @@ public class Crusher extends Machine {
             }
         });
 
-        setButton(new Button(CRUSHER_SAWS_SLOT, new ItemStackBuilder(Material.PAPER)
-                .itemModel(NamespacedKey.minecraft("crusher_saws0"))
+        setButton(new Button(CENTRIFUGE_ICON_SLOT, new ItemStackBuilder(Material.SMOKER)
                 .hideTooltipBox()
                 .build()) {
             @Override
@@ -98,14 +84,15 @@ public class Crusher extends Machine {
             return;
         }
 
-        // Check if the input is a valid crushing recipe ingredient
-        ItemStack resultItem = CrushingRecipe.fromIngredient(inputItem);
-        if (resultItem == null) {
+        // Check if the input is a valid centrifuge recipe ingredient
+        CentrifugeRecipe centrifugeRecipe = CentrifugeRecipe.fromIngredient(inputItem);
+        if (centrifugeRecipe == null) {
             resetProcess();
             return;
         }
 
         // Check if the output item matches the result item
+        ItemStack resultItem = centrifugeRecipe.getResultItem();
         ItemStack outputItem = getOutputItem();
         if (outputItem != null) {
             // Output slot has items - check if we can add more
@@ -113,21 +100,16 @@ public class Crusher extends Machine {
                 resetProcess(); // Different item type
                 return;
 
-            } else if (outputItem.getAmount() + resultItem.getAmount() > outputItem.getMaxStackSize()) {
+            } else if (outputItem.getAmount() + resultItem.getAmount() + 1 > outputItem.getMaxStackSize()) {
                 resetProcess(); // Would overflow
                 return;
             }
         }
-
         // ---------------
         // At this point we know that the output slot is empty or that it already
         // holds some of the result item, so we can start processing
         // ---------------
         this.progress++;
-
-        int frame = progress % 3;
-        getInventory().getItem(CRUSHER_SAWS_SLOT).editMeta(itemMeta ->
-                itemMeta.setItemModel(NamespacedKey.minecraft("crusher_saws" + frame)));
 
         if (progress < getProcessingTime() / 2) {
             int leftArrowFrame = (progress * 14) / (getProcessingTime() / 2);
@@ -145,6 +127,10 @@ public class Crusher extends Machine {
 
         } else if (progress >= getProcessingTime()) {
             inputItem.subtract(1);
+
+            if (ThreadLocalRandom.current().nextFloat() < centrifugeRecipe.doublingChance) {
+                resultItem.add(1);
+            }
 
             if (outputItem != null) {
                 outputItem.add(resultItem.getAmount());
@@ -210,43 +196,47 @@ public class Crusher extends Machine {
 
     }
 
-    public enum CrushingRecipe {
-        CRUSHED_COPPER_ORE(ItemStack.of(Material.RAW_COPPER),
+    public enum CentrifugeRecipe {
+        COPPER_DUST(Sifter.SiftingRecipe.PURIFIED_COPPER_DUST.getResultItem(),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Crushed Copper Ore"))
-                        .itemModel(NamespacedKey.minecraft("crushed_copper_ore"))
-                        .amount(2)
-                        .build()),
-        CRUSHED_IRON_ORE(ItemStack.of(Material.RAW_IRON),
+                        .name(text("Copper Dust"))
+                        .itemModel(NamespacedKey.minecraft("copper_dust"))
+                        .build(),
+                0.25f
+        ),
+        IRON_DUST(Sifter.SiftingRecipe.PURIFIED_IRON_DUST.getResultItem(),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Crushed Iron Ore"))
-                        .itemModel(NamespacedKey.minecraft("crushed_iron_ore"))
-                        .amount(2)
-                        .build()),
-        CRUSHED_GOLD_ORE(ItemStack.of(Material.RAW_GOLD),
+                        .itemModel(NamespacedKey.minecraft("iron_dust"))
+                        .name(text("Iron Dust"))
+                        .build(),
+                0.25f
+        ),
+        GOLD_DUST(Sifter.SiftingRecipe.PURIFIED_GOLD_DUST.getResultItem(),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Crushed Gold Ore"))
-                        .itemModel(NamespacedKey.minecraft("crushed_gold_ore"))
-                        .amount(2)
-                        .build()),
-        ;
+                        .itemModel(NamespacedKey.minecraft("gold_dust"))
+                        .name(text("Gold Dust"))
+                        .build(),
+                0.25f
+        );
 
-        private final ItemStack ingredientItem;
+        private final ItemStack ingredient;
         private final ItemStack resultItem;
+        private final float doublingChance;
 
-        CrushingRecipe(ItemStack ingredientItem, ItemStack resultItem) {
-            this.ingredientItem = ingredientItem;
+        CentrifugeRecipe(ItemStack ingredient, ItemStack resultItem, float doublingChance) {
+            this.ingredient = ingredient;
             this.resultItem = resultItem;
+            this.doublingChance = doublingChance;
         }
 
         public ItemStack getResultItem() {
             return resultItem.clone();
         }
 
-        public static @Nullable ItemStack fromIngredient(ItemStack ingredientItem) {
-            for (CrushingRecipe recipe : values()) {
-                if (ingredientItem.isSimilar(recipe.ingredientItem)) {
-                    return recipe.resultItem.clone();
+        public static @Nullable CentrifugeRecipe fromIngredient(ItemStack ingredientItem) {
+            for (CentrifugeRecipe recipe : values()) {
+                if (ingredientItem.isSimilar(recipe.ingredient)) {
+                    return recipe;
                 }
             }
             return null;

@@ -3,7 +3,7 @@ package com.gotze.spellcasting.pickaxe.enchantment;
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.bossbar.LootCrateFeature;
 import com.gotze.spellcasting.data.PickaxeData;
-import com.gotze.spellcasting.mine.MineManager;
+import com.gotze.spellcasting.mines.MineManager;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;

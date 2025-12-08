@@ -1,9 +1,9 @@
 package com.gotze.spellcasting;
 
-import com.gotze.spellcasting.machine.Centrifuge;
-import com.gotze.spellcasting.machine.Crusher;
-import com.gotze.spellcasting.machine.Sifter;
-import com.gotze.spellcasting.machine.Washer;
+import com.gotze.spellcasting.machines.Centrifuge;
+import com.gotze.spellcasting.machines.Crusher;
+import com.gotze.spellcasting.machines.Sifter;
+import com.gotze.spellcasting.machines.Washer;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;

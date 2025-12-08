@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.machine;
+package com.gotze.spellcasting.machines;
 
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.menu.Button;
@@ -17,17 +17,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static net.kyori.adventure.text.Component.text;
 
-public class Sifter extends Machine {
+public class Washer extends Machine {
 
     private static final int[] EMPTY_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
     private static final int INPUT_SLOT = 11;
     private static final int LEFT_ARROW_SLOT = 12;
-    private static final int SIFTER_ICON_SLOT = 13;
+    private static final int WASHER_ICON_SLOT = 13;
     private static final int RIGHT_ARROW_SLOT = 14;
     private static final int OUTPUT_SLOT = 15;
 
-    public Sifter(Location location, Player player) {
-        super(MachineType.SIFTER, location, player);
+    public Washer(Location location, Player player) {
+        super(MachineType.WASHER, location, player);
         populate();
     }
 
@@ -55,7 +55,7 @@ public class Sifter extends Machine {
             }
         });
 
-        setButton(new Button(SIFTER_ICON_SLOT, new ItemStackBuilder(Material.LOOM)
+        setButton(new Button(WASHER_ICON_SLOT, new ItemStackBuilder(Material.CAULDRON)
                 .hideTooltipBox()
                 .build()) {
             @Override
@@ -84,15 +84,16 @@ public class Sifter extends Machine {
             return;
         }
 
-        // Check if the input is a valid sifting recipe ingredient
-        SiftingRecipe siftingRecipe = SiftingRecipe.fromIngredient(inputItem);
-        if (siftingRecipe == null) {
+        // Check if the input is a valid washing recipe ingredient
+//        ItemStack resultItem = WashingRecipe.fromIngredient(inputItem);
+        WashingRecipe washingRecipe = WashingRecipe.fromIngredient(inputItem);
+        if (washingRecipe == null) {
             resetProcess();
             return;
         }
 
         // Check if the output item matches the result item
-        ItemStack resultItem = siftingRecipe.getResultItem();
+        ItemStack resultItem = washingRecipe.getResultItem();
         ItemStack outputItem = getOutputItem();
         if (outputItem != null) {
             // Output slot has items - check if we can add more
@@ -128,7 +129,7 @@ public class Sifter extends Machine {
         } else if (progress >= getProcessingTime()) {
             inputItem.subtract(1);
 
-            if (ThreadLocalRandom.current().nextFloat() < siftingRecipe.doublingChance) {
+            if (ThreadLocalRandom.current().nextFloat() < washingRecipe.doublingChance) {
                 resultItem.add(1);
             }
 
@@ -196,34 +197,34 @@ public class Sifter extends Machine {
 
     }
 
-    public enum SiftingRecipe {
-        PURIFIED_COPPER_DUST(Washer.WashingRecipe.PURIFIED_COPPER_ORE.getResultItem(),
+    public enum WashingRecipe {
+        PURIFIED_COPPER_ORE(Crusher.CrushingRecipe.CRUSHED_COPPER_ORE.getResultItem(),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Purified Copper Dust"))
-                        .itemModel(NamespacedKey.minecraft("purified_copper_dust"))
+                        .name(text("Purified Copper Ore"))
+                        .itemModel(NamespacedKey.minecraft("purified_copper_ore"))
                         .build(),
-                0.33f
+                0.50f
         ),
-        PURIFIED_IRON_DUST(Washer.WashingRecipe.PURIFIED_IRON_ORE.getResultItem(),
+        PURIFIED_IRON_ORE(Crusher.CrushingRecipe.CRUSHED_IRON_ORE.getResultItem(),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Purified Iron Dust"))
-                        .itemModel(NamespacedKey.minecraft("purified_iron_dust"))
+                        .name(text("Purified Iron Ore"))
+                        .itemModel(NamespacedKey.minecraft("purified_iron_ore"))
                         .build(),
-                0.33f
+                0.50f
         ),
-        PURIFIED_GOLD_DUST(Washer.WashingRecipe.PURIFIED_GOLD_ORE.getResultItem(),
+        PURIFIED_GOLD_ORE(Crusher.CrushingRecipe.CRUSHED_GOLD_ORE.getResultItem(),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Purified Gold Dust"))
-                        .itemModel(NamespacedKey.minecraft("purified_gold_dust"))
+                        .name(text("Purified Gold Ore"))
+                        .itemModel(NamespacedKey.minecraft("purified_gold_ore"))
                         .build(),
-                0.33f
+                0.50f
         );
 
         private final ItemStack ingredientItem;
         private final ItemStack resultItem;
         private final float doublingChance;
 
-        SiftingRecipe(ItemStack ingredientItem, ItemStack resultItem, float doublingChance) {
+        WashingRecipe(ItemStack ingredientItem, ItemStack resultItem, float doublingChance) {
             this.ingredientItem = ingredientItem;
             this.resultItem = resultItem;
             this.doublingChance = doublingChance;
@@ -233,8 +234,8 @@ public class Sifter extends Machine {
             return resultItem.clone();
         }
 
-        public static @Nullable SiftingRecipe fromIngredient(ItemStack ingredientItem) {
-            for (SiftingRecipe recipe : values()) {
+        public static @Nullable WashingRecipe fromIngredient(ItemStack ingredientItem) {
+            for (WashingRecipe recipe : values()) {
                 if (ingredientItem.isSimilar(recipe.ingredientItem)) {
                     return recipe;
                 }

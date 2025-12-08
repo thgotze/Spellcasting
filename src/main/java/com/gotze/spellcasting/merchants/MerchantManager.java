@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.merchant;
+package com.gotze.spellcasting.merchants;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;

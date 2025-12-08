@@ -1,6 +1,6 @@
 package com.gotze.spellcasting;
 
-import com.gotze.spellcasting.mine.MineManager;
+import com.gotze.spellcasting.mines.MineManager;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

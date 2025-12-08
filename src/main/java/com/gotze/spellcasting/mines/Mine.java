@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.mine;
+package com.gotze.spellcasting.mines;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.sk89q.worldedit.EditSession;

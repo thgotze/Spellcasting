@@ -1,5 +1,6 @@
 package com.gotze.spellcasting.data;
 
+import com.gotze.spellcasting.islands.Island;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -12,6 +13,7 @@ public class PlayerProfile {
     private double balance;
     private Rank rank;
     private PickaxeData pickaxeData;
+    private Island island;
 //    private final Map<Integer, ItemStack[]> privateVaults;
 
     public PlayerProfile() {
@@ -21,17 +23,19 @@ public class PlayerProfile {
         this.balance = 0.00;
         this.rank = Rank.A;
         this.pickaxeData = new PickaxeData();
+        this.island = null;
 //        this.privateVaults = new HashMap<>();
     }
 
     public PlayerProfile(LocalDateTime joinDate, LocalDateTime lastSeen, Duration playTime, double balance, Rank rank,
-                         PickaxeData pickaxeData/*, Map<Integer, ItemStack[]> privateVaults*/) {
+                         PickaxeData pickaxeData, Island island /*, Map<Integer, ItemStack[]> privateVaults*/) {
         this.joinDate = joinDate;
         this.lastSeen = lastSeen;
         this.playTime = playTime;
         this.balance = balance;
         this.rank = rank;
         this.pickaxeData = pickaxeData;
+        this.island = island;
 //        this.privateVaults = privateVaults;
     }
 
@@ -89,6 +93,14 @@ public class PlayerProfile {
 
     public void setPickaxeData(PickaxeData pickaxeData) {
         this.pickaxeData = pickaxeData;
+    }
+
+    public Island getIsland() {
+        return island;
+    }
+
+    public void setIsland(Island island) {
+        this.island = island;
     }
 
 //    public Map<Integer, ItemStack[]> getPrivateVaults() {

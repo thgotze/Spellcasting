@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.merchant;
+package com.gotze.spellcasting.merchants;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PlayerProfileManager;

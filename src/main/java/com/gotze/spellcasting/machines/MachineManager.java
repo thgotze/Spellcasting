@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.machine;
+package com.gotze.spellcasting.machines;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.LifecycleManager;

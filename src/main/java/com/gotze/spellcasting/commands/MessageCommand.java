@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.command;
+package com.gotze.spellcasting.commands;
 
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;

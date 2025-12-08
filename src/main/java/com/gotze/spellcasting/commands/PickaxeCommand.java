@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.command;
+package com.gotze.spellcasting.commands;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;

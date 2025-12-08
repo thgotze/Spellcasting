@@ -1,7 +1,7 @@
-package com.gotze.spellcasting.merchant;
+package com.gotze.spellcasting.merchants;
 
 import com.gotze.spellcasting.data.PlayerProfile;
-import com.gotze.spellcasting.machine.Machine;
+import com.gotze.spellcasting.machines.Machine;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.menu.Button;
 import org.bukkit.Bukkit;
