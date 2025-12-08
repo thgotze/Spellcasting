@@ -19,9 +19,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,8 +35,21 @@ public class IslandManager implements Listener {
     private static final int ISLAND_STARTING_DISTANCE = 3000;
     private static final int ISLAND_SEPARATION_DISTANCE = 2000;
 
-    @EventHandler
-    public void init(PlayerTeleportEvent event) {
+    public void onVoidDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (event.getCause() != EntityDamageEvent.DamageCause.VOID) return;
+
+        event.setCancelled(true);
+
+        Location playerLocation = player.getLocation();
+
+        player.teleport(new Location(
+                playerLocation.getWorld(),
+                playerLocation.getX(),
+                325,
+                playerLocation.getZ()
+        ));
+    }
 
     }
     public static void createIsland(Player player) {
