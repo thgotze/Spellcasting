@@ -3,6 +3,7 @@ package com.gotze.spellcasting.pickaxe;
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.bossbar.LootCrateFeature;
 import com.gotze.spellcasting.data.PickaxeData;
+import com.gotze.spellcasting.mines.MineManager;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageAbortListener;
@@ -52,16 +53,21 @@ public class PlayerPickaxeManager implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreakWithPickaxe(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        Block block = event.getBlock();
 
         if (player.getGameMode() == GameMode.CREATIVE) return;
+
+        boolean isInMine = MineManager.isInAnyMine(block);
 
         // Check player is holding their own pickaxe
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) {
-            event.setCancelled(true);
-            player.sendActionBar(text("This is not your pickaxe!", RED));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20, 2));
-            SoundUtils.playBassNoteBlockErrorSound(player);
+            if (isInMine) {
+                event.setCancelled(true);
+                player.sendActionBar(text("This is not your pickaxe!", RED));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20, 2));
+                SoundUtils.playBassNoteBlockErrorSound(player);
+            }
             return;
         }
 
@@ -76,25 +82,25 @@ public class PlayerPickaxeManager implements Listener {
         }
 
         // At this point the block break event is allowed to go through i.e., NOT canceled
-        Block block = event.getBlock();
 
-        // Increment blocks broken
-        pickaxeData.addBlocksBroken(1);
+        if (isInMine) {
+            // Increment blocks broken
+            pickaxeData.addBlocksBroken(1);
 
-        // Notify all block break listeners of this natural block break
-        for (Enchantment enchantment : pickaxeData.getEnchantments()) {
-            if (enchantment instanceof BlockBreakListener blockBreakListener) {
-                blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
+            // Notify all block break listeners of this natural block break
+            for (Enchantment enchantment : pickaxeData.getEnchantments()) {
+                if (enchantment instanceof BlockBreakListener blockBreakListener) {
+                    blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
+                }
             }
-        }
 
-        for (Ability ability : pickaxeData.getAbilities()) {
-            if (ability instanceof BlockBreakListener blockBreakListener) {
-                blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
+            for (Ability ability : pickaxeData.getAbilities()) {
+                if (ability instanceof BlockBreakListener blockBreakListener) {
+                    blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
+                }
             }
+            LootCrateFeature.applyEnergyFromBlockBreak(player, block);
         }
-
-        LootCrateFeature.applyEnergyFromBlockBreak(player, block);
 
         // Update pickaxe durability and lore a tick later
         Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
