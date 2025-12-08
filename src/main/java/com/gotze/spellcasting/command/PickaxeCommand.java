@@ -5,6 +5,7 @@ import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.data.PlayerProfile;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import com.gotze.spellcasting.pickaxe.menu.YourPickaxeMenu;
+import com.gotze.spellcasting.util.PermissionUtils;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -37,13 +38,13 @@ public class PickaxeCommand implements BasicCommand {
         switch (args[0].toLowerCase()) {
             case "menu", "m" -> new YourPickaxeMenu(player);
             case "get" -> {
-                if (player.hasPermission("spellcasting.pickaxe.get")) {
+                if (PermissionUtils.isAdmin(player)) {
                     player.getInventory().addItem(PlayerPickaxeService.getPlayerPickaxe(player));
                     player.sendMessage(text("You received your pickaxe!", GREEN));
                 }
             }
             case "clone" -> {
-                if (player.hasPermission("spellcasting.admin")) {
+                if (PermissionUtils.isAdmin(player)) {
                     if (args.length == 1) {
                         // Clone own pickaxe
                         player.getInventory().addItem(PlayerPickaxeService.getPlayerPickaxe(player));
@@ -66,12 +67,12 @@ public class PickaxeCommand implements BasicCommand {
                 }
             }
             case "debug" -> {
-                if (player.hasPermission("spellcasting.pickaxe.debug")) {
+                if (PermissionUtils.isAdmin(player)) {
                     player.sendMessage(text("Debug mode: ENABLED", GREEN)); // TODO
                 }
             }
             case "repair", "rep" -> {
-                if (player.hasPermission("spellcasting.admin")) {
+                if (PermissionUtils.isAdmin(player)) {
                     if (args.length == 1) {
                         // Repair own pickaxe
                         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
@@ -120,7 +121,7 @@ public class PickaxeCommand implements BasicCommand {
                 }
             }
             case "reset" -> {
-                if (player.hasPermission("spellcasting.admin")) {
+                if (PermissionUtils.isAdmin(player)) {
                     if (args.length == 1) {
                         // Reset own pickaxe
                         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
@@ -165,7 +166,8 @@ public class PickaxeCommand implements BasicCommand {
             List<String> suggestions = new ArrayList<>();
             suggestions.add("menu");
 
-            if (player.hasPermission("spellcasting.admin")) {
+
+            if (PermissionUtils.isAdmin(player)) {
                 suggestions.addAll(List.of("get","clone", "debug", "repair", "reset"));
             }
             return suggestions;
@@ -175,7 +177,7 @@ public class PickaxeCommand implements BasicCommand {
             String input = args[0].toLowerCase();
             if ("menu".startsWith(input)) return List.of("menu");
 
-            if (player.hasPermission("spellcasting.admin")) {
+            if (PermissionUtils.isAdmin(player)) {
                 if ("get".startsWith(input)) return List.of("get");
                 if ("clone".startsWith(input)) return List.of("clone");
                 if ("debug".startsWith(input)) return List.of("debug");
@@ -185,12 +187,12 @@ public class PickaxeCommand implements BasicCommand {
 
         } else if (args.length == 2) {
             // Second argument - only suggest players for command if admin
-            if ((args[0].equalsIgnoreCase("get") ||
+            if (PermissionUtils.isAdmin(player) &&
+                    (args[0].equalsIgnoreCase("get") ||
                     args[0].equalsIgnoreCase("clone") ||
                     args[0].equalsIgnoreCase("debug") ||
                     args[0].equalsIgnoreCase("repair") ||
-                    args[0].equalsIgnoreCase("reset"))
-                    && player.hasPermission("spellcasting.admin")) {
+                    args[0].equalsIgnoreCase("reset"))) {
                 String input = args[1].toLowerCase();
 
                 if (input.isEmpty()) {
