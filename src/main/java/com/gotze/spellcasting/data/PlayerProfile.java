@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.data;
 
-import com.gotze.spellcasting.islands.Island;
+import com.gotze.spellcasting.islands.IslandData;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -13,7 +13,7 @@ public class PlayerProfile {
     private double balance;
     private Rank rank;
     private PickaxeData pickaxeData;
-    private Island island;
+    private IslandData islandData;
 //    private final Map<Integer, ItemStack[]> privateVaults;
 
     public PlayerProfile() {
@@ -23,19 +23,19 @@ public class PlayerProfile {
         this.balance = 0.00;
         this.rank = Rank.A;
         this.pickaxeData = new PickaxeData();
-        this.island = null;
+        this.islandData = null;
 //        this.privateVaults = new HashMap<>();
     }
 
     public PlayerProfile(LocalDateTime joinDate, LocalDateTime lastSeen, Duration playTime, double balance, Rank rank,
-                         PickaxeData pickaxeData, Island island /*, Map<Integer, ItemStack[]> privateVaults*/) {
+                         PickaxeData pickaxeData, IslandData islandData /*, Map<Integer, ItemStack[]> privateVaults*/) {
         this.joinDate = joinDate;
         this.lastSeen = lastSeen;
         this.playTime = playTime;
         this.balance = balance;
         this.rank = rank;
         this.pickaxeData = pickaxeData;
-        this.island = island;
+        this.islandData = islandData;
 //        this.privateVaults = privateVaults;
     }
 
@@ -95,12 +95,12 @@ public class PlayerProfile {
         this.pickaxeData = pickaxeData;
     }
 
-    public Island getIsland() {
-        return island;
+    public IslandData getIslandData() {
+        return islandData;
     }
 
-    public void setIsland(Island island) {
-        this.island = island;
+    public void setIslandData(IslandData islandData) {
+        this.islandData = islandData;
     }
 
 //    public Map<Integer, ItemStack[]> getPrivateVaults() {

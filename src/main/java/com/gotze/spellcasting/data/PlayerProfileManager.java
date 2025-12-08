@@ -1,11 +1,13 @@
 package com.gotze.spellcasting.data;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.islands.IslandData;
 import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.LifecycleManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -92,6 +94,23 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
             }
         }
 
+        // Island Data
+        IslandData islandData = null;
+        if (yamlConfiguration.contains("island-data")) {
+            String islandCenterWorld = yamlConfiguration.getString("island-data.island-center.world");
+            double islandCenterX = yamlConfiguration.getDouble("island-data.island-center.x");
+            double islandCenterY = yamlConfiguration.getDouble("island-data.island-center.y");
+            double islandCenterZ = yamlConfiguration.getDouble("island-data.island-center.z");
+            Location islandCenterLocation = new Location(Bukkit.getWorld(islandCenterWorld), islandCenterX, islandCenterY, islandCenterZ);
+
+            String islandHomeWorld = yamlConfiguration.getString("island-data.island-home.world");
+            double islandHomeX = yamlConfiguration.getDouble("island-data.island-home.x");
+            double islandHomeY = yamlConfiguration.getDouble("island-data.island-home.y");
+            double islandHomeZ = yamlConfiguration.getDouble("island-data.island-home.z");
+            Location islandHomeLocation = new Location(Bukkit.getWorld(islandHomeWorld), islandHomeX, islandHomeY, islandHomeZ);
+
+            islandData = new IslandData(islandCenterLocation, islandHomeLocation);
+        }
 //        // Vaults
 //        ConfigurationSection vaultSection = yamlConfiguration.getConfigurationSection("private-vaults");
 //        Map<Integer, ItemStack[]> privateVaults = new HashMap<>();
@@ -106,7 +125,7 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
 //        }
 
         // Create profile with loaded data
-        playerProfile = new PlayerProfile(joinDate, lastSeen, playTime, balance, rank, pickaxeData/*, privateVaults*/);
+        playerProfile = new PlayerProfile(joinDate, lastSeen, playTime, balance, rank, pickaxeData, islandData/*, privateVaults*/);
         PLAYER_PROFILE_MAP.put(player, playerProfile);
 
         // Track session start time
@@ -189,6 +208,22 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
                 .map(ability -> ability.getAbilityType().name() + " " + ability.getLevel())
                 .toList();
         yamlConfiguration.set("pickaxe-data.abilities", abilitiesSerialized);
+
+        // Island Data
+        IslandData islandData = playerProfile.getIslandData();
+        if (islandData != null) {
+            Location islandCenter = islandData.getIslandCenter();
+            yamlConfiguration.set("island-data.island-center.world", islandCenter.getWorld().getName());
+            yamlConfiguration.set("island-data.island-center.x", islandCenter.getX());
+            yamlConfiguration.set("island-data.island-center.y", islandCenter.getY());
+            yamlConfiguration.set("island-data.island-center.z", islandCenter.getZ());
+
+            Location islandHome = islandData.getIslandHome();
+            yamlConfiguration.set("island-data.island-home.world", islandHome.getWorld().getName());
+            yamlConfiguration.set("island-data.island-home.x", islandHome.getX());
+            yamlConfiguration.set("island-data.island-home.y", islandHome.getY());
+            yamlConfiguration.set("island-data.island-home.z", islandHome.getZ());
+        }
 
 //        // Vaults
 //        Map<Integer, ItemStack[]> vaults = playerProfile.getPrivateVaults();
