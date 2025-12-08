@@ -106,7 +106,7 @@ public class IslandManager implements Listener {
 
         WorldBorder islandBorder = Bukkit.createWorldBorder();
         islandBorder.setCenter(islandData.getIslandCenter());
-        islandBorder.setSize(64);
+        islandBorder.setSize(islandData.getIslandRadius());
         player.setWorldBorder(islandBorder);
     }
 

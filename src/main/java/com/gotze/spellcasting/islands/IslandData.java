@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 public class IslandData {
     private Location islandCenter;
     private Location islandHome;
+    private final double islandRadius = 256;
 
     public IslandData(Location islandCenter) {
         this.islandCenter = islandCenter;
@@ -28,6 +29,10 @@ public class IslandData {
 
     public void setIslandCenter(Location islandCenter) {
         this.islandCenter = islandCenter;
+    }
+
+    public double getIslandRadius() {
+        return islandRadius;
     }
 
     public Location getIslandHome() {
