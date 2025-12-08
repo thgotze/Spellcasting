@@ -105,7 +105,7 @@ public class IslandManager implements Listener {
             try (EditSession editSession = WorldEdit.getInstance().newEditSession(weWorld)) {
                 Operation operation = new ClipboardHolder(clipboard)
                         .createPaste(editSession)
-                        .to(BlockVector3.at(x, y, z - 1))
+                        .to(BlockVector3.at(x, y, z))
                         .ignoreAirBlocks(false)
                         .build();
                 Operations.complete(operation);
