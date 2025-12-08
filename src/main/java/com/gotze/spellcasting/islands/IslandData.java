@@ -11,7 +11,7 @@ public class IslandData {
 
     public IslandData(Location islandCenter) {
         this.islandCenter = islandCenter;
-        this.islandHome = islandCenter;
+        this.islandHome = islandCenter.clone().add(0.5, 0, 0.5);
     }
 
     public IslandData(Location islandCenter, Location islandHome) {
