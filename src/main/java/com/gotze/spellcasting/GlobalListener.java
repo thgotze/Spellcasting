@@ -1,5 +1,6 @@
 package com.gotze.spellcasting;
 
+import com.gotze.spellcasting.islands.IslandManager;
 import com.gotze.spellcasting.mines.MineManager;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
@@ -22,9 +23,12 @@ public class GlobalListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        Block block = event.getBlock();
 
         if (player.getGameMode() == GameMode.CREATIVE) return;
-        if (MineManager.isInAnyMine(event.getBlock())) return;
+
+        if (MineManager.isInAnyMine(block)) return;
+        if (IslandManager.isLocationOnPlayerIsland(player, block.getLocation())) return;
 
         event.setCancelled(true);
     }
@@ -32,8 +36,11 @@ public class GlobalListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
+        Block block = event.getBlock();
 
         if (player.getGameMode() == GameMode.CREATIVE) return;
+
+        if (IslandManager.isLocationOnPlayerIsland(player, block.getLocation())) return;
 
         event.setCancelled(true);
     }
@@ -49,6 +56,7 @@ public class GlobalListener implements Listener {
             if (block == null) return;
 
             if (MineManager.isInAnyMine(block)) return;
+            if (IslandManager.isLocationOnPlayerIsland(player, block.getLocation())) return;
 
             event.setCancelled(true);
         }
