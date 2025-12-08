@@ -51,7 +51,21 @@ public class IslandManager implements Listener {
         ));
     }
 
+    public static boolean isLocationOnPlayerIsland(Player player, Location location) {
+        IslandData islandData = IslandData.fromPlayer(player);
+        if (islandData == null) return false;
+
+        Location center = islandData.getIslandCenter();
+
+        double minX = center.getX() - islandData.getIslandRadius();
+        double maxX = center.getX() + islandData.getIslandRadius();
+        double minZ = center.getZ() - islandData.getIslandRadius();
+        double maxZ = center.getZ() + islandData.getIslandRadius();
+
+        return location.getX() >= minX && location.getX() <= maxX &&
+                location.getZ() >= minZ && location.getZ() <= maxZ;
     }
+
     public static void createIsland(Player player) {
         IslandData islandData = IslandData.fromPlayer(player);
         if (islandData != null) {
