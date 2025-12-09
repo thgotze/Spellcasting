@@ -3,6 +3,7 @@ package com.gotze.spellcasting;
 import com.gotze.spellcasting.islands.IslandManager;
 import com.gotze.spellcasting.mines.MineManager;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WindCharge;
@@ -68,6 +69,23 @@ public class GlobalListener implements Listener {
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL) return;
 
         event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onVoidDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (event.getCause() != EntityDamageEvent.DamageCause.VOID) return;
+
+        event.setCancelled(true);
+
+        Location playerLocation = player.getLocation();
+
+        player.teleport(new Location(
+                playerLocation.getWorld(),
+                playerLocation.getX(),
+                325,
+                playerLocation.getZ()
+        ));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
