@@ -1,43 +1,82 @@
-package com.gotze.spellcasting.mines;
+package com.gotze.spellcasting.feature.mines;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.util.WorldUtils;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.block.BlockType;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Mine {
-    private final CuboidRegion cuboidRegion;
-    private final Location teleportLocation;
-    private final Pattern pattern;
+    private final String mineName;
 
-    public Mine(Location corner1, Location corner2, Location teleportLocation, Pattern pattern) {
-        if (corner1.getWorld() != corner2.getWorld()) {
-            throw new IllegalArgumentException("Both corners must be in the same world!");
-        }
+    private int refillDelayTicks;
 
-        this.teleportLocation = teleportLocation;
+    private Location corner1;
+    private Location corner2;
+    private CuboidRegion cuboidRegion;
+
+    private Location safetyTeleportLocation;
+
+    private final RandomPattern blockPattern = new RandomPattern();
+
+    private BukkitTask mineRefiller;
+
+    public Mine(String mineName) {
+        this.mineName = mineName;
+    }
+
+    public Mine refillDelayTicks(int refillDelayTicks) {
+        this.refillDelayTicks = refillDelayTicks;
+        return this;
+    }
+
+    public Mine corner1(double x, double y, double z) {
+        this.corner1 = new Location(WorldUtils.getWorld(), x, y, z);
+        return this;
+    }
+
+    public Mine corner2(double x, double y, double z) {
+        this.corner2 = new Location(WorldUtils.getWorld(), x, y, z);
+        return this;
+    }
+
+    public Mine safetyTeleportLocation(double x, double y, double z) {
+        this.safetyTeleportLocation = new Location(WorldUtils.getWorld(), x, y, z);
+        return this;
+    }
+
+    public Mine block(BlockType blockType, double chance) {
+        this.blockPattern.add(blockType, chance);
+        return this;
+    }
+
+    public Mine build() {
         this.cuboidRegion = new CuboidRegion(
-                BukkitAdapter.adapt(corner1.getWorld()),
+                BukkitAdapter.adapt(WorldUtils.getWorld()),
                 BlockVector3.at(corner1.getBlockX(), corner1.getBlockY(), corner1.getBlockZ()),
                 BlockVector3.at(corner2.getBlockX(), corner2.getBlockY(), corner2.getBlockZ())
         );
 
-        this.pattern = pattern;
+        this.mineRefiller = Bukkit.getScheduler().runTaskTimer(Spellcasting.getPlugin(), this::refillMine, refillDelayTicks, refillDelayTicks);
+        return this;
     }
 
-    public void refillMine() {
+    private void refillMine() {
         List<Player> playersInMine = getPlayersInMine();
         playersInMine.forEach(player -> {
             player.sendRichMessage("<yellow>The mine has reset! You've been teleported to safety");
@@ -45,11 +84,11 @@ public class Mine {
         });
 
         try (EditSession editSession = WorldEdit.getInstance().newEditSession(cuboidRegion.getWorld())) {
-            editSession.setBlocks((Region) cuboidRegion, pattern);
+            editSession.setBlocks((Region) cuboidRegion, blockPattern);
             editSession.flushQueue();
 
         } catch (Exception e) {
-            Spellcasting.getPlugin().getLogger().warning("Failed to refill mine using FAWE: " + e.getMessage());
+            Spellcasting.getPlugin().getLogger().warning("Failed to refill mine " + mineName + " using FAWE: " + e.getMessage());
         }
     }
 
@@ -62,7 +101,7 @@ public class Mine {
     }
 
     public void teleportPlayerToSafety(Player player) {
-        player.teleport(teleportLocation);
+        player.teleport(safetyTeleportLocation);
     }
 
     public boolean contains(Block block) {
