@@ -32,18 +32,20 @@ public class Spellcasting extends JavaPlugin {
         plugin = this;
 
         // Event listeners
-        pluginManager.registerEvents(new GlobalListener(), this);
-        pluginManager.registerEvents(new PlayerPickaxeManager(), this);
-        pluginManager.registerEvents(playerProfileManager, this);
-        pluginManager.registerEvents(new MenuListener(), this);
-//        pluginManager.registerEvents(new LootPotManager(), this);
-//        pluginManager.registerEvents(new ResourcePackManager(), this);
-        pluginManager.registerEvents(new MerchantManager(), this);
-        pluginManager.registerEvents(machineManager, this);
-        pluginManager.registerEvents(new ItemModelManager(), this);
-        pluginManager.registerEvents(new LootCrateManager(), this);
-//        pluginManager.registerEvents(new PrivateVaultManager(), this); // TODO: fix impl
-        pluginManager.registerEvents(new IslandManager(), this);
+        List.of(new GlobalListener(),
+                new PlayerPickaxeManager(),
+                new PlayerProfileManager(),
+                new MenuListener(),
+//                new LootPotManager(), // TODO: fix impl
+//                new ResourcePackManager(), // TODO: remove?
+                new MerchantManager(),
+                new MachineManager(),
+                new ItemModelManager(),
+                new LootCrateManager(),
+//                new PrivateVaultManager(), // TODO: fix impl
+                new IslandManager(),
+                new ActionBarManager()
+        ).forEach(listener -> plugin.getServer().getPluginManager().registerEvents(listener, plugin));
 
         // Commands
         registerCommand("admin", new AdminCommand());
