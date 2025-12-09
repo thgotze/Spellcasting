@@ -20,13 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Spellcasting extends JavaPlugin {
-
-
-    private static Spellcasting plugin;
-
-    public static Spellcasting getPlugin() {
-        return plugin;
-    }
+    public static final @NotNull World world = Bukkit.getWorld("world");
+    public static final @NotNull Location spawn = new Location(world, 0.50D, 100.0D, 0.5D, 0.0F, 0.0F);
+    public static Spellcasting plugin;
 
     @Override
     public void onEnable() {

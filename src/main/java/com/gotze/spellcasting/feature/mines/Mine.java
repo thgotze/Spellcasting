@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.gotze.spellcasting.Spellcasting.world;
 public class Mine {
     private final Rank requiredRank;
     private int refillDelayTicks;
@@ -44,17 +45,17 @@ public class Mine {
     }
 
     public Mine corner1(double x, double y, double z) {
-        this.corner1 = new Location(WorldUtils.getWorld(), x, y, z);
+        this.corner1 = new Location(world, x, y, z);
         return this;
     }
 
     public Mine corner2(double x, double y, double z) {
-        this.corner2 = new Location(WorldUtils.getWorld(), x, y, z);
+        this.corner2 = new Location(world, x, y, z);
         return this;
     }
 
     public Mine safetyTeleportLocation(double x, double y, double z) {
-        this.safetyTeleportLocation = new Location(WorldUtils.getWorld(), x, y, z);
+        this.safetyTeleportLocation = new Location(world, x, y, z);
         return this;
     }
 
@@ -79,7 +80,7 @@ public class Mine {
         }
 
         this.cuboidRegion = new CuboidRegion(
-                BukkitAdapter.adapt(WorldUtils.getWorld()),
+                BukkitAdapter.adapt(world),
                 BlockVector3.at(corner1.getBlockX(), corner1.getBlockY(), corner1.getBlockZ()),
                 BlockVector3.at(corner2.getBlockX(), corner2.getBlockY(), corner2.getBlockZ())
         );
@@ -105,7 +106,7 @@ public class Mine {
     }
 
     public List<Player> getPlayersInMine() {
-        return WorldUtils.getWorld().getPlayers().stream()
+        return world.getPlayers().stream()
                 .filter(this::contains)
                 .collect(Collectors.toList());
     }
