@@ -1,6 +1,7 @@
 package com.gotze.spellcasting.feature.mines;
 
 import com.gotze.spellcasting.Spellcasting;
+import com.gotze.spellcasting.data.Rank;
 import com.gotze.spellcasting.util.WorldUtils;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -9,16 +10,17 @@ import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.world.block.BlockType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Mine {
@@ -28,8 +30,9 @@ public class Mine {
     private Location corner2;
     private CuboidRegion cuboidRegion;
     private Location safetyTeleportLocation;
-    private final RandomPattern blockPattern = new RandomPattern();
     private BukkitTask mineRefiller;
+    private final Map<Material, Double> blockPattern = new HashMap<>();
+    private final RandomPattern FAWEBlockPattern = new RandomPattern();
 
     public Mine(Rank requiredRank) {
         this.requiredRank = requiredRank;
@@ -55,12 +58,26 @@ public class Mine {
         return this;
     }
 
-    public Mine block(BlockType blockType, double chance) {
-        this.blockPattern.add(blockType, chance);
+    public Mine block(Material material, double chance) {
+        this.blockPattern.put(material, chance);
         return this;
     }
 
-    public Mine build() {
+    public Mine remainingBlocks(Material material) {
+        double remainingBlockChance = 100.0;
+        for (Double chance : blockPattern.values()) {
+            remainingBlockChance -= chance;
+        }
+
+        this.blockPattern.put(material, remainingBlockChance);
+        return this;
+    }
+
+    public Mine startRefilling() {
+        for (var entry : blockPattern.entrySet()) {
+            this.FAWEBlockPattern.add(BukkitAdapter.asBlockType(entry.getKey()), entry.getValue());
+        }
+
         this.cuboidRegion = new CuboidRegion(
                 BukkitAdapter.adapt(WorldUtils.getWorld()),
                 BlockVector3.at(corner1.getBlockX(), corner1.getBlockY(), corner1.getBlockZ()),
@@ -79,18 +96,16 @@ public class Mine {
         });
 
         try (EditSession editSession = WorldEdit.getInstance().newEditSession(cuboidRegion.getWorld())) {
-            editSession.setBlocks((Region) cuboidRegion, blockPattern);
+            editSession.setBlocks((Region) cuboidRegion, FAWEBlockPattern);
             editSession.flushQueue();
 
         } catch (Exception e) {
-            Spellcasting.getPlugin().getLogger().warning("Failed to refill mine " + mineName + " using FAWE: " + e.getMessage());
+            Spellcasting.getPlugin().getLogger().warning("Failed to refill mine '" + requiredRank.name() + "' using FAWE: " + e.getMessage());
         }
     }
 
     public List<Player> getPlayersInMine() {
-        World world = BukkitAdapter.adapt(cuboidRegion.getWorld());
-
-        return world.getPlayers().stream()
+        return WorldUtils.getWorld().getPlayers().stream()
                 .filter(this::contains)
                 .collect(Collectors.toList());
     }
