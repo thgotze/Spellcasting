@@ -1,7 +1,6 @@
 package com.gotze.spellcasting.feature.mines;
 
 import com.gotze.spellcasting.data.Rank;
-import com.gotze.spellcasting.util.LifecycleManager;
 import io.papermc.paper.util.Tick;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,12 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MineManager implements LifecycleManager {
+public class MineManager {
 
     private static final List<Mine> mines = new ArrayList<>();
 
-    @Override
-    public void start() {
+    public static void startRefillingMines() {
         // A Mine
         mines.add(new Mine(Rank.A)
                 .refillDelayTicks(Tick.tick().fromDuration(Duration.ofMinutes(1)))
@@ -79,8 +77,7 @@ public class MineManager implements LifecycleManager {
                 .startRefilling());
     }
 
-    @Override
-    public void stop() {
+    public static void stopRefillingMines() {
         mines.forEach(Mine::stopRefilling);
     }
 

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class PlayerProfileManager implements Listener, LifecycleManager {
+public class PlayerProfileManager implements Listener {
 
     private static final Map<Player, PlayerProfile> PLAYER_PROFILE_MAP = new HashMap<>();
     private static final Map<Player, LocalDateTime> SESSION_START_MAP = new HashMap<>();
@@ -156,13 +157,7 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
         SESSION_START_MAP.remove(player);
     }
 
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void stop() {
+    public static void saveAllProfiles() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             PlayerProfile playerProfile = PLAYER_PROFILE_MAP.get(player);
             if (playerProfile == null) continue;
@@ -186,7 +181,7 @@ public class PlayerProfileManager implements Listener, LifecycleManager {
         SESSION_START_MAP.clear();
     }
 
-    private void saveProfile(PlayerProfile playerProfile, File playerFile, YamlConfiguration yamlConfiguration) {
+    private static void saveProfile(PlayerProfile playerProfile, File playerFile, YamlConfiguration yamlConfiguration) {
         yamlConfiguration.set("join-date", playerProfile.getJoinDate().toString());
         yamlConfiguration.set("last-seen", playerProfile.getLastSeen().toString());
         yamlConfiguration.set("playtime-seconds", playerProfile.getPlayTime().getSeconds());

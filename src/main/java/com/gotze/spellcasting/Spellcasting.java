@@ -21,7 +21,6 @@ import java.util.List;
 
 public class Spellcasting extends JavaPlugin {
 
-    private final List<LifecycleManager> lifecycleManagers = new ArrayList<>();
 
     private static Spellcasting plugin;
 
@@ -63,17 +62,16 @@ public class Spellcasting extends JavaPlugin {
 //        registerCommand("pv", new PrivateVaultCommand());
 
         // Other
+        MineManager.startRefillingMines();
+        MachineManager.startTickingMachines();
         RecipeRegistry.registerRecipes();
-
-        lifecycleManagers.add(mineManager);
-        lifecycleManagers.add(machineManager);
-        lifecycleManagers.add(playerProfileManager);
-
-        lifecycleManagers.forEach(LifecycleManager::start);
     }
 
     @Override
     public void onDisable() {
         lifecycleManagers.forEach(LifecycleManager::stop);
+        MineManager.stopRefillingMines();
+        MachineManager.stopTickingMachines();
+        PlayerProfileManager.saveAllProfiles();
     }
 }

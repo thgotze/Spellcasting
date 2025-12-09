@@ -20,19 +20,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MachineManager implements Listener, LifecycleManager {
+public class MachineManager implements Listener {
     private static final Map<Location, Machine> machines = new HashMap<>();
     private static BukkitTask tickTask;
 
-    @Override
-    public void start() {
-        tickTask = Bukkit.getScheduler().runTaskTimer(
-                Spellcasting.getPlugin(),
+    public static void startTickingMachines() {
+        tickTask = Bukkit.getScheduler().runTaskTimer(plugin,
                 () -> machines.values().forEach(Machine::tick),
                 0L, 1L);
     }
 
-    @Override
-    public void stop() {
+    public static void stopTickingMachines() {
         if (tickTask != null) {
             tickTask.cancel();
         }
