@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.bossbar;
+package com.gotze.spellcasting.feature.lootcrate;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.Rarity;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class LootCrateFeature implements Listener {
+public class LootCrateManager implements Listener {
 
     private static final BlockData LOOT_CRATE_TINTED_GLASS = BlockType.TINTED_GLASS.createBlockData();
     private static final Map<Player, BossBar> playerBossBar = new HashMap<>();
