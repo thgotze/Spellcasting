@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Mine {
-    private final String mineName;
+    private final Rank requiredRank;
     private int refillDelayTicks;
     private Location corner1;
     private Location corner2;
@@ -31,8 +31,8 @@ public class Mine {
     private final RandomPattern blockPattern = new RandomPattern();
     private BukkitTask mineRefiller;
 
-    public Mine(String mineName) {
-        this.mineName = mineName;
+    public Mine(Rank requiredRank) {
+        this.requiredRank = requiredRank;
     }
 
     public Mine refillDelayTicks(int refillDelayTicks) {
@@ -113,5 +113,9 @@ public class Mine {
 
     public boolean contains(Entity entity) {
         return cuboidRegion.contains(BlockVector3.at(entity.getX(), entity.getY(), entity.getZ()));
+    }
+
+    public Rank getRequiredRank() {
+        return requiredRank;
     }
 }

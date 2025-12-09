@@ -18,8 +18,7 @@ public class MineManager implements LifecycleManager {
     @Override
     public void start() {
         // A Mine
-        mines.add(new Mine("A Mine")
-                .refillDelayTicks(12000)
+        mines.add(new Mine(Rank.A)
                 .corner1(-24, 96, 25)
                 .corner2(24, 36, 77)
                 .safetyTeleportLocation(0.5, 97, 22.5)
@@ -37,8 +36,7 @@ public class MineManager implements LifecycleManager {
                 .build());
 
         // B Mine
-        mines.add(new Mine("B Mine")
-                .refillDelayTicks(12000)
+        mines.add(new Mine(Rank.B)
                 .corner1(-24 + 500, 96, 25)
                 .corner2(24 + 500, 36, 77)
                 .safetyTeleportLocation(0.5 + 500, 97, 22.5)
@@ -56,23 +54,7 @@ public class MineManager implements LifecycleManager {
                 .build());
 
         // C Mine
-        mines.add(new Mine("C Mine")
-                .refillDelayTicks(12000)
-                .corner1(-24 + 500, 96, 25)
-                .corner2(24 + 500, 36, 77)
-                .safetyTeleportLocation(0.5 + 500, 97, 22.5)
-                .block(BlockTypes.STONE, 78.50)
-                .block(BlockTypes.DIAMOND_ORE, 0.25 * 4)
-                .block(BlockTypes.GOLD_ORE, 1.00 * 4)
-                .block(BlockTypes.DEEPSLATE_GOLD_ORE, 0.50 * 4)
-                .block(BlockTypes.RAW_GOLD_BLOCK, 0.25 * 4)
-                .block(BlockTypes.COPPER_ORE, 3.00 * 4)
-                .block(BlockTypes.DEEPSLATE_COPPER_ORE, 1.50 * 4)
-                .block(BlockTypes.RAW_COPPER_BLOCK, 0.75 * 4)
-                .block(BlockTypes.IRON_ORE, 2.00 * 4)
-                .block(BlockTypes.DEEPSLATE_IRON_ORE, 1.00 * 4)
-                .block(BlockTypes.RAW_IRON_BLOCK, 0.50 * 4)
-                .build());
+        mines.add(new Mine(Rank.C)
     }
 
     @Override
