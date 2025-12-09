@@ -125,21 +125,19 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
         // ---------------
         // Subsequent times
         // ---------------
-        markedCornerBlocks.entrySet().removeIf(entry -> {
-            if (entry.getKey().equals(block)) {
-                player.playSound(block.getLocation(), Sound.BLOCK_SCULK_CATALYST_HIT, 1.0f,1.0f);
-                for (Location particlePoint : BlockUtils.getBlockOutlineForParticles(block.getLocation(), 0.10)) {
-                    PHANTOM_QUARRY_PARTICLE.clone()
-                            .location(particlePoint)
-                            .receivers(player)
-                            .spawn();
-                }
-                BlockDisplay display = entry.getValue();
-                display.remove();
-                return true;
+        BlockDisplay display = markedCornerBlocks.remove(block);
+        if (display != null) {
+            display.remove();
+
+            player.playSound(block.getLocation(), Sound.BLOCK_SCULK_CATALYST_HIT, 1.0f, 1.0f);
+
+            for (Location particlePoint : BlockUtils.getBlockOutlineForParticles(block.getLocation(), 0.10)) {
+                PHANTOM_QUARRY_PARTICLE.clone()
+                        .location(particlePoint)
+                        .receivers(player)
+                        .spawn();
             }
-            return false;
-        });
+        }
 
         if (markedCornerBlocks.isEmpty()) {
             player.playSound(centerBlock.getLocation(), Sound.BLOCK_SCULK_PLACE, 1.0f,1.0f);
