@@ -23,17 +23,12 @@ import java.util.stream.Collectors;
 
 public class Mine {
     private final String mineName;
-
     private int refillDelayTicks;
-
     private Location corner1;
     private Location corner2;
     private CuboidRegion cuboidRegion;
-
     private Location safetyTeleportLocation;
-
     private final RandomPattern blockPattern = new RandomPattern();
-
     private BukkitTask mineRefiller;
 
     public Mine(String mineName) {
@@ -98,6 +93,10 @@ public class Mine {
         return world.getPlayers().stream()
                 .filter(this::contains)
                 .collect(Collectors.toList());
+    }
+
+    public void stopRefilling() {
+        this.mineRefiller.cancel();
     }
 
     public void teleportPlayerToSafety(Player player) {
