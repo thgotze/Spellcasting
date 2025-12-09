@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.pickaxe.capability;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -20,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.gotze.spellcasting.Spellcasting.plugin;
 
 public class ItemModelManager implements Listener {
 
@@ -52,7 +53,7 @@ public class ItemModelManager implements Listener {
         Key originalModel = pickaxeData.getPickaxeMaterial().getPickaxeType().key();
         itemStack.setData(DataComponentTypes.ITEM_MODEL, newType.key());
 
-        BukkitTask revertTask = Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+        BukkitTask revertTask = Bukkit.getScheduler().runTaskLater(plugin, () -> {
             revertActiveModification(player);
             if (onComplete != null) {
                 onComplete.run();

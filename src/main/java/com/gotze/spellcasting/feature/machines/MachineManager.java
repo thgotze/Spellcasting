@@ -1,7 +1,5 @@
 package com.gotze.spellcasting.feature.machines;
 
-import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.util.LifecycleManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -19,7 +17,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MachineManager implements Listener, LifecycleManager {
+import static com.gotze.spellcasting.Spellcasting.plugin;
+
 public class MachineManager implements Listener {
     private static final Map<Location, Machine> machines = new HashMap<>();
     private static BukkitTask tickTask;
@@ -52,7 +51,7 @@ public class MachineManager implements Listener {
     public void onPlaceMachine(BlockPlaceEvent event) {
         ItemStack itemInHand = event.getItemInHand();
 
-        NamespacedKey machineKey = new NamespacedKey(Spellcasting.getPlugin(), "machine");
+        NamespacedKey machineKey = new NamespacedKey(plugin, "machine");
         String machineValue = itemInHand
                 .getPersistentDataContainer()
                 .get(machineKey, PersistentDataType.STRING);

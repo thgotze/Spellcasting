@@ -37,7 +37,6 @@ public class MineManager {
                 .remainingBlocks(Material.STONE)
                 .startRefilling());
 
-
         // B Mine
         mines.add(new Mine(Rank.B)
                 .refillDelayTicks(Tick.tick().fromDuration(Duration.ofMinutes(1)))

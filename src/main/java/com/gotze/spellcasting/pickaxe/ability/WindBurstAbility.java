@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.feature.mines.MineManager;
 import com.gotze.spellcasting.util.block.BlockCategories;
@@ -14,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
@@ -69,6 +69,6 @@ public class WindBurstAbility extends Ability {
                 }
                 ticks++;
             }
-        }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);
+        }.runTaskTimer(plugin, 0L, 1L);
     }
 }

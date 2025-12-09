@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.feature.lootcrate;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.Rarity;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.*;
@@ -25,6 +24,8 @@ import org.joml.Matrix4f;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static com.gotze.spellcasting.Spellcasting.plugin;
 
 public class LootCrateManager implements Listener {
 
@@ -217,7 +218,7 @@ public class LootCrateManager implements Listener {
         blockDisplay.setGlowColorOverride(lootCrate.getFireworkColor());
 
         blockDisplay.setVisibleByDefault(false);
-        player.showEntity(Spellcasting.getPlugin(), blockDisplay);
+        player.showEntity(plugin, blockDisplay);
 
         playerLootCratesInWorld.get(player).put(targetBlock, blockDisplay);
 

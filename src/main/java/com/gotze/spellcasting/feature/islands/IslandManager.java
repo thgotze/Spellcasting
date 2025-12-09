@@ -1,7 +1,6 @@
 package com.gotze.spellcasting.feature.islands;
 
 import com.fastasyncworldedit.core.FaweAPI;
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PlayerProfileManager;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.sk89q.worldedit.EditSession;
@@ -25,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
@@ -56,9 +56,9 @@ public class IslandManager implements Listener {
             return;
         }
 
-        final int playerIslandsCount = Spellcasting.getPlugin().getConfig().getInt("player-islands-count", 0);
-        Spellcasting.getPlugin().getConfig().set("player-islands-count", playerIslandsCount + 1);
-        Spellcasting.getPlugin().saveConfig();
+        final int playerIslandsCount = plugin.getConfig().getInt("player-islands-count", 0);
+        plugin.getConfig().set("player-islands-count", playerIslandsCount + 1);
+        plugin.saveConfig();
 
         // Find the location for the island
         World world = player.getWorld();
@@ -72,7 +72,7 @@ public class IslandManager implements Listener {
         PlayerProfileManager.getPlayerProfile(player).setIslandData(islandData);
 
         // Paste island schematic
-        File islandSchematicFile = new File(Spellcasting.getPlugin().getDataFolder(), "default-player-island.schem");
+        File islandSchematicFile = new File(plugin.getDataFolder(), "default-player-island.schem");
         if (!islandSchematicFile.exists()) {
             player.sendMessage(text("Default island schematic file not found! Contact admin", RED));
             return;

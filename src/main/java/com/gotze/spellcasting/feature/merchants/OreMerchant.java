@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.feature.merchants;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PlayerProfileManager;
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.SoundUtils;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
@@ -77,13 +77,13 @@ public class OreMerchant extends Merchant {
         }
 
         if (!itemsToReturn.isEmpty()) {
-            Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> player.give(itemsToReturn), 1L);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> player.give(itemsToReturn), 1L);
         }
     }
 
     @Override
     protected void onInventoryDrag(InventoryDragEvent event) {
-        Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
             double totalSellValue = calculateTotalSellValue();
             if (totalSellValue > 0.00) {
                 setYellowPanes(totalSellValue);

@@ -1,7 +1,6 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
@@ -23,6 +22,7 @@ import org.joml.Matrix4f;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
@@ -89,7 +89,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 blockDisplay.setGlowColorOverride(Color.ORANGE);
 
                 blockDisplay.setVisibleByDefault(false);
-                player.showEntity(Spellcasting.getPlugin(), blockDisplay);
+                player.showEntity(plugin, blockDisplay);
 
                 markedCornerBlocks.put(cornerBlock, blockDisplay);
 
@@ -118,7 +118,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                     }
                 }
             };
-            timeoutTask.runTaskLater(Spellcasting.getPlugin(), TIMEOUT_TASK_LENGTH);
+            timeoutTask.runTaskLater(plugin, TIMEOUT_TASK_LENGTH);
             return;
         }
 
@@ -166,7 +166,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                         breakBlock(player, blocksToBreak.removeFirst(), pickaxeData);
                     }
                 }
-            }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);
+            }.runTaskTimer(plugin, 0L, 1L);
         }
     }
 

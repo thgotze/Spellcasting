@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.util.block.BlockCategories;
@@ -13,6 +12,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static com.gotze.spellcasting.Spellcasting.plugin;
 
 public class GlaciateEnchantment extends Enchantment implements BlockBreakListener {
 
@@ -68,7 +69,7 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
                     }
                 }
             }
-        }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);
+        }.runTaskTimer(plugin, 0L, 1L);
 
         new BukkitRunnable() {
             @Override
@@ -85,6 +86,6 @@ public class GlaciateEnchantment extends Enchantment implements BlockBreakListen
                     blockToThaw.setBlockData(originalBlockData);
                 }
             }
-        }.runTaskTimer(Spellcasting.getPlugin(), 200L, 5L);
+        }.runTaskTimer(plugin, 200L, 5L);
     }
 }

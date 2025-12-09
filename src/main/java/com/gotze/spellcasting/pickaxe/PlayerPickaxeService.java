@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.pickaxe;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
@@ -30,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
@@ -74,7 +74,7 @@ public class PlayerPickaxeService {
                 }
 
                 AttributeModifier reachModifier = new AttributeModifier(
-                        new NamespacedKey(Spellcasting.getPlugin(), "extended-reach-modifier"),
+                        new NamespacedKey(plugin, "extended-reach-modifier"),
                         reach.getLevel(),
                         AttributeModifier.Operation.ADD_NUMBER,
                         EquipmentSlotGroup.MAINHAND
@@ -249,7 +249,7 @@ public class PlayerPickaxeService {
     public static boolean isItemStackPlayerOwnPickaxe(ItemStack itemStack, Player player) {
         if (itemStack == null) return false;
 
-        NamespacedKey ownerKey = new NamespacedKey(Spellcasting.getPlugin(), "owner");
+        NamespacedKey ownerKey = new NamespacedKey(plugin, "owner");
         String owner = itemStack.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
         return player.getUniqueId().toString().equals(owner);
     }

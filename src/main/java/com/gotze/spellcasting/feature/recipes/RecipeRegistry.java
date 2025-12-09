@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.feature.recipes;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.feature.machines.Centrifuge;
 import com.gotze.spellcasting.feature.machines.Crusher;
 import com.gotze.spellcasting.feature.machines.Sifter;
@@ -14,6 +13,8 @@ import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
+
 public class RecipeRegistry {
 
     public static void registerRecipes() {
@@ -25,7 +26,7 @@ public class RecipeRegistry {
                     .replace(" ", "_");
 
             // Register Furnace recipe
-            NamespacedKey furnaceRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_smelt");
+            NamespacedKey furnaceRecipeKey = new NamespacedKey(plugin, baseKey + "_smelt");
             FurnaceRecipe furnaceRecipe = new FurnaceRecipe(
                     furnaceRecipeKey,
                     new ItemStack(getCorrespondingIngot(crushingRecipe)),
@@ -33,10 +34,10 @@ public class RecipeRegistry {
                     getExperienceAmount(crushingRecipe),
                     200 // 10 seconds
             );
-            Spellcasting.getPlugin().getServer().addRecipe(furnaceRecipe);
+            plugin.getServer().addRecipe(furnaceRecipe);
 
             // Register Blast Furnace recipe
-            NamespacedKey blastingRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_blast");
+            NamespacedKey blastingRecipeKey = new NamespacedKey(plugin, baseKey + "_blast");
             BlastingRecipe blastingRecipe = new BlastingRecipe(
                     blastingRecipeKey,
                     new ItemStack(getCorrespondingIngot(crushingRecipe)),
@@ -44,7 +45,7 @@ public class RecipeRegistry {
                     getExperienceAmount(crushingRecipe),
                     100 // 5 seconds
             );
-            Spellcasting.getPlugin().getServer().addRecipe(blastingRecipe);
+            plugin.getServer().addRecipe(blastingRecipe);
         }
 
         for (Washer.WashingRecipe washingRecipe : Washer.WashingRecipe.values()) {
@@ -55,7 +56,7 @@ public class RecipeRegistry {
                     .replace(" ", "_");
 
             // Register Furnace recipe
-            NamespacedKey furnaceRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_smelt");
+            NamespacedKey furnaceRecipeKey = new NamespacedKey(plugin, baseKey + "_smelt");
             FurnaceRecipe furnaceRecipe = new FurnaceRecipe(
                     furnaceRecipeKey,
                     new ItemStack(getCorrespondingIngot(washingRecipe)),
@@ -63,10 +64,10 @@ public class RecipeRegistry {
                     getExperienceAmount(washingRecipe),
                     200 // 10 seconds
             );
-            Spellcasting.getPlugin().getServer().addRecipe(furnaceRecipe);
+            plugin.getServer().addRecipe(furnaceRecipe);
 
             // Register Blast Furnace recipe
-            NamespacedKey blastingRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_blast");
+            NamespacedKey blastingRecipeKey = new NamespacedKey(plugin, baseKey + "_blast");
             BlastingRecipe blastingRecipe = new BlastingRecipe(
                     blastingRecipeKey,
                     new ItemStack(getCorrespondingIngot(washingRecipe)),
@@ -74,7 +75,7 @@ public class RecipeRegistry {
                     getExperienceAmount(washingRecipe),
                     100 // 5 seconds
             );
-            Spellcasting.getPlugin().getServer().addRecipe(blastingRecipe);
+            plugin.getServer().addRecipe(blastingRecipe);
         }
 
         for (Sifter.SiftingRecipe siftingRecipe : Sifter.SiftingRecipe.values()) {
@@ -85,7 +86,7 @@ public class RecipeRegistry {
                     .replace(" ", "_");
 
             // Register Furnace recipe
-            NamespacedKey furnaceRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_smelt");
+            NamespacedKey furnaceRecipeKey = new NamespacedKey(plugin, baseKey + "_smelt");
             FurnaceRecipe furnaceRecipe = new FurnaceRecipe(
                     furnaceRecipeKey,
                     new ItemStack(getCorrespondingIngot(siftingRecipe)),
@@ -93,10 +94,10 @@ public class RecipeRegistry {
                     getExperienceAmount(siftingRecipe),
                     200 // 10 seconds
             );
-            Spellcasting.getPlugin().getServer().addRecipe(furnaceRecipe);
+            plugin.getServer().addRecipe(furnaceRecipe);
 
             // Register Blast Furnace recipe
-            NamespacedKey blastingRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_blast");
+            NamespacedKey blastingRecipeKey = new NamespacedKey(plugin, baseKey + "_blast");
             BlastingRecipe blastingRecipe = new BlastingRecipe(
                     blastingRecipeKey,
                     new ItemStack(getCorrespondingIngot(siftingRecipe)),
@@ -104,7 +105,7 @@ public class RecipeRegistry {
                     getExperienceAmount(siftingRecipe),
                     100 // 5 seconds
             );
-            Spellcasting.getPlugin().getServer().addRecipe(blastingRecipe);
+            plugin.getServer().addRecipe(blastingRecipe);
         }
 
         for (Centrifuge.CentrifugeRecipe centrifugeRecipe : Centrifuge.CentrifugeRecipe.values()) {
@@ -115,7 +116,7 @@ public class RecipeRegistry {
                     .replace(" ", "_");
 
             // Register Furnace recipe
-            NamespacedKey furnaceRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_smelt");
+            NamespacedKey furnaceRecipeKey = new NamespacedKey(plugin, baseKey + "_smelt");
             FurnaceRecipe furnaceRecipe = new FurnaceRecipe(
                     furnaceRecipeKey,
                     new ItemStack(getCorrespondingIngot(centrifugeRecipe)),
@@ -123,10 +124,10 @@ public class RecipeRegistry {
                     getExperienceAmount(centrifugeRecipe),
                     200 // 10 seconds
             );
-            Spellcasting.getPlugin().getServer().addRecipe(furnaceRecipe);
+            plugin.getServer().addRecipe(furnaceRecipe);
 
             // Register Blast Furnace recipe
-            NamespacedKey blastingRecipeKey = new NamespacedKey(Spellcasting.getPlugin(), baseKey + "_blast");
+            NamespacedKey blastingRecipeKey = new NamespacedKey(plugin, baseKey + "_blast");
             BlastingRecipe blastingRecipe = new BlastingRecipe(
                     blastingRecipeKey,
                     new ItemStack(getCorrespondingIngot(centrifugeRecipe)),
@@ -134,7 +135,7 @@ public class RecipeRegistry {
                     getExperienceAmount(centrifugeRecipe),
                     100 // 5 seconds
             );
-            Spellcasting.getPlugin().getServer().addRecipe(blastingRecipe);
+            plugin.getServer().addRecipe(blastingRecipe);
         }
     }
 

@@ -1,8 +1,7 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
-import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.feature.lootcrate.LootCrateManager;
 import com.gotze.spellcasting.data.PickaxeData;
+import com.gotze.spellcasting.feature.lootcrate.LootCrateManager;
 import com.gotze.spellcasting.feature.mines.MineManager;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
@@ -24,6 +23,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.gotze.spellcasting.Spellcasting.plugin;
 
 public class DoubleTapEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
 
@@ -104,7 +105,7 @@ public class DoubleTapEnchantment extends Enchantment implements BlockBreakListe
                     }
                 }
             }
-        }.runTaskLater(Spellcasting.getPlugin(), 1L);
+        }.runTaskLater(plugin, 1L);
     }
 
     @Override

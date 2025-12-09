@@ -108,7 +108,7 @@
 //                    player.sendActionBar(text("Slice ability expired", RED));
 //                }
 //            }
-//        }.runTaskTimer(Spellcasting.getPlugin(), 0, 1);
+//        }.runTaskTimer(plugin(), 0, 1);
 //    }
 //
 //    private List<Block> getBlocksInLineOfSight(int displayIndex, Player player) {

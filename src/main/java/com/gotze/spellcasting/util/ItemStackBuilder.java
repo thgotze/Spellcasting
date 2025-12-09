@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.util;
 
-import com.gotze.spellcasting.Spellcasting;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
@@ -17,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 import static net.kyori.adventure.text.format.TextDecoration.State.FALSE;
@@ -196,7 +196,7 @@ public class ItemStackBuilder {
         if (persistentDataContainer != null) {
             itemStack.editPersistentDataContainer(pdc -> {
                 for (Map.Entry<String, String> entry : persistentDataContainer.entrySet()) {
-                    NamespacedKey key = new NamespacedKey(Spellcasting.getPlugin(), entry.getKey());
+                    NamespacedKey key = new NamespacedKey(plugin, entry.getKey());
                     pdc.set(key, PersistentDataType.STRING, entry.getValue());
                 }
             });

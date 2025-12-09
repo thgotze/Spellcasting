@@ -1,8 +1,6 @@
 package com.gotze.spellcasting.feature.mines;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.Rank;
-import com.gotze.spellcasting.util.WorldUtils;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -23,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static com.gotze.spellcasting.Spellcasting.world;
+
 public class Mine {
     private final Rank requiredRank;
     private int refillDelayTicks;
@@ -85,7 +85,7 @@ public class Mine {
                 BlockVector3.at(corner2.getBlockX(), corner2.getBlockY(), corner2.getBlockZ())
         );
 
-        this.mineRefiller = Bukkit.getScheduler().runTaskTimer(Spellcasting.getPlugin(), this::refillMine, refillDelayTicks, refillDelayTicks);
+        this.mineRefiller = Bukkit.getScheduler().runTaskTimer(plugin, this::refillMine, refillDelayTicks, refillDelayTicks);
         return this;
     }
 
@@ -101,7 +101,7 @@ public class Mine {
             editSession.flushQueue();
 
         } catch (Exception e) {
-            Spellcasting.getPlugin().getLogger().warning("Failed to refill mine '" + requiredRank.name() + "' using FAWE: " + e.getMessage());
+            plugin.getLogger().warning("Failed to refill mine '" + requiredRank.name() + "' using FAWE: " + e.getMessage());
         }
     }
 

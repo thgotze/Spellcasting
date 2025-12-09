@@ -48,11 +48,11 @@ package com.gotze.spellcasting.pickaxe.enchantment.todo;
 //
 //        if (candidateBlocks.isEmpty()) {
 //            markedBlock = null;
-//            player.hideEntity(Spellcasting.getPlugin(), markedBlockDisplay);
+//            player.hideEntity(plugin(), markedBlockDisplay);
 //        } else {
 //            markedBlock = candidateBlocks.remove(ThreadLocalRandom.current().nextInt(candidateBlocks.size()));
 //            markedBlockDisplay.teleport(markedBlock.getLocation().add(0.001953125f, 0.001953125f, 0.001953125f));
-//            player.showEntity(Spellcasting.getPlugin(), markedBlockDisplay);
+//            player.showEntity(plugin(), markedBlockDisplay);
 //
 //            player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
 //        }

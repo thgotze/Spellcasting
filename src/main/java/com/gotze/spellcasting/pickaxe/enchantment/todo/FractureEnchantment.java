@@ -129,7 +129,7 @@
 //                    player.sendBlockDamage(currentlyMiningBlock.getLocation(), Math.min(initialDamageState + 0.4f, 1.0f), player.getEntityId() + 123);
 //                }
 //            }
-//        }.runTaskTimer(Spellcasting.getPlugin(), 0, 1);
+//        }.runTaskTimer(plugin(), 0, 1);
 //    }
 //
 //    @Override

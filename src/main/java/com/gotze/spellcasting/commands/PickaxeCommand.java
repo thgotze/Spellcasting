@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.commands;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.data.PlayerProfile;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeService;
@@ -20,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
@@ -78,7 +78,7 @@ public class PickaxeCommand implements BasicCommand {
                         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, true);
                         if (pickaxe == null) return;
 
-                        Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
                             pickaxe.setData(DataComponentTypes.DAMAGE, 0);
 
                             PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
@@ -105,7 +105,7 @@ public class PickaxeCommand implements BasicCommand {
                             return;
                         }
 
-                        Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
                             pickaxe.setData(DataComponentTypes.DAMAGE, 0);
 
                             PickaxeData pickaxeData = PickaxeData.fromPlayer(targetPlayer);

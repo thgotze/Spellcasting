@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.feature.vaults;
 
-import com.gotze.spellcasting.Spellcasting;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -17,6 +16,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.text;
 
 public class PrivateVaultManager implements Listener {
@@ -43,7 +43,7 @@ public class PrivateVaultManager implements Listener {
                     text("Vault #" + vaultNumber)
             );
 
-            NamespacedKey vaultKey = new NamespacedKey(Spellcasting.getPlugin(), "private-vault-" + vaultNumber);
+            NamespacedKey vaultKey = new NamespacedKey(plugin, "private-vault-" + vaultNumber);
 
             if (playerPDC.has(vaultKey, PersistentDataType.STRING)) {
                 String privateVaultString = playerPDC.get(vaultKey, PersistentDataType.STRING);
@@ -73,7 +73,7 @@ public class PrivateVaultManager implements Listener {
             ItemStack[] vaultStorageContents = vaultInventory.getStorageContents();
             String serializedVaultItems = serializeItems(vaultStorageContents);
 
-            NamespacedKey vaultKey = new NamespacedKey(Spellcasting.getPlugin(), "private-vault-" + vaultNumber);
+            NamespacedKey vaultKey = new NamespacedKey(plugin, "private-vault-" + vaultNumber);
             playerPDC.set(vaultKey, PersistentDataType.STRING, serializedVaultItems);
         }
     }

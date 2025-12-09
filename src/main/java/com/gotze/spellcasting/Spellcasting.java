@@ -1,23 +1,26 @@
 package com.gotze.spellcasting;
 
-import com.gotze.spellcasting.feature.lootcrate.LootCrateManager;
-import com.gotze.spellcasting.feature.islands.IslandCommand;
-import com.gotze.spellcasting.feature.islands.IslandManager;
 import com.gotze.spellcasting.commands.*;
 import com.gotze.spellcasting.data.PlayerProfileManager;
+import com.gotze.spellcasting.feature.actionbar.ActionBarManager;
+import com.gotze.spellcasting.feature.islands.IslandCommand;
+import com.gotze.spellcasting.feature.islands.IslandManager;
+import com.gotze.spellcasting.feature.lootcrate.LootCrateManager;
 import com.gotze.spellcasting.feature.machines.MachineManager;
 import com.gotze.spellcasting.feature.merchants.MerchantManager;
 import com.gotze.spellcasting.feature.mines.MineManager;
 import com.gotze.spellcasting.feature.recipes.RecipeRegistry;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
 import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
-import com.gotze.spellcasting.util.LifecycleManager;
 import com.gotze.spellcasting.util.menu.MenuListener;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+
 
 public class Spellcasting extends JavaPlugin {
     public static final @NotNull World world = Bukkit.getWorld("world");
@@ -27,11 +30,6 @@ public class Spellcasting extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        PluginManager pluginManager = getServer().getPluginManager();
-
-        MineManager mineManager = new MineManager();
-        MachineManager machineManager = new MachineManager();
-        PlayerProfileManager playerProfileManager = new PlayerProfileManager();
 
         // Event listeners
         pluginManager.registerEvents(new GlobalListener(), this);
@@ -57,7 +55,6 @@ public class Spellcasting extends JavaPlugin {
         registerCommand("island", List.of("is"), new IslandCommand());
 //        registerCommand("pv", new PrivateVaultCommand());
 
-        // Other
         MineManager.startRefillingMines();
         MachineManager.startTickingMachines();
         RecipeRegistry.registerRecipes();
@@ -65,7 +62,6 @@ public class Spellcasting extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        lifecycleManagers.forEach(LifecycleManager::stop);
         MineManager.stopRefillingMines();
         MachineManager.stopTickingMachines();
         PlayerProfileManager.saveAllProfiles();

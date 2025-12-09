@@ -84,6 +84,6 @@
 //                player.sendActionBar(text("Peek ability expired",RED));
 //                affectedBlocks.clear();
 //            }
-//        }.runTaskLater(Spellcasting.getPlugin(), 20L * 10);
+//        }.runTaskLater(plugin(), 20L * 10);
 //    }
 //}

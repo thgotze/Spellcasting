@@ -65,7 +65,7 @@
 //                    cancel();
 //                }
 //            }
-//        }.runTaskTimer(Spellcasting.getPlugin(), 1L, 1L);
+//        }.runTaskTimer(plugin(), 1L, 1L);
 //    }
 //
 //    private void performSlamEffect(Player player, PickaxeData pickaxeData) {

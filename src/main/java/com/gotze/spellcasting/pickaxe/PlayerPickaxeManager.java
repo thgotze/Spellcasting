@@ -1,8 +1,7 @@
 package com.gotze.spellcasting.pickaxe;
 
-import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.feature.lootcrate.LootCrateManager;
 import com.gotze.spellcasting.data.PickaxeData;
+import com.gotze.spellcasting.feature.lootcrate.LootCrateManager;
 import com.gotze.spellcasting.feature.mines.MineManager;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
@@ -43,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
@@ -103,7 +103,7 @@ public class PlayerPickaxeManager implements Listener {
         }
 
         // Update pickaxe durability and lore a tick later
-        Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
             int durabilityDamage = pickaxe.getData(DataComponentTypes.DAMAGE);
             pickaxeData.setDurabilityDamage(durabilityDamage);
             pickaxe.lore(PlayerPickaxeService.getPickaxeLore(pickaxeData));
@@ -262,7 +262,7 @@ public class PlayerPickaxeManager implements Listener {
                     event.setCancelled(true);
 
                     if (event.getInventory().getHolder() instanceof Player) {
-                        Bukkit.getScheduler().runTask(Spellcasting.getPlugin(), () -> new YourPickaxeMenu(player));
+                        Bukkit.getScheduler().runTask(plugin, () -> new YourPickaxeMenu(player));
                     }
                 }
             }

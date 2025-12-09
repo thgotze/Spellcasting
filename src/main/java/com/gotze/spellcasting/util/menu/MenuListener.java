@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.util.menu;
 
-import com.gotze.spellcasting.Spellcasting;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,26 +11,28 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.Optional;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
+
 public class MenuListener implements Listener {
 
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent event) {
         asMenu(event.getInventory()).ifPresent(menu ->
-                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () ->
+                Bukkit.getScheduler().runTaskLater(plugin, () ->
                         menu.onInventoryOpen(event), 1L));
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         asMenu(event.getInventory()).ifPresent(menu ->
-                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () ->
+                Bukkit.getScheduler().runTaskLater(plugin, () ->
                         menu.onInventoryClose(event), 1L));
     }
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
 //        asMenu(event.getInventory()).ifPresent(menu ->
-//                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () ->
+//                Bukkit.getScheduler().runTaskLater(plugin(), () ->
 //                        menu.onInventoryDrag(event), 1L));
         asMenu(event.getInventory()).ifPresent(menu -> menu.onInventoryDrag(event));
     }
@@ -54,7 +55,7 @@ public class MenuListener implements Listener {
                     // Prevent item movement
                     event.setCancelled(true);
 
-                    Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
                         button.onButtonClick(event);
                         menu.onTopInventoryClick(event);
                     }, 1L);
@@ -67,7 +68,7 @@ public class MenuListener implements Listener {
                     if (!menu.isInteractable()) {
                         event.setCancelled(true);
                     }
-                    Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
                         menu.onTopInventoryClick(event);
                     }, 1L);
                 }
@@ -81,7 +82,7 @@ public class MenuListener implements Listener {
                     event.setCancelled(true);
                 }
 
-                Bukkit.getScheduler().runTaskLater(Spellcasting.getPlugin(), () -> {
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     menu.onBottomInventoryClick(event);
                 }, 1L);
             }

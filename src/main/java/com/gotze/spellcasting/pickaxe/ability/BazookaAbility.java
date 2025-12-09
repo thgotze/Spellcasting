@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.pickaxe.ability;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
 import com.gotze.spellcasting.util.block.BlockUtils;
@@ -15,6 +14,7 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 
+import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
@@ -75,6 +75,6 @@ public class BazookaAbility extends Ability implements BlockBreaker {
                 ticks++;
                 if (ticks >= 64) this.cancel();
             }
-        }.runTaskTimer(Spellcasting.getPlugin(), 0, 1);
+        }.runTaskTimer(plugin, 0, 1);
     }
 }

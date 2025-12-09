@@ -1,11 +1,9 @@
 package com.gotze.spellcasting.data;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.feature.islands.IslandData;
 import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
-import com.gotze.spellcasting.util.LifecycleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,7 +19,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class PlayerProfileManager implements Listener, LifecycleManager {
+import static com.gotze.spellcasting.Spellcasting.plugin;
+
 public class PlayerProfileManager implements Listener {
 
     private static final Map<Player, PlayerProfile> PLAYER_PROFILE_MAP = new HashMap<>();
@@ -36,7 +35,7 @@ public class PlayerProfileManager implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        File playerFile = new File(Spellcasting.getPlugin().getDataFolder() + "/playerdata", uuid + ".yml");
+        File playerFile = new File(plugin.getDataFolder() + "/playerdata", uuid + ".yml");
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
 
         PlayerProfile playerProfile;
@@ -138,7 +137,7 @@ public class PlayerProfileManager implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        File playerFile = new File(Spellcasting.getPlugin().getDataFolder() + "/playerdata", uuid + ".yml");
+        File playerFile = new File(plugin.getDataFolder() + "/playerdata", uuid + ".yml");
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
 
         PlayerProfile playerProfile = PLAYER_PROFILE_MAP.get(player);
@@ -163,7 +162,7 @@ public class PlayerProfileManager implements Listener {
             if (playerProfile == null) continue;
 
             UUID uuid = player.getUniqueId();
-            File playerFile = new File(Spellcasting.getPlugin().getDataFolder() + "/playerdata", uuid + ".yml");
+            File playerFile = new File(plugin.getDataFolder() + "/playerdata", uuid + ".yml");
             YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerFile);
 
             playerProfile.setLastSeen(LocalDateTime.now());

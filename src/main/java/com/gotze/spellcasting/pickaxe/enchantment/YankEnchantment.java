@@ -1,6 +1,5 @@
 package com.gotze.spellcasting.pickaxe.enchantment;
 
-import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockDropItemListener;
 import org.bukkit.block.BlockState;
@@ -10,6 +9,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.List;
+
+import static com.gotze.spellcasting.Spellcasting.plugin;
 
 public class YankEnchantment extends Enchantment implements BlockDropItemListener {
 
@@ -46,9 +47,9 @@ public class YankEnchantment extends Enchantment implements BlockDropItemListene
                             }
                             ticks++;
                         }
-                    }.runTaskTimer(Spellcasting.getPlugin(), 0L, 1L);
+                    }.runTaskTimer(plugin, 0L, 1L);
                 });
             }
-        }.runTaskLater(Spellcasting.getPlugin(), 1L);
+        }.runTaskLater(plugin, 1L);
     }
 }
