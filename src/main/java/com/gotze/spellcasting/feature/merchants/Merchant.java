@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.merchants;
+package com.gotze.spellcasting.feature.merchants;
 
 import com.gotze.spellcasting.util.menu.Menu;
 import net.kyori.adventure.text.Component;

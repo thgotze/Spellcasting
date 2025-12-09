@@ -1,13 +1,14 @@
 package com.gotze.spellcasting;
 
-import com.gotze.spellcasting.islands.IslandCommand;
-import com.gotze.spellcasting.islands.IslandManager;
-import com.gotze.spellcasting.bossbar.LootCrateFeature;
+import com.gotze.spellcasting.feature.lootcrate.LootCrateManager;
+import com.gotze.spellcasting.feature.islands.IslandCommand;
+import com.gotze.spellcasting.feature.islands.IslandManager;
 import com.gotze.spellcasting.commands.*;
 import com.gotze.spellcasting.data.PlayerProfileManager;
-import com.gotze.spellcasting.machines.MachineManager;
-import com.gotze.spellcasting.merchants.MerchantManager;
-import com.gotze.spellcasting.mines.MineManager;
+import com.gotze.spellcasting.feature.machines.MachineManager;
+import com.gotze.spellcasting.feature.merchants.MerchantManager;
+import com.gotze.spellcasting.feature.mines.MineManager;
+import com.gotze.spellcasting.feature.recipes.RecipeRegistry;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
 import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
 import com.gotze.spellcasting.util.LifecycleManager;
@@ -47,7 +48,7 @@ public class Spellcasting extends JavaPlugin {
         pluginManager.registerEvents(new MerchantManager(), this);
         pluginManager.registerEvents(machineManager, this);
         pluginManager.registerEvents(new ItemModelManager(), this);
-        pluginManager.registerEvents(new LootCrateFeature(), this);
+        pluginManager.registerEvents(new LootCrateManager(), this);
 //        pluginManager.registerEvents(new PrivateVaultManager(), this); // TODO: fix impl
         pluginManager.registerEvents(new IslandManager(), this);
 

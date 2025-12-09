@@ -1,6 +1,6 @@
 package com.gotze.spellcasting.data;
 
-import com.gotze.spellcasting.islands.IslandData;
+import com.gotze.spellcasting.feature.islands.IslandData;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;

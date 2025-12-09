@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.machines;
+package com.gotze.spellcasting.feature.machines;
 
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.StringUtils;

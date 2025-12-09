@@ -1,6 +1,6 @@
 //package com.gotze.spellcasting.pickaxe.enchantment;
 //
-//import com.gotze.spellcasting.bossbar.LootCrateFeature;
+//import com.gotze.spellcasting.feature.bossbar.LootCrateManager;
 //import com.gotze.spellcasting.data.PickaxeData;
 //import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 //import org.bukkit.block.Block;
@@ -16,7 +16,7 @@
 //
 //    @Override
 //    public void onBlockBreak(Player player, Block block, PickaxeData pickaxeData, boolean isNaturalBreak) {
-//        int energyFromBlock = LootCrateFeature.getEnergyFromBlock(block);
+//        int energyFromBlock = LootCrateManager.getEnergyFromBlock(block);
 //        if (energyFromBlock == 1) return;
 //
 //        double random = ThreadLocalRandom.current().nextDouble();
@@ -29,15 +29,15 @@
 //        if (multiplier == 1) return;
 //
 //        if (multiplier == 2) {
-//            LootCrateFeature.applyEnergyToBossBar(player, energyFromBlock);
+//            LootCrateManager.applyEnergyToBossBar(player, energyFromBlock);
 //            player.sendMessage("Surge gave you " + energyFromBlock + " energy!");
 //
 //        } else if (multiplier == 3) {
-//            LootCrateFeature.applyEnergyToBossBar(player, energyFromBlock * 2);
+//            LootCrateManager.applyEnergyToBossBar(player, energyFromBlock * 2);
 //            player.sendMessage("Surge gave you " + energyFromBlock * 2 + " energy!");
 //
 //        } else if (multiplier == 4) {
-//            LootCrateFeature.applyEnergyToBossBar(player, energyFromBlock * 3);
+//            LootCrateManager.applyEnergyToBossBar(player, energyFromBlock * 3);
 //            player.sendMessage("Surge gave you " + energyFromBlock * 3 + " energy!");
 //        }
 //    }

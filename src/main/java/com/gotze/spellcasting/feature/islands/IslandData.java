@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.islands;
+package com.gotze.spellcasting.feature.islands;
 
 import com.gotze.spellcasting.data.PlayerProfileManager;
 import org.bukkit.Location;

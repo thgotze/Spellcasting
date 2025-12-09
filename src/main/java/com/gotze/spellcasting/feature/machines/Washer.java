@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.machines;
+package com.gotze.spellcasting.feature.machines;
 
 import com.gotze.spellcasting.util.ItemStackBuilder;
 import com.gotze.spellcasting.util.menu.Button;
@@ -13,34 +13,21 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static net.kyori.adventure.text.Component.text;
 
-public class Crusher extends Machine {
+public class Washer extends Machine {
 
     private static final int[] EMPTY_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
     private static final int INPUT_SLOT = 11;
     private static final int LEFT_ARROW_SLOT = 12;
-    private static final int CRUSHER_SAWS_SLOT = 13;
+    private static final int WASHER_ICON_SLOT = 13;
     private static final int RIGHT_ARROW_SLOT = 14;
     private static final int OUTPUT_SLOT = 15;
-//    private static final String[] LEFT_ARROW_SPRITES = {
-//            "crusher_left_arrow00", "crusher_left_arrow01", "crusher_left_arrow02",
-//            "crusher_left_arrow03", "crusher_left_arrow04", "crusher_left_arrow05",
-//            "crusher_left_arrow06", "crusher_left_arrow07", "crusher_left_arrow08",
-//            "crusher_left_arrow09", "crusher_left_arrow10", "crusher_left_arrow11",
-//            "crusher_left_arrow12", "crusher_left_arrow13", "crusher_left_arrow14"
-//    };
-//
-//    private static final String[] RIGHT_ARROW_SPRITES = {
-//            "crusher_right_arrow00", "crusher_right_arrow01", "crusher_right_arrow02",
-//            "crusher_right_arrow03", "crusher_right_arrow04", "crusher_right_arrow05",
-//            "crusher_right_arrow06", "crusher_right_arrow07", "crusher_right_arrow08",
-//            "crusher_right_arrow09", "crusher_right_arrow10", "crusher_right_arrow11",
-//            "crusher_right_arrow12", "crusher_right_arrow13", "crusher_right_arrow14"
-//    };
 
-    public Crusher(Location location, Player player) {
-        super(MachineType.CRUSHER, location, player);
+    public Washer(Location location, Player player) {
+        super(MachineType.WASHER, location, player);
         populate();
     }
 
@@ -68,8 +55,7 @@ public class Crusher extends Machine {
             }
         });
 
-        setButton(new Button(CRUSHER_SAWS_SLOT, new ItemStackBuilder(Material.PAPER)
-                .itemModel(NamespacedKey.minecraft("crusher_saws0"))
+        setButton(new Button(WASHER_ICON_SLOT, new ItemStackBuilder(Material.CAULDRON)
                 .hideTooltipBox()
                 .build()) {
             @Override
@@ -98,14 +84,16 @@ public class Crusher extends Machine {
             return;
         }
 
-        // Check if the input is a valid crushing recipe ingredient
-        ItemStack resultItem = CrushingRecipe.fromIngredient(inputItem);
-        if (resultItem == null) {
+        // Check if the input is a valid washing recipe ingredient
+//        ItemStack resultItem = WashingRecipe.fromIngredient(inputItem);
+        WashingRecipe washingRecipe = WashingRecipe.fromIngredient(inputItem);
+        if (washingRecipe == null) {
             resetProcess();
             return;
         }
 
         // Check if the output item matches the result item
+        ItemStack resultItem = washingRecipe.getResultItem();
         ItemStack outputItem = getOutputItem();
         if (outputItem != null) {
             // Output slot has items - check if we can add more
@@ -113,21 +101,16 @@ public class Crusher extends Machine {
                 resetProcess(); // Different item type
                 return;
 
-            } else if (outputItem.getAmount() + resultItem.getAmount() > outputItem.getMaxStackSize()) {
+            } else if (outputItem.getAmount() + resultItem.getAmount() + 1 > outputItem.getMaxStackSize()) {
                 resetProcess(); // Would overflow
                 return;
             }
         }
-
         // ---------------
         // At this point we know that the output slot is empty or that it already
         // holds some of the result item, so we can start processing
         // ---------------
         this.progress++;
-
-        int frame = progress % 3;
-        getInventory().getItem(CRUSHER_SAWS_SLOT).editMeta(itemMeta ->
-                itemMeta.setItemModel(NamespacedKey.minecraft("crusher_saws" + frame)));
 
         if (progress < getProcessingTime() / 2) {
             int leftArrowFrame = (progress * 14) / (getProcessingTime() / 2);
@@ -145,6 +128,10 @@ public class Crusher extends Machine {
 
         } else if (progress >= getProcessingTime()) {
             inputItem.subtract(1);
+
+            if (ThreadLocalRandom.current().nextFloat() < washingRecipe.doublingChance) {
+                resultItem.add(1);
+            }
 
             if (outputItem != null) {
                 outputItem.add(resultItem.getAmount());
@@ -210,43 +197,47 @@ public class Crusher extends Machine {
 
     }
 
-    public enum CrushingRecipe {
-        CRUSHED_COPPER_ORE(ItemStack.of(Material.RAW_COPPER),
+    public enum WashingRecipe {
+        PURIFIED_COPPER_ORE(Crusher.CrushingRecipe.CRUSHED_COPPER_ORE.getResultItem(),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Crushed Copper Ore"))
-                        .itemModel(NamespacedKey.minecraft("crushed_copper_ore"))
-                        .amount(2)
-                        .build()),
-        CRUSHED_IRON_ORE(ItemStack.of(Material.RAW_IRON),
+                        .name(text("Purified Copper Ore"))
+                        .itemModel(NamespacedKey.minecraft("purified_copper_ore"))
+                        .build(),
+                0.50f
+        ),
+        PURIFIED_IRON_ORE(Crusher.CrushingRecipe.CRUSHED_IRON_ORE.getResultItem(),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Crushed Iron Ore"))
-                        .itemModel(NamespacedKey.minecraft("crushed_iron_ore"))
-                        .amount(2)
-                        .build()),
-        CRUSHED_GOLD_ORE(ItemStack.of(Material.RAW_GOLD),
+                        .name(text("Purified Iron Ore"))
+                        .itemModel(NamespacedKey.minecraft("purified_iron_ore"))
+                        .build(),
+                0.50f
+        ),
+        PURIFIED_GOLD_ORE(Crusher.CrushingRecipe.CRUSHED_GOLD_ORE.getResultItem(),
                 new ItemStackBuilder(Material.PAPER)
-                        .name(text("Crushed Gold Ore"))
-                        .itemModel(NamespacedKey.minecraft("crushed_gold_ore"))
-                        .amount(2)
-                        .build()),
-        ;
+                        .name(text("Purified Gold Ore"))
+                        .itemModel(NamespacedKey.minecraft("purified_gold_ore"))
+                        .build(),
+                0.50f
+        );
 
         private final ItemStack ingredientItem;
         private final ItemStack resultItem;
+        private final float doublingChance;
 
-        CrushingRecipe(ItemStack ingredientItem, ItemStack resultItem) {
+        WashingRecipe(ItemStack ingredientItem, ItemStack resultItem, float doublingChance) {
             this.ingredientItem = ingredientItem;
             this.resultItem = resultItem;
+            this.doublingChance = doublingChance;
         }
 
         public ItemStack getResultItem() {
             return resultItem.clone();
         }
 
-        public static @Nullable ItemStack fromIngredient(ItemStack ingredientItem) {
-            for (CrushingRecipe recipe : values()) {
+        public static @Nullable WashingRecipe fromIngredient(ItemStack ingredientItem) {
+            for (WashingRecipe recipe : values()) {
                 if (ingredientItem.isSimilar(recipe.ingredientItem)) {
-                    return recipe.resultItem.clone();
+                    return recipe;
                 }
             }
             return null;

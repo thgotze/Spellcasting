@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.vaults;
+package com.gotze.spellcasting.feature.vaults;
 
 import com.gotze.spellcasting.Spellcasting;
 import org.bukkit.Bukkit;

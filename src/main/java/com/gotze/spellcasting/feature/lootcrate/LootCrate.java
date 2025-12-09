@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.bossbar;
+package com.gotze.spellcasting.feature.lootcrate;
 
 import com.gotze.spellcasting.util.Rarity;
 import net.kyori.adventure.bossbar.BossBar;

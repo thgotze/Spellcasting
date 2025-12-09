@@ -1,7 +1,7 @@
 package com.gotze.spellcasting.data;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.islands.IslandData;
+import com.gotze.spellcasting.feature.islands.IslandData;
 import com.gotze.spellcasting.pickaxe.PickaxeMaterial;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;

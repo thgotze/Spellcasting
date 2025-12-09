@@ -1,9 +1,9 @@
 package com.gotze.spellcasting.pickaxe;
 
 import com.gotze.spellcasting.Spellcasting;
-import com.gotze.spellcasting.bossbar.LootCrateFeature;
+import com.gotze.spellcasting.feature.lootcrate.LootCrateManager;
 import com.gotze.spellcasting.data.PickaxeData;
-import com.gotze.spellcasting.mines.MineManager;
+import com.gotze.spellcasting.feature.mines.MineManager;
 import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreakListener;
 import com.gotze.spellcasting.pickaxe.capability.BlockDamageAbortListener;
@@ -99,7 +99,7 @@ public class PlayerPickaxeManager implements Listener {
                     blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
                 }
             }
-            LootCrateFeature.applyEnergyFromBlockBreak(player, block);
+            LootCrateManager.applyEnergyFromBlockBreak(player, block);
         }
 
         // Update pickaxe durability and lore a tick later

@@ -1,7 +1,7 @@
 package com.gotze.spellcasting;
 
-import com.gotze.spellcasting.islands.IslandManager;
-import com.gotze.spellcasting.mines.MineManager;
+import com.gotze.spellcasting.feature.islands.IslandManager;
+import com.gotze.spellcasting.feature.mines.MineManager;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;

@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.islands;
+package com.gotze.spellcasting.feature.islands;
 
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;

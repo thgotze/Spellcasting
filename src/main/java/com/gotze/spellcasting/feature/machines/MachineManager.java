@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.machines;
+package com.gotze.spellcasting.feature.machines;
 
 import com.gotze.spellcasting.Spellcasting;
 import com.gotze.spellcasting.util.LifecycleManager;
@@ -119,62 +119,4 @@ public class MachineManager implements Listener, LifecycleManager {
 
         removeMachine(blockLocation);
     }
-
-//    private static final EnumSet<InventoryAction> ALLOWED_OUTPUT_ACTIONS = EnumSet.of(
-//            InventoryAction.PICKUP_ALL,
-//            InventoryAction.PICKUP_ONE,
-//            InventoryAction.PICKUP_SOME,
-//            InventoryAction.PICKUP_HALF,
-//            InventoryAction.MOVE_TO_OTHER_INVENTORY,
-//            InventoryAction.DROP_ALL_SLOT,
-//            InventoryAction.DROP_ONE_SLOT,
-//            InventoryAction.PICKUP_ALL_INTO_BUNDLE,
-//            InventoryAction.PICKUP_SOME_INTO_BUNDLE
-//    );
-//
-//    @EventHandler
-//    public void onInventoryClick(InventoryClickEvent event) {
-//        if (!(event.getInventory().getHolder() instanceof Crusher crusher)) return;
-//
-//        // ---------------
-//        // Crusher Inventory
-//        // ---------------
-//        if (event.getClickedInventory() == event.getView().getTopInventory()) {
-//            int slot = event.getSlot();
-//
-//            // Allow interaction with the input slot
-//            if (slot == 11) return;
-//
-//            // Allow interaction with the output slot if the action is allowed
-//            if (slot == 15 && ALLOWED_OUTPUT_ACTIONS.contains(event.getAction())) return;
-//
-//            // Cancel event for all other slots and output slot if the action wasn't allowed
-//            event.setCancelled(true);
-//            return;
-//        }
-//
-//        // ---------------
-//        // Player Inventory
-//        // ---------------
-//        ClickType clickType = event.getClick();
-//        if (clickType != ClickType.SHIFT_LEFT && clickType != ClickType.SHIFT_RIGHT) return;
-//
-//        ItemStack clickedItem = event.getCurrentItem();
-//        if (clickedItem == null) return;
-//
-//        ItemStack inputItem = crusher.getInputItem();
-//        if (inputItem == null) return;
-//
-//        if (clickedItem.isSimilar(inputItem)) {
-//            int clickedItemAmount = clickedItem.getAmount();
-//            int inputItemAmount = inputItem.getAmount();
-//
-//            if (clickedItemAmount + inputItemAmount <= 64) return;
-//
-//            int transferred = 64 - inputItemAmount;
-//            inputItem.setAmount(64);
-//            clickedItem.subtract(transferred);
-//        }
-//        event.setCancelled(true);
-//    }
 }

@@ -1,4 +1,4 @@
-package com.gotze.spellcasting.islands;
+package com.gotze.spellcasting.feature.islands;
 
 import com.fastasyncworldedit.core.FaweAPI;
 import com.gotze.spellcasting.Spellcasting;
@@ -65,12 +65,12 @@ public class IslandManager implements Listener {
         int x = playerIslandsCount * ISLAND_SEPARATION_DISTANCE + ISLAND_STARTING_DISTANCE;
         int y = 100;
         int z = 8;
-        
+
         // Save the island data to the player profile
         Location islandCenter = new Location(world, x, y, z);
         islandData = new IslandData(islandCenter);
         PlayerProfileManager.getPlayerProfile(player).setIslandData(islandData);
-        
+
         // Paste island schematic
         File islandSchematicFile = new File(Spellcasting.getPlugin().getDataFolder(), "default-player-island.schem");
         if (!islandSchematicFile.exists()) {
