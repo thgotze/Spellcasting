@@ -2,7 +2,6 @@ package com.gotze.spellcasting;
 
 import com.gotze.spellcasting.commands.*;
 import com.gotze.spellcasting.data.PlayerProfileManager;
-import com.gotze.spellcasting.feature.actionbar.ActionBarManager;
 import com.gotze.spellcasting.feature.islands.IslandCommand;
 import com.gotze.spellcasting.feature.islands.IslandManager;
 import com.gotze.spellcasting.feature.lootcrate.LootCrateManager;
@@ -17,19 +16,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-
 public class Spellcasting extends JavaPlugin {
-    public static final @NotNull World world = Bukkit.getWorld("world");
-    public static final @NotNull Location spawn = new Location(world, 0.50D, 100.0D, 0.5D, 0.0F, 0.0F);
     public static Spellcasting plugin;
+    public static World world;
+    public static Location spawn;
 
     @Override
     public void onEnable() {
         plugin = this;
+        world = Bukkit.getWorld("world");
+        spawn = new Location(world, 0.50D, 100.0D, 0.5D, 0.0F, 0.0F);
 
         // Event listeners
         List.of(new GlobalListener(),
