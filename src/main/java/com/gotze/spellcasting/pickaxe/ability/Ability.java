@@ -60,18 +60,24 @@ public abstract class Ability {
     }
 
     public boolean canActivateAbility() {
-        return energy == abilityType.getRequiredEnergy();
+        return energy >= abilityType.getRequiredEnergyToActivate();
     }
 
     public void setEnergy(int energy) {
         if (energy < 0) return;
-        this.energy = Math.min(abilityType.getRequiredEnergy(), energy);
+        this.energy = Math.min(abilityType.getMaxEnergyCapacity(), energy);
     }
 
     public void addEnergy(int energy) {
         if (energy < 0) return;
         this.energy += energy;
-        this.energy = Math.min(abilityType.getRequiredEnergy(), this.energy);
+        this.energy = Math.min(abilityType.getMaxEnergyCapacity(), this.energy);
+    }
+
+    public void expendEnergy() {
+        if (energy >= abilityType.getRequiredEnergyToActivate()) {
+            energy -= abilityType.getRequiredEnergyToActivate();
+        }
     }
 
     public enum AbilityType {
@@ -79,7 +85,8 @@ public abstract class Ability {
                 Rarity.EPIC,
                 1,
                 Material.MACE,
-                200,
+                2000,
+                3000,
                 "Temporarily transform your",
                 "pickaxe into a hammer, allowing",
                 "you to break blocks within a 3x3 area"),
@@ -93,14 +100,16 @@ public abstract class Ability {
                 Rarity.LEGENDARY,
                 1,
                 Material.FIREWORK_ROCKET,
-                500,
+                4000,
+                6000,
                 "Shoot an extremely destructive blast,",
                 "breaking blocks in a large radius"),
         DRILL_DASH(DrillDashAbility.class,
                 Rarity.LEGENDARY,
                 5,
                 Material.HOPPER,
-                500,
+                4000,
+                6000,
                 "Dash forwards and break blocks",
                 "in the direction you are facing"),
 //        SLAM(SlamAbility.class,
@@ -119,14 +128,16 @@ public abstract class Ability {
                 Rarity.RARE,
                 1,
                 Material.TRIDENT,
-                300,
+                2000,
+                3000,
                 "Throw a trident that",
                 "breaks blocks in its path"),
         WIND_BURST(WindBurstAbility.class,
                 Rarity.COMMON,
                 5,
                 Material.WIND_CHARGE,
-                100,
+                500,
+                750,
                 "Shoot wind charges that",
                 "turn filler blocks into air... Poof!"),
         ;
@@ -135,19 +146,21 @@ public abstract class Ability {
         private final Rarity rarity;
         private final int maxLevel;
         private final Material upgradeTokenType;
-        private final int requiredEnergy;
+        private final int requiredEnergyToActivate;
+        private final int maxEnergyCapacity;
         private final String[] description;
 
         private final ItemStack upgradeToken;
         private final ItemStack menuItem;
 
-        AbilityType(Class<? extends Ability> abilityClass, Rarity rarity, int maxLevel,
-                    Material upgradeTokenType, int requiredEnergy, String... description) {
+        AbilityType(Class<? extends Ability> abilityClass, Rarity rarity, int maxLevel, Material upgradeTokenType,
+                    int requiredEnergyToActivate, int maxEnergyCapacity, String... description) {
             this.abilityClass = abilityClass;
             this.rarity = rarity;
             this.maxLevel = maxLevel;
             this.upgradeTokenType = upgradeTokenType;
-            this.requiredEnergy = requiredEnergy;
+            this.requiredEnergyToActivate = requiredEnergyToActivate;
+            this.maxEnergyCapacity = maxEnergyCapacity;
             this.description = description;
 
             this.upgradeToken = buildUpgradeToken();
@@ -199,8 +212,12 @@ public abstract class Ability {
             return upgradeTokenType;
         }
 
-        public int getRequiredEnergy() {
-            return requiredEnergy;
+        public int getRequiredEnergyToActivate() {
+            return requiredEnergyToActivate;
+        }
+
+        public int getMaxEnergyCapacity() {
+            return maxEnergyCapacity;
         }
 
         public ItemStack getUpgradeToken() {
