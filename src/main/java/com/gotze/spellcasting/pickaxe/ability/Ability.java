@@ -63,10 +63,6 @@ public abstract class Ability {
         return energy == abilityType.getRequiredEnergy();
     }
 
-    public void expendEnergy() {
-        energy = 0;
-    }
-
     public void setEnergy(int energy) {
         if (energy < 0) return;
         this.energy = Math.min(abilityType.getRequiredEnergy(), energy);
