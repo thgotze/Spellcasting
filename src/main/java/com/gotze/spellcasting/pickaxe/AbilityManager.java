@@ -114,7 +114,9 @@ public class AbilityManager implements Listener {
         if (abilities.isEmpty()) return;
 
         int current = selectedAbilityIndex.getOrDefault(player, 0);
-        int next = (current + 1) % abilities.size();
+        int delta = player.isSneaking() ? -1 : 1; // sneak = left, not sneaking = right
+        int next = Math.floorMod(current + delta, abilities.size());
+
         selectedAbilityIndex.put(player, next);
 
         Ability selectedAbility = abilities.get(next);
