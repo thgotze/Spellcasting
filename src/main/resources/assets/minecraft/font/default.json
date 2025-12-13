@@ -1,0 +1,38 @@
+{
+  "providers": [
+    {"chars": ["\uA027"], "file": "minecraft:font/menu/generic27.png", "type": "bitmap", "ascent": 13, "height": 256},
+    {"chars": ["\uA036"], "file": "minecraft:font/menu/generic36.png", "type": "bitmap", "ascent": 13, "height": 256},
+    {"chars": ["\uA045"], "file": "minecraft:font/menu/generic45.png", "type": "bitmap", "ascent": 13, "height": 256},
+    {"chars": ["\uA054"], "file": "minecraft:font/menu/generic54.png", "type": "bitmap", "ascent": 13, "height": 256},
+
+    {"chars": ["\uC027"], "file": "minecraft:font/menu/io27.png", "type": "bitmap", "ascent": 13, "height": 256},
+    {"chars": ["\uC045"], "file": "minecraft:font/menu/io45.png", "type": "bitmap", "ascent": 13, "height": 256},
+
+    {"chars": ["\uD027"], "file": "minecraft:font/menu/io_bordered27.png", "type": "bitmap", "ascent": 13, "height": 256},
+
+    {"chars": ["\uE100"], "file": "minecraft:font/menu/blank_brewing_stand.png", "type": "bitmap", "ascent": 13, "height": 256},
+    {"chars": ["\uE101"], "file": "minecraft:font/menu/crusher-menu.png", "type": "bitmap", "ascent": 13, "height": 256},
+    {"chars": ["\uE102"], "file": "minecraft:font/menu/weird45.png", "type": "bitmap", "ascent": 13, "height": 256},
+
+    {"chars": ["\uF000"], "file": "minecraft:font/empty.png", "type": "bitmap", "ascent": 1, "height": 8},
+    {"chars": ["\uF001"], "file": "minecraft:font/negative-space.png", "type": "bitmap", "ascent": -32768, "height": -3},
+
+    {"chars": ["\uF002"], "file": "minecraft:font/ability/grid-selected.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF003"], "file": "minecraft:font/ability/grid-unselected.png", "type": "bitmap", "ascent": -2, "height": 48},
+
+    {"chars": ["\uF004"], "file": "minecraft:font/ability/firework-selected.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF005"], "file": "minecraft:font/ability/firework-unselected.png", "type": "bitmap", "ascent": -2, "height": 48},
+
+    {"chars": ["\uF006"], "file": "minecraft:font/ability/hopper-selected.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF007"], "file": "minecraft:font/ability/hopper-unselected.png", "type": "bitmap", "ascent": -2, "height": 48},
+
+    {"chars": ["\uF008"], "file": "minecraft:font/ability/mace-selected.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF009"], "file": "minecraft:font/ability/mace-unselected.png", "type": "bitmap", "ascent": -2, "height": 48},
+
+    {"chars": ["\uF010"], "file": "minecraft:font/ability/trident-selected.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF011"], "file": "minecraft:font/ability/trident-unselected.png", "type": "bitmap", "ascent": -2, "height": 48},
+
+    {"chars": ["\uF012"], "file": "minecraft:font/ability/wind-charge-selected.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF013"], "file": "minecraft:font/ability/wind-charge-unselected.png", "type": "bitmap", "ascent": -2, "height": 48}
+  ]
+}
