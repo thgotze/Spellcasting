@@ -41,23 +41,26 @@ public class AbilityManager implements Listener {
     private static final Component progressBar80 = textOfChildren(text("||||||||", GOLD, BOLD), text("||", DARK_GRAY, BOLD));
     private static final Component progressBar90 = textOfChildren(text("|||||||||", GOLD, BOLD), text("|", DARK_GRAY, BOLD));
     private static final Component progressBar100 = text("||||||||||", RED, BOLD);
+    private static final Component progressBarMAX = text("||||||||||", DARK_RED, BOLD);
     private static final Component spaceBetweenProgressBars = text(" ".repeat(5));
     private static final Component startingSpace = (text(" ".repeat(3)).append(text(NEG_SPACE.repeat(2))));
 
     private static final Map<Player, Integer> selectedAbilityIndex = new HashMap<>();
-    private static final Map<Player, Component> playerActionBar = new HashMap<>();
+    private static final Map<Player, Integer> activatedAbilityIndex = new HashMap<>();
 
     public AbilityManager() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            for (Player player : playerActionBar.keySet()) {
-                player.sendActionBar(playerActionBar.get(player));
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                updateActionBar(player);
             }
         }, 40, 40);
     }
 
     private Component getProgressBarFor(Ability ability) {
+        if (ability.getEnergy() == ability.getAbilityType().getMaxEnergyCapacity()) return progressBarMAX;
+
         int energy = ability.getEnergy();
-        int requiredEnergy = ability.getAbilityType().getRequiredEnergy();
+        int requiredEnergy = ability.getAbilityType().getRequiredEnergyToActivate();
 
         // 0..10 filled bars (floor), then map to 0..100 in steps of 10
         int filledBars = (int) Math.floor((energy * 10.0) / requiredEnergy);
@@ -100,9 +103,6 @@ public class AbilityManager implements Listener {
         };
     }
 
-    @EventHandler
-    public void onHandSwapCycleAbility(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
     private Component getSpriteOfActivatedAbilityType(Ability.AbilityType abilityType) {
         return switch (abilityType) {
             case BAZOOKA -> text("\uF014");
@@ -112,6 +112,59 @@ public class AbilityManager implements Listener {
             case WIND_BURST -> text("\uF018");
         };
     }
+
+    private void updateActionBar(Player player) {
+        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
+        if (pickaxe == null) {
+            activatedAbilityIndex.remove(player);
+            return;
+        }
+
+        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
+        List<Ability> abilities = pickaxeData.getAbilities();
+        if (abilities.isEmpty()) {
+            activatedAbilityIndex.remove(player);
+            return;
+        }
+
+        int selectedIndex = selectedAbilityIndex.getOrDefault(player, 0);
+        selectedIndex = Math.floorMod(selectedIndex, abilities.size());
+        selectedAbilityIndex.put(player, selectedIndex);
+
+        Ability selectedAbility = abilities.get(selectedIndex);
+
+        List<Component> actionBarComponents = new ArrayList<>();
+        actionBarComponents.add(startingSpace);
+
+        int activatedIndex = activatedAbilityIndex.getOrDefault(player, -1);
+
+        for (Ability ability : abilities) {
+            actionBarComponents.add(getProgressBarFor(ability));
+            actionBarComponents.add(text(NEG_SPACE.repeat(39)));
+
+            boolean isSelected = (ability == selectedAbility);
+            boolean isSelectedAndActivated = isSelected && (activatedIndex == selectedIndex);
+
+            if (isSelectedAndActivated) {
+                actionBarComponents.add(getSpriteOfActivatedAbilityType(ability.getAbilityType()));
+            } else if (isSelected) {
+                actionBarComponents.add(getSpriteOfSelectedAbilityType(ability.getAbilityType()));
+            } else {
+                actionBarComponents.add(getSpriteOfUnselectedAbilityType(ability.getAbilityType()));
+            }
+
+            if (ability != abilities.getLast()) {
+                actionBarComponents.add(spaceBetweenProgressBars);
+            }
+        }
+
+        TextComponent actionBar = textOfChildren(actionBarComponents.toArray(Component[]::new));
+        player.sendActionBar(actionBar);
+    }
+
+    @EventHandler
+    public void onHandSwapCycleAbility(PlayerSwapHandItemsEvent event) {
+        Player player = event.getPlayer();
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
@@ -128,31 +181,7 @@ public class AbilityManager implements Listener {
 
         selectedAbilityIndex.put(player, next);
 
-        Ability selectedAbility = abilities.get(next);
-
-        List<Component> actionBarComponents = new ArrayList<>();
-        actionBarComponents.add(startingSpace);
-
-        for (Ability ability : abilities) {
-            actionBarComponents.add(getProgressBarFor(ability));
-
-            actionBarComponents.add(text(NEG_SPACE.repeat(39)));
-
-            if (ability == selectedAbility) {
-                actionBarComponents.add(getSpriteOfSelectedAbilityType(ability.getAbilityType()));
-            } else {
-                actionBarComponents.add(getSpriteOfUnselectedAbilityType(ability.getAbilityType()));
-            }
-
-            if (ability != abilities.getLast()) {
-                actionBarComponents.add(spaceBetweenProgressBars);
-            }
-        }
-
-        TextComponent actionBar = textOfChildren(actionBarComponents.toArray(Component[]::new));
-        playerActionBar.put(player, actionBar);
-        player.sendActionBar(actionBar);
-
+        updateActionBar(player);
         player.playSound(player, Sound.UI_BUTTON_CLICK, 0.05f, 2f);
     }
 
@@ -180,12 +209,24 @@ public class AbilityManager implements Listener {
             return;
         }
 
-        int index = selectedAbilityIndex.getOrDefault(player, 0);
+        int selectedIndex = selectedAbilityIndex.getOrDefault(player, 0);
 
-        Ability selectedAbility = abilities.get(index);
+        Ability selectedAbility = abilities.get(selectedIndex);
         if (selectedAbility != null && selectedAbility.canActivateAbility()) {
             selectedAbility.activateAbility(player, pickaxeData);
-            selectedAbility.setEnergy(0);
+            selectedAbility.expendEnergy();
+
+            // show "activated" sprite for 1 second, then revert automatically
+            activatedAbilityIndex.put(player, selectedIndex);
+            updateActionBar(player);
+
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                Integer currentActivated = activatedAbilityIndex.get(player);
+                if (currentActivated != null && currentActivated == selectedIndex) {
+                    activatedAbilityIndex.remove(player);
+                    updateActionBar(player);
+                }
+            }, 20L);
         }
     }
 }
