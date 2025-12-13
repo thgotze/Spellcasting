@@ -2,7 +2,6 @@ package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
-import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
 import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -12,8 +11,6 @@ import org.bukkit.util.Vector;
 import java.util.List;
 
 import static com.gotze.spellcasting.Spellcasting.plugin;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class DrillDashAbility extends Ability implements BlockBreaker {
     private static final float DASH_SPEED = 0.5f;
@@ -27,7 +24,6 @@ public class DrillDashAbility extends Ability implements BlockBreaker {
     @Override
     public void activateAbility(Player player, PickaxeData pickaxeData) {
         if (this.isActive) return;
-        if (ItemModelManager.hasActiveModification(player)) return;
         this.isActive = true;
 
         final int DASH_DURATION_TICKS = 5 + getLevel() * 5; // 10, 15, 20, 25, 30
