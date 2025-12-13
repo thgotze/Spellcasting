@@ -132,13 +132,13 @@ public abstract class Ability {
                 3000,
                 "Throw a trident that",
                 "breaks blocks in its path"),
-        WIND_BURST(WindBurstAbility.class,
+        WINDSCATTER(WindscatterAbility.class,
                 Rarity.COMMON,
                 5,
                 Material.WIND_CHARGE,
                 500,
                 750,
-                "Shoot wind charges that",
+                "Shoot multiple wind charges that",
                 "turn filler blocks into air... Poof!"),
         ;
 

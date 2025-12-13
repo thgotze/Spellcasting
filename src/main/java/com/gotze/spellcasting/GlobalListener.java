@@ -94,7 +94,7 @@ public class GlobalListener implements Listener {
         MineManager.teleportPlayerToSafety(player);
     }
 
-    // Is here because of the Wind Burst Ability
+    // Is here because of the Windscatter Ability
     @EventHandler(priority = EventPriority.LOWEST)
     public void onWindChargeHitEntity(ProjectileHitEvent event) {
         if (event.getEntity() instanceof WindCharge) {
@@ -102,7 +102,7 @@ public class GlobalListener implements Listener {
         }
     }
 
-    // Is here because of the Wind Burst Ability
+    // Is here because of the Windscatter Ability
     @EventHandler(priority = EventPriority.LOWEST)
     public void onWindChargeExplode(ExplosionPrimeEvent event) {
         if (event.getEntity() instanceof WindCharge) {

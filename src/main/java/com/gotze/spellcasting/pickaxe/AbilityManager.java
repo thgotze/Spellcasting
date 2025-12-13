@@ -89,7 +89,7 @@ public class AbilityManager implements Listener {
             case DRILL_DASH -> text("\uF006");
             case HAMMER -> text("\uF008");
             case TRIDENT_THROW -> text("\uF010");
-            case WIND_BURST -> text("\uF012");
+            case WINDSCATTER -> text("\uF012");
         };
     }
 
@@ -99,7 +99,7 @@ public class AbilityManager implements Listener {
             case DRILL_DASH -> text("\uF007");
             case HAMMER -> text("\uF009");
             case TRIDENT_THROW -> text("\uF011");
-            case WIND_BURST -> text("\uF013");
+            case WINDSCATTER -> text("\uF013");
         };
     }
 
@@ -109,7 +109,7 @@ public class AbilityManager implements Listener {
             case DRILL_DASH -> text("\uF015");
             case HAMMER -> text("\uF016");
             case TRIDENT_THROW -> text("\uF017");
-            case WIND_BURST -> text("\uF018");
+            case WINDSCATTER -> text("\uF018");
         };
     }
 
