@@ -59,7 +59,7 @@ public abstract class Ability {
         return energy;
     }
 
-    public boolean hasEnoughEnergy() {
+    public boolean canActivateAbility() {
         return energy == abilityType.getRequiredEnergy();
     }
 
