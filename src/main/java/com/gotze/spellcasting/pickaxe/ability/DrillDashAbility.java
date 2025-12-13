@@ -30,8 +30,6 @@ public class DrillDashAbility extends Ability implements BlockBreaker {
         if (ItemModelManager.hasActiveModification(player)) return;
         this.isActive = true;
 
-        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
-
         final int DASH_DURATION_TICKS = 5 + getLevel() * 5; // 10, 15, 20, 25, 30
 
         player.setGravity(false);

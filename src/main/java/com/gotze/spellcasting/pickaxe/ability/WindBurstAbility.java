@@ -14,8 +14,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.List;
 
 import static com.gotze.spellcasting.Spellcasting.plugin;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class WindBurstAbility extends Ability {
 
@@ -40,12 +38,6 @@ public class WindBurstAbility extends Ability {
 
         WindCharge windCharge = player.launchProjectile(WindCharge.class);
         this.windChargesShot++;
-
-        int remainingShots = this.maxWindChargeShots - this.windChargesShot;
-
-        player.sendActionBar(getAbilityType().getFormattedName()
-                .append(text(" activated! ", YELLOW))
-                .append(text(remainingShots + "/" + maxWindChargeShots)));
 
         new BukkitRunnable() {
             int ticks = 0;

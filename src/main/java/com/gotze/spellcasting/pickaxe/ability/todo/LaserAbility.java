@@ -34,7 +34,6 @@
 //        this.isActive = true;
 //
 //        player.swingMainHand();
-//        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 //
 //        // Perform rayTrace to find blocks within 20 block range
 //        RayTraceResult rayTraceResult = player.rayTraceBlocks(20);

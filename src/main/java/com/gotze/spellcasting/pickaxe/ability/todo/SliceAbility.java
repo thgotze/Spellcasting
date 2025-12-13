@@ -47,7 +47,6 @@
 //        if (this.isActive) return;
 //        this.isActive = true;
 //        player.swingMainHand();
-//        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 //
 //        Location spawnLocation = player.getEyeLocation().add(player.getLocation().getDirection().multiply(2.3f));
 //        World world = player.getWorld();

@@ -15,8 +15,6 @@ import org.bukkit.util.Vector;
 import java.util.List;
 
 import static com.gotze.spellcasting.Spellcasting.plugin;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class BazookaAbility extends Ability implements BlockBreaker {
 
@@ -33,7 +31,6 @@ public class BazookaAbility extends Ability implements BlockBreaker {
         if (System.currentTimeMillis() < cooldown) return;
         this.cooldown = System.currentTimeMillis() + BASE_COOLDOWN;
         player.swingMainHand();
-        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 
         World world = player.getWorld();
         Location startLocation = player.getEyeLocation();

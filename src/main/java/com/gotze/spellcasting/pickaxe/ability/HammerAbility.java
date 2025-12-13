@@ -14,10 +14,6 @@ import org.bukkit.event.block.BlockDamageEvent;
 
 import java.util.List;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
-
 public class HammerAbility extends Ability implements BlockBreakListener, BlockDamageListener, BlockBreaker {
 
     boolean isActive;
@@ -34,16 +30,12 @@ public class HammerAbility extends Ability implements BlockBreakListener, BlockD
         this.isActive = true;
 
         player.swingMainHand();
-        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 
         ItemModelManager.modifyItemModelTemporarily(player,
                 player.getInventory().getItemInMainHand(),
                 Material.MACE,
                 300L,
-                () -> {
-                    player.sendActionBar(text("Hammer ability expired", RED));
-                    this.isActive = false;
-                }
+                () -> this.isActive = false
         );
     }
 

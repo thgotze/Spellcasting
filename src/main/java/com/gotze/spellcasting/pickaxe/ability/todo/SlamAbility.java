@@ -29,7 +29,6 @@
 //    public void activateAbility(Player player, PickaxeData pickaxeData) {
 //        if (isActive) return;
 //        isActive = true;
-//        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!", YELLOW)));
 //
 //        // Launch player upward
 //        double jumpHeight = JUMP_STRENGTH + (getLevel() * 0.3); // Higher levels = higher jump

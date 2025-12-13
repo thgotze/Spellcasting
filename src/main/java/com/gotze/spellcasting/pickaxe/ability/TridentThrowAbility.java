@@ -2,10 +2,7 @@ package com.gotze.spellcasting.pickaxe.ability;
 
 import com.gotze.spellcasting.data.PickaxeData;
 import com.gotze.spellcasting.pickaxe.capability.BlockBreaker;
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
@@ -31,7 +28,6 @@ public class TridentThrowAbility extends Ability implements BlockBreaker {
         if (this.isActive) return;
         this.isActive = true;
 
-
         Trident trident = player.launchProjectile(
                 Trident.class,
                 player.getLocation().getDirection(),
@@ -41,6 +37,8 @@ public class TridentThrowAbility extends Ability implements BlockBreaker {
             t.setGlowing(true);
 //            t.setLoyaltyLevel(3);
         });
+
+
 //        trident.setItemStack(PlayerPickaxeService.getPlayerPickaxe(player));
 //        Vector halfVelocity = trident.getVelocity().divide(new Vector(2, 2, 2));
 //        trident.setVelocity(halfVelocity);

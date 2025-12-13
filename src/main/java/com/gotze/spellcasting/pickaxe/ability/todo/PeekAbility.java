@@ -37,7 +37,6 @@
 //    public void activateAbility(Player player, PickaxeData pickaxeData) {
 //        if (this.isActive) return;
 //        this.isActive = true;
-//        player.sendActionBar(getAbilityType().getFormattedName().append(text(" activated!").color(YELLOW)));
 //
 //        Block centerBlock = player.getLocation().getBlock().getRelative(BlockFace.UP);
 //
