@@ -6,6 +6,7 @@ import com.gotze.spellcasting.util.SoundUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -140,6 +141,8 @@ public class AbilityManager implements Listener {
         TextComponent actionBar = textOfChildren(actionBarComponents.toArray(Component[]::new));
         playerActionBar.put(player, actionBar);
         player.sendActionBar(actionBar);
+
+        player.playSound(player, Sound.UI_BUTTON_CLICK, 0.05f, 2f);
     }
 
     @EventHandler
