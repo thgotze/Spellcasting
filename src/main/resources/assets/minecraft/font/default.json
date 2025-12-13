@@ -33,6 +33,12 @@
     {"chars": ["\uF011"], "file": "minecraft:font/ability/trident-unselected.png", "type": "bitmap", "ascent": -2, "height": 48},
 
     {"chars": ["\uF012"], "file": "minecraft:font/ability/wind-charge-selected.png", "type": "bitmap", "ascent": -2, "height": 48},
-    {"chars": ["\uF013"], "file": "minecraft:font/ability/wind-charge-unselected.png", "type": "bitmap", "ascent": -2, "height": 48}
+    {"chars": ["\uF013"], "file": "minecraft:font/ability/wind-charge-unselected.png", "type": "bitmap", "ascent": -2, "height": 48},
+
+    {"chars": ["\uF014"], "file": "minecraft:font/ability/firework-activated.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF015"], "file": "minecraft:font/ability/hopper-activated.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF016"], "file": "minecraft:font/ability/mace-activated.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF017"], "file": "minecraft:font/ability/trident-activated.png", "type": "bitmap", "ascent": -2, "height": 48},
+    {"chars": ["\uF018"], "file": "minecraft:font/ability/wind-charge-activated.png", "type": "bitmap", "ascent": -2, "height": 48}
   ]
 }

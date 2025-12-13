@@ -103,6 +103,15 @@ public class AbilityManager implements Listener {
     @EventHandler
     public void onHandSwapCycleAbility(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
+    private Component getSpriteOfActivatedAbilityType(Ability.AbilityType abilityType) {
+        return switch (abilityType) {
+            case BAZOOKA -> text("\uF014");
+            case DRILL_DASH -> text("\uF015");
+            case HAMMER -> text("\uF016");
+            case TRIDENT_THROW -> text("\uF017");
+            case WIND_BURST -> text("\uF018");
+        };
+    }
         ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
         if (pickaxe == null) return;
 
