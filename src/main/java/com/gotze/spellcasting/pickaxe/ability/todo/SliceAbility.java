@@ -104,7 +104,6 @@
 //                    this.cancel();
 //                    for (ItemDisplay display : itemDisplays) display.remove();
 //                    isActive = false;
-//                    player.sendActionBar(text("Slice ability expired", RED));
 //                }
 //            }
 //        }.runTaskTimer(plugin(), 0, 1);

@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 
 import static com.gotze.spellcasting.Spellcasting.plugin;
 import static com.gotze.spellcasting.Spellcasting.world;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class Mine {
     private final Rank requiredRank;
@@ -92,7 +94,7 @@ public class Mine {
     private void refillMine() {
         List<Player> playersInMine = getPlayersInMine();
         playersInMine.forEach(player -> {
-            player.sendRichMessage("<yellow>The mine has reset! You've been teleported to safety");
+            player.sendMessage(text("The mine has reset! You've been teleported to safety", YELLOW));
             teleportPlayerToSafety(player);
         });
 

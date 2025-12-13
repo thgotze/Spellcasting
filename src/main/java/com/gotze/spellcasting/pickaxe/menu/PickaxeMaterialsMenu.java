@@ -87,9 +87,7 @@ public class PickaxeMaterialsMenu extends Menu {
                     }
 
                     if (!playerInventory.containsAtLeast(upgradeToken, requiredTokenAmount)) {
-                        player.sendMessage(text("You need " + requiredTokenAmount + "x [", RED)
-                                .append(pickaxeMaterial.getFormattedUpgradeTokenName())
-                                .append(text("] to upgrade your pickaxe!", RED)));
+                        player.sendMessage(text("You need " + requiredTokenAmount + "x [" + pickaxeMaterial.getFormattedUpgradeTokenName() + text("] to upgrade your pickaxe!", RED)));
                         SoundUtils.playBassNoteBlockErrorSound(player);
                         return;
                     }

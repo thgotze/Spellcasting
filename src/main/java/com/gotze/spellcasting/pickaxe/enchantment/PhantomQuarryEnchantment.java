@@ -114,7 +114,6 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 public void run() {
                     if (isActive) {
                         reset();
-                        player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" expired", RED)));
                     }
                 }
             };

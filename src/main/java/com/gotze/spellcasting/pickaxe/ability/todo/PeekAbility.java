@@ -80,7 +80,6 @@
 //                    block.setBlockData(entry.getValue());
 //                }
 //                isActive = false;
-//                player.sendActionBar(text("Peek ability expired",RED));
 //                affectedBlocks.clear();
 //            }
 //        }.runTaskLater(plugin(), 20L * 10);

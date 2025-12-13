@@ -54,7 +54,6 @@ package com.gotze.spellcasting.pickaxe.enchantment.todo;
 //            markedBlockDisplay.teleport(markedBlock.getLocation().add(0.001953125f, 0.001953125f, 0.001953125f));
 //            player.showEntity(plugin(), markedBlockDisplay);
 //
-//            player.sendActionBar(getEnchantmentType().getFormattedName().append(text(" activated")));
 //        }
 //    }
 //}

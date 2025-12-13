@@ -9,7 +9,7 @@ import com.gotze.spellcasting.feature.machines.MachineManager;
 import com.gotze.spellcasting.feature.merchants.MerchantManager;
 import com.gotze.spellcasting.feature.mines.MineManager;
 import com.gotze.spellcasting.feature.recipes.RecipeRegistry;
-import com.gotze.spellcasting.feature.scoreboard.ScoreboardManager;
+import com.gotze.spellcasting.pickaxe.AbilityManager;
 import com.gotze.spellcasting.pickaxe.PlayerPickaxeManager;
 import com.gotze.spellcasting.pickaxe.capability.ItemModelManager;
 import com.gotze.spellcasting.util.menu.MenuListener;
