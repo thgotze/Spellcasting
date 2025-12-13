@@ -34,10 +34,6 @@ public abstract class Ability {
         return level;
     }
 
-    public int getMaxLevel() {
-        return abilityType.getMaxLevel();
-    }
-
     public Rarity getRarity() {
         return abilityType.getRarity();
     }
