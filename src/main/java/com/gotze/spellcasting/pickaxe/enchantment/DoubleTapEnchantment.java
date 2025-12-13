@@ -50,6 +50,8 @@ public class DoubleTapEnchantment extends Enchantment implements BlockBreakListe
         new BukkitRunnable() {
             @Override
             public void run() {
+                pickaxeData.addBlocksBroken(1);
+
                 Location blockBehindLocation = blockBehind.getLocation();
                 for (Location blockOutlineForParticle : BlockUtils.getBlockOutlineForParticles(blockBehindLocation, 0.10)) {
                     player.spawnParticle(Particle.OMINOUS_SPAWNING, blockOutlineForParticle, 0, 0, 0, 0, 0);
@@ -63,14 +65,15 @@ public class DoubleTapEnchantment extends Enchantment implements BlockBreakListe
                     }
                 }
 
+                int energy = BlockUtils.getEnergyFromBlock(block); // Get energy from the block
+
                 for (Ability ability : pickaxeData.getAbilities()) {
+                    ability.addEnergy(energy); // Add energy to ability
                     if (ability instanceof BlockBreakListener blockBreakListener) {
                         blockBreakListener.onBlockBreak(player, blockBehind, pickaxeData, true);
                     }
                 }
-                pickaxeData.addBlocksBroken(1);
-
-                LootCrateManager.applyEnergyFromBlockBreak(player, blockBehind);
+                LootCrateManager.applyEnergyToBossBar(player, energy); // Add energy to the boss bar
 
                 List<Item> droppedItems = new ArrayList<>();
 
