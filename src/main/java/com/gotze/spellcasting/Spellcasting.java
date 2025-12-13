@@ -34,6 +34,7 @@ public class Spellcasting extends JavaPlugin {
         // Event listeners
         List.of(new GlobalListener(),
                 new PlayerPickaxeManager(),
+                new AbilityManager(),
                 new PlayerProfileManager(),
                 new MenuListener(),
 //                new LootPotManager(), // TODO: fix impl
@@ -43,7 +44,7 @@ public class Spellcasting extends JavaPlugin {
                 new ItemModelManager(),
                 new LootCrateManager(),
 //                new PrivateVaultManager(), // TODO: fix impl
-                new IslandManager(),
+                new IslandManager()
         ).forEach(listener -> plugin.getServer().getPluginManager().registerEvents(listener, plugin));
 
         // Commands

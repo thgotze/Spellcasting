@@ -31,24 +31,17 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.gotze.spellcasting.Spellcasting.plugin;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public class PlayerPickaxeManager implements Listener {
-    private final Map<Player, Integer> selectedAbilityIndex = new HashMap<>();
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreakWithPickaxe(BlockBreakEvent event) {
@@ -181,59 +174,6 @@ public class PlayerPickaxeManager implements Listener {
             if (ability instanceof BlockDropItemListener blockDropItemListener) {
                 blockDropItemListener.onBlockDropItem(player, blockState, droppedItems, pickaxeData);
             }
-        }
-    }
-
-    @EventHandler
-    public void onHandSwapCycleAbility(PlayerSwapHandItemsEvent event) {
-        Player player = event.getPlayer();
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
-        if (pickaxe == null) return;
-
-        event.setCancelled(true);
-
-        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
-
-        List<Ability> abilities = pickaxeData.getAbilities();
-        if (abilities.isEmpty()) return;
-
-        int current = selectedAbilityIndex.getOrDefault(player, 0);
-        int next = (current + 1) % abilities.size();
-        selectedAbilityIndex.put(player, next);
-
-        Ability selectedAbility = abilities.get(next);
-        player.sendActionBar(text("Selected ability: ", YELLOW).append(selectedAbility.getAbilityType().getFormattedName()));
-    }
-
-    @EventHandler
-    public void onShiftRightClickActivateAbility(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-
-        if (!event.getAction().isRightClick()) return;
-        if (!player.isSneaking()) return;
-        if (event.getHand() != EquipmentSlot.HAND) return;
-
-        ItemStack pickaxe = PlayerPickaxeService.getPlayerPickaxeFromMainHand(player, false);
-        if (pickaxe == null) return;
-
-        event.setCancelled(true);
-
-        PickaxeData pickaxeData = PickaxeData.fromPlayer(player);
-        List<Ability> abilities = pickaxeData.getAbilities();
-        if (abilities.isEmpty()) return;
-
-        if (pickaxeData.getDurabilityDamage() + 20 >= pickaxeData.getPickaxeMaterial().getMaxDurability()) {
-            player.sendMessage(text("Pickaxe durability too low to activate ability", RED));
-            SoundUtils.playBassNoteBlockErrorSound(player);
-            SoundUtils.playVillagerErrorSound(player);
-            return;
-        }
-
-        int index = selectedAbilityIndex.getOrDefault(player, 0);
-
-        Ability selectedAbility = abilities.get(index);
-        if (selectedAbility != null) {
-            selectedAbility.activateAbility(player, pickaxeData);
         }
     }
 
