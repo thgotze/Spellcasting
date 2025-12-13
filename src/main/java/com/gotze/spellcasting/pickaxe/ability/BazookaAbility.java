@@ -58,6 +58,7 @@ public class BazookaAbility extends Ability implements BlockBreaker {
                 Block targetBlock = laserLocation.getBlock();
                 if (!targetBlock.getType().isAir()) {
                     List<Block> blocksToBreak = BlockUtils.getBlocksInSpherePattern(targetBlock, 9, 7, 9);
+                    blocksToBreak.removeIf(Block::isEmpty);
                     breakBlocks(player, blocksToBreak, pickaxeData);
 
                     Location targetBlockLocation = targetBlock.getLocation();

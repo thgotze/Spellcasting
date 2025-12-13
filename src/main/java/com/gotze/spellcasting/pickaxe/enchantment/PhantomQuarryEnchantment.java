@@ -23,8 +23,6 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.gotze.spellcasting.Spellcasting.plugin;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakListener, BlockDamageListener, BlockBreaker {
 
@@ -149,7 +147,7 @@ public class PhantomQuarryEnchantment extends Enchantment implements BlockBreakL
                 default -> null;
             };
             if (blocksToBreak == null) return;
-            blocksToBreak.removeIf(blockToBreak -> blockToBreak.getType().isAir());
+            blocksToBreak.removeIf(Block::isEmpty);
             Collections.shuffle(blocksToBreak);
 
             new BukkitRunnable() {

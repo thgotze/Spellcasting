@@ -31,6 +31,7 @@ public interface BlockBreaker {
 
     default void breakBlock(Player player, Block block, PickaxeData pickaxeData) {
         if (!MineManager.isInAnyMine(block)) return;
+
         pickaxeData.addBlocksBroken(1);
 
         for (Enchantment enchantment : pickaxeData.getEnchantments()) {

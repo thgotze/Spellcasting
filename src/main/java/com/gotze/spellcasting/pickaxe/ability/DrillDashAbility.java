@@ -39,6 +39,7 @@ public class DrillDashAbility extends Ability implements BlockBreaker {
             public void run() {
                 Block centerBlock = player.getLocation().add(startingDirection).getBlock();
                 List<Block> blocksToBreak = BlockUtils.getBlocksInSquarePattern(centerBlock, 3, 3, 3);
+                blocksToBreak.removeIf(Block::isEmpty);
                 breakBlocks(player, blocksToBreak, pickaxeData);
 
                 player.setVelocity(startingDirection.clone().multiply(DASH_SPEED));
