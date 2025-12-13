@@ -92,6 +92,7 @@ public class PlayerPickaxeManager implements Listener {
             int energy = BlockUtils.getEnergyFromBlock(block); // Get energy from the block
 
             for (Ability ability : pickaxeData.getAbilities()) {
+                ability.addEnergy(energy); // Add energy to ability
                 if (ability instanceof BlockBreakListener blockBreakListener) {
                     blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
                 }

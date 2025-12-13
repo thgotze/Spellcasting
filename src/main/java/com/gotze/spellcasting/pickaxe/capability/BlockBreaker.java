@@ -31,6 +31,7 @@ public interface BlockBreaker {
 
     default void breakBlock(Player player, Block block, PickaxeData pickaxeData) {
         if (!MineManager.isInAnyMine(block)) return;
+        pickaxeData.addBlocksBroken(1);
 
         for (Enchantment enchantment : pickaxeData.getEnchantments()) {
             if (enchantment instanceof BlockBreakListener blockBreakListener) {
@@ -41,6 +42,7 @@ public interface BlockBreaker {
         int energy = BlockUtils.getEnergyFromBlock(block); // Get energy from the block
 
         for (Ability ability : pickaxeData.getAbilities()) {
+            ability.addEnergy(energy); // Add energy to ability
             if (ability instanceof BlockBreakListener blockBreakListener) {
                 blockBreakListener.onBlockBreak(player, block, pickaxeData, false);
             }
