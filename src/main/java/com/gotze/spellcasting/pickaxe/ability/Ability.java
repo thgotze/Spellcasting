@@ -222,10 +222,10 @@ public abstract class Ability {
 
         public int getRequiredTokenAmount() { // TODO: placeholder amounts
             return switch (rarity) {
-                case COMMON -> 16;
-                case UNCOMMON -> 8;
-                case RARE -> 4;
-                case EPIC -> 2;
+                case COMMON -> 1;
+                case UNCOMMON -> 1;
+                case RARE -> 1;
+                case EPIC -> 1;
                 case LEGENDARY -> 1;
             };
         }
