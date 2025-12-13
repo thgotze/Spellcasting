@@ -174,8 +174,9 @@ public class AbilityManager implements Listener {
         int index = selectedAbilityIndex.getOrDefault(player, 0);
 
         Ability selectedAbility = abilities.get(index);
-        if (selectedAbility != null) {
+        if (selectedAbility != null && selectedAbility.canActivateAbility()) {
             selectedAbility.activateAbility(player, pickaxeData);
+            selectedAbility.setEnergy(0);
         }
     }
 }
