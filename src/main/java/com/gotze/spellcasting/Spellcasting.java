@@ -44,7 +44,6 @@ public class Spellcasting extends JavaPlugin {
                 new LootCrateManager(),
 //                new PrivateVaultManager(), // TODO: fix impl
                 new IslandManager(),
-                new ScoreboardManager()
         ).forEach(listener -> plugin.getServer().getPluginManager().registerEvents(listener, plugin));
 
         // Commands
