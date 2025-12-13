@@ -83,10 +83,12 @@ public class PlayerProfileManager implements Listener {
 
             Ability.AbilityType abilityType = Ability.AbilityType.valueOf(split[0]);
             int level = Integer.parseInt(split[1]);
+            int energy = Integer.parseInt(split[2]);
 
             try {
                 Ability ability = abilityType.getAbilityClass().getDeclaredConstructor().newInstance();
                 ability.setLevel(level);
+                ability.setEnergy(energy);
                 pickaxeData.addAbility(ability);
 
             } catch (Exception e) {
@@ -199,7 +201,7 @@ public class PlayerProfileManager implements Listener {
         yamlConfiguration.set("pickaxe-data.enchantments", enchantmentsSerialized);
 
         List<String> abilitiesSerialized = pickaxeData.getAbilities().stream()
-                .map(ability -> ability.getAbilityType().name() + " " + ability.getLevel())
+                .map(ability -> ability.getAbilityType().name() + " " + ability.getLevel() + " " + ability.getEnergy())
                 .toList();
         yamlConfiguration.set("pickaxe-data.abilities", abilitiesSerialized);
 
