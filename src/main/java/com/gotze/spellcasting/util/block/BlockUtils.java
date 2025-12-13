@@ -11,6 +11,23 @@ import java.util.List;
 
 public class BlockUtils {
 
+    public static int getEnergyFromBlock(Block block) {
+        return switch (block.getType()) {
+            case COPPER_ORE -> 3;
+            case DEEPSLATE_COPPER_ORE -> 6;
+            case RAW_COPPER_BLOCK -> 9;
+            case IRON_ORE -> 5;
+            case DEEPSLATE_IRON_ORE -> 10;
+            case RAW_IRON_BLOCK -> 15;
+            case GOLD_ORE -> 7;
+            case DEEPSLATE_GOLD_ORE -> 14;
+            case RAW_GOLD_BLOCK -> 21;
+            case DIAMOND_ORE -> 20;
+            case DEEPSLATE_DIAMOND_ORE -> 40;
+            default -> 1;
+        };
+    }
+
     public static List<Block> getVerticalBlocks(Block block) {
         List<Block> blocks = new ArrayList<>();
 

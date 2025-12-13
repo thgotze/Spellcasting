@@ -13,6 +13,7 @@ import com.gotze.spellcasting.pickaxe.menu.YourPickaxeMenu;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.SoundUtils;
 import com.gotze.spellcasting.util.block.BlockCategories;
+import com.gotze.spellcasting.util.block.BlockUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -88,12 +89,14 @@ public class PlayerPickaxeManager implements Listener {
                 }
             }
 
+            int energy = BlockUtils.getEnergyFromBlock(block); // Get energy from the block
+
             for (Ability ability : pickaxeData.getAbilities()) {
                 if (ability instanceof BlockBreakListener blockBreakListener) {
                     blockBreakListener.onBlockBreak(player, block, pickaxeData, true);
                 }
             }
-            LootCrateManager.applyEnergyFromBlockBreak(player, block);
+            LootCrateManager.applyEnergyToBossBar(player, energy); // Add energy to the boss bar
         }
 
         // Update pickaxe durability and lore a tick later

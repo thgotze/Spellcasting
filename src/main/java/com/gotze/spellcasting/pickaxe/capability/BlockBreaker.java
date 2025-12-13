@@ -7,6 +7,7 @@ import com.gotze.spellcasting.pickaxe.ability.Ability;
 import com.gotze.spellcasting.pickaxe.enchantment.Enchantment;
 import com.gotze.spellcasting.util.Loot;
 import com.gotze.spellcasting.util.block.BlockCategories;
+import com.gotze.spellcasting.util.block.BlockUtils;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,14 +38,14 @@ public interface BlockBreaker {
             }
         }
 
+        int energy = BlockUtils.getEnergyFromBlock(block); // Get energy from the block
+
         for (Ability ability : pickaxeData.getAbilities()) {
             if (ability instanceof BlockBreakListener blockBreakListener) {
                 blockBreakListener.onBlockBreak(player, block, pickaxeData, false);
             }
         }
-        pickaxeData.addBlocksBroken(1);
-
-        LootCrateManager.applyEnergyFromBlockBreak(player, block);
+        LootCrateManager.applyEnergyToBossBar(player, energy); // Add energy to the boss bar
 
         List<Item> droppedItems = new ArrayList<>();
 

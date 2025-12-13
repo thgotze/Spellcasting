@@ -35,14 +35,7 @@ public class LootCrateManager implements Listener {
     private static final Map<Player, LootCrate> playerActiveLootCrate = new HashMap<>();
     private static final Map<Player, Map<Block, BlockDisplay>> playerLootCratesInWorld = new HashMap<>();
 
-    public static void applyEnergyFromBlockBreak(Player player, Block block) {
-        int energyFromBlock = getEnergyFromBlock(block);
-        applyEnergyToBossBar(player, energyFromBlock);
-    }
-
     public static void applyEnergyToBossBar(Player player, int amount) {
-        if (amount == 0) return;
-
         int currentEnergy = playerEnergy.getOrDefault(player, 0);
         int totalEnergy = currentEnergy + amount;
 
@@ -59,23 +52,6 @@ public class LootCrateManager implements Listener {
         bossBar.name(activeLootCrate.computeBossBarName(totalEnergy));
         bossBar.progress((float) totalEnergy / activeLootCrate.getRequiredEnergy());
         bossBar.color(activeLootCrate.getBossBarColor());
-    }
-
-    public static int getEnergyFromBlock(Block block) {
-        return switch (block.getType()) {
-            case COPPER_ORE -> 3;
-            case DEEPSLATE_COPPER_ORE -> 6;
-            case RAW_COPPER_BLOCK -> 9;
-            case IRON_ORE -> 5;
-            case DEEPSLATE_IRON_ORE -> 10;
-            case RAW_IRON_BLOCK -> 15;
-            case GOLD_ORE -> 7;
-            case DEEPSLATE_GOLD_ORE -> 14;
-            case RAW_GOLD_BLOCK -> 21;
-            case DIAMOND_ORE -> 20;
-            case DEEPSLATE_DIAMOND_ORE -> 40;
-            default -> 1;
-        };
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
